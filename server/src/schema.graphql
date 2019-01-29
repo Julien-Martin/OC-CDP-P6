@@ -1,0 +1,36 @@
+scalar Date
+
+type Query {
+    test: String
+}
+
+type Mutation {
+    captureEmail(mail: String!): User
+    signup(id: String!, firstname: String!, lastname: String!, password: String!): AuthPayload!
+    login(mail: String!, password: String!): AuthPayload!
+}
+
+type User {
+    id: String
+    lastname: String
+    firstname: String
+    mail: String
+    address: String
+    phone: String
+    siret: String
+    useVAT: Boolean
+    paymentInfo: String
+    VATnumber: String
+    RCS: String
+    RM: String
+    commercialName: String
+    ape: String
+    role: String
+    createdAt: Date
+    status: String
+}
+
+type AuthPayload {
+    token: String!
+    user: User!
+}
