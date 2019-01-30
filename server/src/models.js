@@ -14,7 +14,7 @@ module.exports.User = buildModel('User', {
   lastname: {
     type: String
   },
-  mail: {
+  email: {
     type: String
   },
   password: {
@@ -28,7 +28,6 @@ module.exports.User = buildModel('User', {
   },
   siret: {
     type: String,
-    unique: true
   },
   useVAT: {
     type: Boolean,
@@ -62,7 +61,7 @@ module.exports.Client = buildModel('Client', {
     ref: 'Status',
     required: true
   },
-  mail: String,
+  email: String,
   address: String,
   phone: String,
   company: String

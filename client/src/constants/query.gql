@@ -1,6 +1,0 @@
-mutation captureEmail($mail: String!) {
-    captureEmail(mail: $mail){
-        id
-        mail
-    }
-}
