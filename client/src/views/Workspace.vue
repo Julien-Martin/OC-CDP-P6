@@ -1,23 +1,29 @@
 <template>
 	<div>
+
 		<div class="container">
 			<aside class="tree-root">
-				<div v-if="getUser.id" class="tree-item"
-						 @click.left.stop="$router.push({name: 'folder', params: {id: getUser.id}})">
+				<div v-if="getUser.id" class="tree-item">
 					<div class="tree-plate"  v-bind:class="{active: $route.params.id === getUser.id}">
 						<div class="circle"></div>
 						<span class="folder no-select-color teamname">{{ getUser.firstname }}</span>
 					</div>
 				</div>
+
 			</aside>
+
 			<div class="workspace-main">
 				<router-view :key="$route.fullPath"></router-view>
 			</div>
+
 		</div>
+
 	</div>
+
 </template>
+
 <script>
-	import { getUser } from '../constants/query.graphql'
+	import { GetUser } from '../constants/query.graphql'
 	export default {
 		data() {
 			return {
@@ -26,11 +32,12 @@
 		},
 		apollo: {
 			getUser: {
-				query: getUser,
+				query: GetUser,
 			},
 		},
 	}
 </script>
+
 <style scoped>
 	.container {
 		width: 100%;

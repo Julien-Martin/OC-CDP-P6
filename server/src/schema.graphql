@@ -1,13 +1,20 @@
 scalar Date
+scalar JSON
 
 type Query {
     getUser: User
+    getClients: [Client]
+    getProducts: [Product]
+    getInvoices: [Invoice]
 }
 
 type Mutation {
     captureEmail(email: String!): User
     signup(id: String!, firstname: String!, lastname: String!, password: String!): AuthPayload!
     login(email: String!, password: String!): AuthPayload!
+    createClient(lastname: String!, firstname: String!, email: String, address: String, phone: String, company: String): Client!
+    createProduct(description: String!, priceht: Float!, vat: Float!, pricettc: Float!, unit: String): Product!
+    createInvoice(clientId: String!, invoiceNumber: String!, deliveryDate: Date!, paymentDate: Date!, price: Float!, products: [JSON]): Invoice!
 }
 
 type User {
@@ -28,6 +35,52 @@ type User {
     role: String
     createdAt: Date
     status: String
+    clients: [Client]
+    products: [Product]
+    invoices: [Invoice]
+}
+
+type Client {
+    id: String
+    lastname: String
+    firstname: String
+    email: String
+    address: String
+    phone: String
+    company: String
+    invoices: [Invoice]
+}
+
+type Status {
+    id: String
+    form: String
+    title: String
+}
+
+type Product {
+    userId: String
+    id: String
+    description: String
+    priceht: Float
+    vat: Float
+    pricettc: String
+    unit: String
+}
+
+type Invoice {
+    id: String
+    userId: String
+    clientId: String
+    invoiceNumber: String
+    deliveryDate: Date
+    paymentDate: Date
+    price: Float
+    products: [Item]
+}
+
+type Item {
+    product: Product
+    quantity: Float
 }
 
 type AuthPayload {

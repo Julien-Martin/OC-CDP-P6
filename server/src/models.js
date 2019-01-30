@@ -40,10 +40,22 @@ module.exports.User = buildModel('User', {
   commercialName: String,
   ape: String,
   role: String,
-  status: String
+  status: String,
+  products: [{
+    type: ObjectId,
+    ref: 'Product'
+  }],
+  clients: [{
+    type: ObjectId,
+    ref: 'Client'
+  }],
+  invoices: [{
+    type: ObjectId,
+    ref: 'Invoice'
+  }]
 })
 module.exports.Client = buildModel('Client', {
-  _userId: {
+  userId: {
     type: ObjectId,
     ref: 'User',
     required: true
@@ -58,16 +70,19 @@ module.exports.Client = buildModel('Client', {
   },
   status: {
     type: ObjectId,
-    ref: 'Status',
-    required: true
+    ref: 'Status'
   },
   email: String,
   address: String,
   phone: String,
-  company: String
+  company: String,
+  invoices: [{
+    type: ObjectId,
+    ref: 'Invoice'
+  }]
 })
 module.exports.Product = buildModel('Product', {
-  _userId: {
+  userId: {
     type: ObjectId,
     ref: 'User',
     required: true
@@ -104,12 +119,12 @@ module.exports.Status = buildModel('Status', {
   }
 })
 module.exports.Invoice = buildModel('Invoice', {
-  _userId: {
+  userId: {
     type: ObjectId,
     ref: 'User',
     required: true
   },
-  _clientId: {
+  clientId: {
     type: ObjectId,
     ref: 'Client',
     required: true
@@ -132,21 +147,17 @@ module.exports.Invoice = buildModel('Invoice', {
   },
   products: [{
     description: {
-      type: String,
-      required: true
+      type: String
     },
     priceht: {
-      type: Number,
-      required: true
+      type: Number
     },
     vat: {
       type: Number,
-      enum: [0, 2.1, 5.5, 10, 20],
-      required: true
+      enum: [0, 2.1, 5.5, 10, 20]
     },
     pricettc: {
-      type: Number,
-      required: true
+      type: Number
     },
     quantity: Number
   }]

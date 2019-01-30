@@ -1,10 +1,3 @@
-query GetUser {
-    getUser {
-        id
-        firstname
-    }
-}
-
 mutation captureEmail($email: String!) {
     captureEmail(email: $email){
         id
@@ -29,5 +22,12 @@ mutation Login($email: String!, $password: String!){
             id
             email
         }
+    }
+}
+
+query GetUser {
+    getUser {
+        id
+        firstname
     }
 }
