@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const moment = require('moment')
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
+const Mixed = Schema.Types.Mixed
 
 buildModel = (name, schema) => {
   return mongoose.model(name, new Schema(schema, {timestamps: true}))
@@ -119,14 +120,16 @@ module.exports.Status = buildModel('Status', {
   }
 })
 module.exports.Invoice = buildModel('Invoice', {
-  userId: {
-    type: ObjectId,
-    ref: 'User',
+  isValidate: {
+    type: Boolean,
+    default: false
+  },
+  user: {
+    type: Mixed,
     required: true
   },
-  clientId: {
-    type: ObjectId,
-    ref: 'Client',
+  client: {
+    type: Mixed,
     required: true
   },
   invoiceNumber: {
@@ -146,19 +149,13 @@ module.exports.Invoice = buildModel('Invoice', {
     required: true
   },
   products: [{
-    description: {
-      type: String
+    product: {
+      type: Mixed,
+      required: true
     },
-    priceht: {
-      type: Number
-    },
-    vat: {
+    quantity: {
       type: Number,
-      enum: [0, 2.1, 5.5, 10, 20]
-    },
-    pricettc: {
-      type: Number
-    },
-    quantity: Number
+      required: true
+    }
   }]
 })

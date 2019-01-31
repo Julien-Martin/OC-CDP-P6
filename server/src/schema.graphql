@@ -6,6 +6,7 @@ type Query {
     getClients: [Client]
     getProducts: [Product]
     getInvoices: [Invoice]
+    getStatus: [Status]
 }
 
 type Mutation {
@@ -13,8 +14,18 @@ type Mutation {
     signup(id: String!, firstname: String!, lastname: String!, password: String!): AuthPayload!
     login(email: String!, password: String!): AuthPayload!
     createClient(lastname: String!, firstname: String!, email: String, address: String, phone: String, company: String): Client!
+    updateClient(id: String!, lastname: String, firstname: String, email: String, address: String, phone: String, company: String): Client!
+    deleteClient(id: String!): Boolean
     createProduct(description: String!, priceht: Float!, vat: Float!, pricettc: Float!, unit: String): Product!
-    createInvoice(clientId: String!, invoiceNumber: String!, deliveryDate: Date!, paymentDate: Date!, price: Float!, products: [JSON]): Invoice!
+    updateProduct(id: String!, description: String, priceht: Float, vat: Float, pricettc: Float, unit: String): Product!
+    deleteProduct(id: String!): Boolean
+    createInvoice(clientId: String, invoiceNumber: String!, deliveryDate: Date!, paymentDate: Date!, price: Float!, products: [JSON]): Invoice!
+    validateInvoice(id: String!): Invoice!
+    updateInvoice(id: String!, clientId: String, deliveryDate: Date, paymentDate: Date, price: Float, products: [JSON], isValidate: Boolean): Invoice!
+    deleteInvoice(id: String!): Boolean
+    createStatus(form: String!, title: String!): Status
+    updateStatus(form: String, title: String): Status
+    deleteStatus(id: String!): Boolean
 }
 
 type User {
@@ -69,13 +80,14 @@ type Product {
 
 type Invoice {
     id: String
-    userId: String
-    clientId: String
+    user: User
+    client: Client
     invoiceNumber: String
     deliveryDate: Date
     paymentDate: Date
     price: Float
     products: [Item]
+    isValidate: Boolean
 }
 
 type Item {
