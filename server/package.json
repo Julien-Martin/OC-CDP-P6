@@ -13,6 +13,7 @@
     "bcrypt": "^2.0.1",
     "dotenv": "^6.0.0",
     "graphql": "^0.13.2",
+    "graphql-import": "^0.7.1",
     "graphql-yoga": "1.14.10",
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.22.2",
