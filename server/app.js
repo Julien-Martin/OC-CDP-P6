@@ -16,14 +16,8 @@ const server = new GraphQLServer({
 	typeDefs: './src/schema.graphql',
 	resolvers,
 	context: req => ({ ...req }),
-	middlewares: [authMiddleware],
+	middlewares: [authMiddleware]
 })
-
-/*const server = new GraphQLServer({
-	typeDefs: './src/schema.graphql',
-	resolvers,
-	context: req => req,
-});*/
 
 const options = {
 	port: process.env.PORT || 5500,

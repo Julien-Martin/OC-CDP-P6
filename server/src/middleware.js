@@ -5,8 +5,8 @@ exports.authMiddleware = async (resolve, root, args, context, info) => {
 	const Authorization = context.request.get('Authorization')
 	if(Authorization) {
 		const token = Authorization.replace('Bearer ', '')
-		const {id} = jwt.verify(token, process.env.JWT_SECRET)
-		return resolve()
+		args.user = jwt.verify(token, process.env.JWT_SECRET)
+		return await resolve(root, args, context, info)
 	}
-	throw new Error('Not authenticated')
+	return false
 };

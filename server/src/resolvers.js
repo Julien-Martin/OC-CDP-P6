@@ -23,6 +23,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const resolvers = {
 	Query: {
 		async getUsers(_, args, context) {
+			console.log('2. resolver')
+			console.log(args.user)
+
 			return await User.find({}).populate('products').populate('clients').populate('invoices')
 		},
 		async getUser(_, {id}, context) {
