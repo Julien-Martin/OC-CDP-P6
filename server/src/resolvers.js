@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodeMailer = require('nodemailer');
 const {welcomeEmail} = require('./emails');
-const {getUserId, getUserForInvoice, getClientForInvoice, getProductForInvoice} = require('./utils');
+const {getUserId, getUserForDocument, getClientForDocument, getProductForDocument, getPrice} = require('./utils');
 
 const transporter = nodeMailer.createTransport({
 	host: 'smtp.gmail.com',
@@ -16,30 +16,55 @@ const transporter = nodeMailer.createTransport({
 	}
 });
 
-const {User, Client, Product, Status, Invoice} = require('./models');
+const {User, Client, Product, Status, Invoice, Estimate} = require('./models');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const resolvers = {
 	Query: {
-		async getUser(_, args, context) {
+		async getUsers(_, args, context) {
+			return await User.find({}).populate('products').populate('clients').populate('invoices')
+		},
+		async getUser(_, {id}, context) {
+			return await User.findById(id).populate('products').populate('clients').populate('invoices')
+		},
+		async getMe(_, args, context) {
 			const userId = getUserId(context);
 			return await User.findById(userId).populate('products').populate('clients').populate('invoices')
 		},
 		async getClients(_, args, context) {
 			const userId = getUserId(context);
-			return await Client.find({userId: userId})
+			return await Client.find({userId: userId}).populate('invoices')
 		},
-		async getProducts(_, args, context){
+		async getClient(_, {id}, context) {
+			return await Client.findById(id).populate('invoices')
+		},
+		async getProducts(_, args, context) {
 			const userId = getUserId(context);
 			return await Product.find({userId: userId})
 		},
-		async getInvoices(_, args, context){
+		async getProduct(_, {id}, context) {
+			return await Product.findById(id)
+		},
+		async getInvoices(_, args, context) {
 			const userId = getUserId(context);
 			return await Invoice.find({userId: userId})
 		},
-		async getStatus(_, args, context){
+		async getInvoice(_, {id}, context) {
+			return await Invoice.findById(id)
+		},
+		async getEstimates(_, args, context){
+			const userId = getUserId(context);
+			return await Estimate.find({userId: userId})
+		},
+		async getEstimate(_, {id}, context){
+			return await Estimate.findById(id)
+		},
+		async getStatus(_, args, context) {
 			return await Status.find({})
+		},
+		async getOneStatus(_, {id}, context) {
+			return await Status.findById(id)
 		}
 	},
 	Mutation: {
@@ -91,17 +116,17 @@ const resolvers = {
 			await User.updateOne({_id: userId}, {$push: {clients: client}});
 			return client
 		},
-		async updateClient(_, data){
+		async updateClient(_, data) {
 			return await Client.findOneAndUpdate({_id: data.id}, data, {new: true})
 		},
-		async deleteClient(_, {id}, context){
+		async deleteClient(_, {id}, context) {
 			const userId = getUserId(context);
 			await Client.deleteOne({_id: id});
 			await User.updateOne({_id: userId}, {$pull: {clients: id}});
 			return true
 		},
 
-		async createProduct(_, {description, priceht, vat, pricettc, unit}, context){
+		async createProduct(_, {description, priceht, vat, pricettc, unit}, context) {
 			const userId = getUserId(context);
 			const product = await Product.create({
 				userId: (userId),
@@ -114,78 +139,140 @@ const resolvers = {
 			await User.updateOne({_id: userId}, {$push: {products: product}});
 			return product
 		},
-		async updateProduct(_, data){
+		async updateProduct(_, data) {
 			return await Product.findOneAndUpdate({_id: data.id}, data, {new: true})
 		},
-		async deleteProduct(_, {id}, context){
+		async deleteProduct(_, {id}, context) {
 			const userId = getUserId(context);
 			await Product.deleteOne({_id: id});
 			await User.updateOne({_id: userId}, {$pull: {products: id}});
 			return true
 		},
 
-		async createInvoice(_, {clientId, invoiceNumber, deliveryDate, paymentDate, price, products}, context){
+		async createInvoice(_, {clientId, invoiceNumber, billingDate, paymentCondition, lateFee, message, products, footNote}, context) {
 			const userId = getUserId(context);
-			const user = getUserForInvoice(await User.findById(userId));
-			const client = getClientForInvoice(await Client.findById(clientId));
-			for (let i = 0; i < products.length; i++){
-				products[i].product = getProductForInvoice(await Product.findById(products[i].product))
+			const user = getUserForDocument(await User.findById(userId));
+			const client = getClientForDocument(await Client.findById(clientId));
+			const deadline = moment(billingDate).add(paymentCondition, 'days');
+			for (let i = 0; i < products.length; i++) {
+				products[i].product = getProductForDocument(await Product.findById(products[i].product))
 			}
+			let price = getPrice(products);
 			const invoice = await Invoice.create({
-				user: (user),
-				client: (client),
+				userId,
+				user,
+				client,
 				invoiceNumber,
-				deliveryDate,
-				paymentDate,
-				price,
+				billingDate,
+				paymentCondition,
+				lateFee,
+				message,
 				products,
-				isValidate: false
+				deadline,
+				price,
+				footNote,
+				state: 'Draft'
 			});
 			await User.updateOne({_id: userId}, {$push: {invoices: invoice}});
 			await Client.updateOne({_id: clientId}, {$push: {invoices: invoice}});
 			return invoice
 		},
-		async validateInvoice(_, {id}, context){
-			const invoice = await Invoice.findById({_id: id})
-			if(invoice.isValidate){
+		async validateInvoice(_, {id}) {
+			const invoice = await Invoice.findById({_id: id});
+			if (invoice.state !== 'Draft') {
 				throw new Error('This invoice is already validate')
 			}
-			return await Invoice.findOneAndUpdate({_id: id}, {isValidate: true}, {new: true})
+			return await Invoice.findOneAndUpdate({_id: id}, {state: 'Pending'}, {new: true})
 		},
-		async updateInvoice(_, data){
-			const invoice = await Invoice.findById(data.id)
-			if(invoice.isValidate){
+		async updateInvoice(_, data) {
+			const invoice = await Invoice.findById(data.id);
+			if (invoice.state !== 'Draft') {
 				throw new Error('You cannot modify validate invoice')
 			}
+			for (let i = 0; i < data.products.length; i++) {
+				data.products[i].product = getProductForDocument(await Product.findById(data.products[i].product))
+			}
+			data.price = getPrice(data.products);
 			return await Invoice.findOneAndUpdate({_id: data.id}, data, {new: true})
 		},
-		async deleteInvoice(_, {id}, context){
-			const userId = getUserId(context)
-			const invoice = await Invoice.findById({_id: id})
-			const client = await Client.findOne({invoices: id})
-			const clientId = client._id
-			if(invoice.isValidate){
+		async deleteInvoice(_, {id}, context) {
+			const userId = getUserId(context);
+			const invoice = await Invoice.findById({_id: id});
+			const client = await Client.findOne({invoices: id});
+			const clientId = client._id;
+			if (invoice.state !== 'Draft') {
 				throw new Error('You cannot delete validate invoice')
 			} else {
-				await Invoice.deleteOne({_id: id})
-				await User.updateOne({_id: userId}, {$pull: {invoices: id}})
-				await Client.updateOne({_id: clientId}, {$pull: {invoices: id}})
+				await Invoice.deleteOne({_id: id});
+				await User.updateOne({_id: userId}, {$pull: {invoices: id}});
+				await Client.updateOne({_id: clientId}, {$pull: {invoices: id}});
 				return true
 			}
 		},
 
-		async createStatus(_, {form, title}){
-			const status = await Status.findOne({$or: [{form: form}, {title: title}]})
-			if(status) throw new Error('Status already exist')
+		async createEstimate(_, {clientId, estimateNumber, startedDate, deliveryDate, validityDate, message, products, footNote}, context) {
+			const userId = getUserId(context);
+			const user = getUserForDocument(await User.findById(userId));
+			const client = getClientForDocument(await Client.findById(clientId));
+			for (let i = 0; i < products.length; i++) {
+				products[i].product = getProductForDocument(await Product.findById(products[i].product))
+			}
+			let price = getPrice(products);
+			const estimate = await Estimate.create({
+				userId,
+				user,
+				client,
+				price,
+				estimateNumber,
+				startedDate,
+				deliveryDate,
+				validityDate,
+				message,
+				products,
+				footNote,
+				state: 'Draft'
+			});
+			await User.updateOne({_id: userId}, {$push: {estimates: estimate}});
+			await Client.updateOne({_id: clientId}, {$push: {estimates: estimate}});
+			return estimate
+		},
+		async validateEstimate(_, {id}){
+			const estimate = await Estimate.findById(id);
+			if(estimate.state !== 'Draft') throw new Error('This estimate is already validate');
+			return await Estimate.findOneAndUpdate({_id: id}, {state: 'Pending'}, {new: true})
+		},
+		async updateEstimate(_, data){
+			const estimate = await Estimate.findById(data.id);
+			for(let i = 0; i < data.products.length; i++){
+				data.products[i].product = getProductForDocument(await Product.findById(data.products[i].product))
+			}
+			data.price = getPrice(data.products);
+			return await Estimate.findOneAndUpdate({_id: data.id}, data, {new: true})
+		},
+		async deleteEstimate(_, {id}, context){
+			const userId = getUserId(context);
+			const estimate = await Estimate.findById(id);
+			const client = await Client.findOne({invoices: id});
+			const clientId = client._id;
+			if(estimate.state !== 'Draft') throw new Error('You cannot delete validate estimate');
+			await Estimate.deleteOne({_id: id});
+			await User.updateOne({_id: userId}, {$pull: {estimates: id}});
+			await Client.updateOne({_id: clientId}, {$pull: {estimates: id}});
+			return true
+		},
+
+		async createStatus(_, {form, title}) {
+			const status = await Status.findOne({$or: [{form: form}, {title: title}]});
+			if (status) throw new Error('Status already exist');
 			return await Status.create({form, title})
 		},
-		async updateStatus(_, data){
-			const status = await Status.findOne({$or: [{form: data.form}, {title: data.title}]})
-			if(status) throw new Error('Duplicate status')
+		async updateStatus(_, data) {
+			const status = await Status.findOne({$or: [{form: data.form}, {title: data.title}]});
+			if (status) throw new Error('Duplicate status');
 			return await Status.update({_id: data.id}, data, {new: true})
 		},
-		async deleteStatus(_, {id}){
-			await Status.deleteOne({_id: id})
+		async deleteStatus(_, {id}) {
+			await Status.deleteOne({_id: id});
 			return true
 		}
 	},

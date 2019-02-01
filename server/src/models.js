@@ -1,25 +1,27 @@
-const mongoose = require('mongoose')
-const moment = require('moment')
-const Schema = mongoose.Schema
-const ObjectId = Schema.Types.ObjectId
-const Mixed = Schema.Types.Mixed
+const mongoose = require('mongoose');
+const moment = require('moment');
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
+const Mixed = Schema.Types.Mixed;
 
 buildModel = (name, schema) => {
   return mongoose.model(name, new Schema(schema, {timestamps: true}))
-}
+};
 
 module.exports.User = buildModel('User', {
   firstname: {
-    type: String
+    type: String,
   },
   lastname: {
-    type: String
+    type: String,
   },
   email: {
-    type: String
+    type: String,
+		required: true,
+		unique: true
   },
   password: {
-    type: String
+    type: String,
   },
   address: {
     type: String
@@ -42,6 +44,7 @@ module.exports.User = buildModel('User', {
   ape: String,
   role: String,
   status: String,
+  cgv: String,
   products: [{
     type: ObjectId,
     ref: 'Product'
@@ -53,8 +56,12 @@ module.exports.User = buildModel('User', {
   invoices: [{
     type: ObjectId,
     ref: 'Invoice'
+  }],
+  estimates: [{
+    type: ObjectId,
+    ref: 'Estimate'
   }]
-})
+});
 module.exports.Client = buildModel('Client', {
   userId: {
     type: ObjectId,
@@ -80,8 +87,12 @@ module.exports.Client = buildModel('Client', {
   invoices: [{
     type: ObjectId,
     ref: 'Invoice'
+  }],
+  estimates: [{
+    type: ObjectId,
+    ref: 'Estimate'
   }]
-})
+});
 module.exports.Product = buildModel('Product', {
   userId: {
     type: ObjectId,
@@ -106,7 +117,7 @@ module.exports.Product = buildModel('Product', {
     required: true
   },
   unit: String
-})
+});
 module.exports.Status = buildModel('Status', {
   form: {
     type: String,
@@ -118,11 +129,16 @@ module.exports.Status = buildModel('Status', {
     unique: true,
     required: true
   }
-})
+});
 module.exports.Invoice = buildModel('Invoice', {
-  isValidate: {
-    type: Boolean,
-    default: false
+  userId: {
+    type: String,
+    required: true
+  },
+  state: {
+    type: String,
+    enum: ['Draft', 'Pending', 'Done'],
+    required: true
   },
   user: {
     type: Mixed,
@@ -136,17 +152,24 @@ module.exports.Invoice = buildModel('Invoice', {
     type: String,
     required: true
   },
-  deliveryDate: {
+  billingDate: {
     type: Date,
     required: true
   },
-  paymentDate: {
-    type: Date,
-    required: true
-  },
-  price: {
+  paymentCondition: {
     type: Number,
     required: true
+  },
+  deadline: {
+    type: Date,
+    required: true
+  },
+  lateFee: {
+    type: Number,
+    required: true
+  },
+  message: {
+    type: String
   },
   products: [{
     product: {
@@ -157,5 +180,67 @@ module.exports.Invoice = buildModel('Invoice', {
       type: Number,
       required: true
     }
-  }]
-})
+  }],
+  price: {
+    type: Number,
+    required: true
+  },
+  footNote: {
+    type: String
+  }
+});
+module.exports.Estimate = buildModel('Estimate', {
+  userId: {
+    type: String,
+    required: true
+  },
+  state: {
+    type: String,
+    enum: ['Draft', 'Pending', 'Done'],
+    required: true
+  },
+	user: {
+	  type: Mixed,
+    required: true
+  },
+  client: {
+	  type: Mixed,
+    required: true
+  },
+  estimateNumber: {
+	  type: String,
+    required: true
+  },
+  startedDate: {
+	  type: Date,
+    required: true
+  },
+  deliveryDate: {
+	  type: Date,
+    required: true
+  },
+  validityDate: {
+	  type: Date,
+    required: true
+  },
+  message: {
+	  type: String
+  },
+  price: {
+	  type: Number,
+    required: true
+  },
+  products: [{
+	  product: {
+	    type: Mixed,
+      required: true
+    },
+    quantity: {
+	    type: Number,
+      required: true
+    }
+  }],
+  footNote: {
+	  type: String
+  }
+});

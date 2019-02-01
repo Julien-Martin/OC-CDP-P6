@@ -1,5 +1,5 @@
-const url = process.env.CLIENT_URL
-const fromEmail = process.env.FROM_EMAIL
+const url = process.env.CLIENT_URL;
+const fromEmail = process.env.FROM_EMAIL;
 
 module.exports.welcomeEmail = (email, user) => {
 	const text = `
@@ -9,7 +9,7 @@ module.exports.welcomeEmail = (email, user) => {
 	
 	Confirmer votre email:\n
 	${url}/signup/${user.id}
-	`
+	`;
 	return {
 		to: `${email}`,
 		from: {
@@ -19,4 +19,4 @@ module.exports.welcomeEmail = (email, user) => {
 		subject: 'Merci de terminer votre inscription',
 		text
 	}
-}
+};

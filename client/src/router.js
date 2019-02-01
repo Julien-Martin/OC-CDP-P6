@@ -5,20 +5,20 @@ import Signup from './views/Signup.vue'
 import Login from './views/Login.vue'
 import Workspace from './views/Workspace.vue'
 
-Vue.use(Router)
+Vue.use(Router);
 
 const login = {
 	path: '/login',
 	name: 'login',
 	component: Login,
 	meta: { title: 'Login - enamel' }
-}
+};
 const workspace = {
 	path: '/w',
 	name: 'workspace',
 	component: Workspace,
 	meta: { title: 'Workspace - enamel', requiresAuth: true },
-}
+};
 const router = new Router({
 	mode: 'history',
 	routes: [
@@ -37,9 +37,9 @@ const router = new Router({
 		login,
 		workspace
 	]
-})
+});
 router.beforeEach((to, from, next) => {
-	const auth = localStorage.getItem('user-id')
+	const auth = localStorage.getItem('user-id');
 	if (to.matched.some(record => record.meta.requiresAuth)) {
 		if(!auth) {
 			next(login)
@@ -50,8 +50,8 @@ router.beforeEach((to, from, next) => {
 		}
 	}
 	next()
-})
+});
 router.afterEach((to, from) => {
 	document.title = to.meta.title
-})
+});
 export default router

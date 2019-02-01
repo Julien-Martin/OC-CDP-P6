@@ -15,14 +15,14 @@ import store from './store'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/style.scss'
 
-Vue.use(ElementUI)
+Vue.use(ElementUI);
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
-const uri = `${process.env.VUE_APP_URI}/graphql`
-const httpLink = new HttpLink({uri})
+const uri = `${process.env.VUE_APP_URI}/graphql`;
+const httpLink = new HttpLink({uri});
 
-const cache = new InMemoryCache({})
+const cache = new InMemoryCache({});
 
 const errorLink = onError(({graphQLErrors, networkError}) => {
   if (graphQLErrors)
@@ -30,19 +30,19 @@ const errorLink = onError(({graphQLErrors, networkError}) => {
         console.log(
             `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
         )
-    )
+    );
   if (networkError) console.log(`[Network error]: ${networkError}`)
-})
+});
 
 const authMiddleware = new ApolloLink(((operation, forward) => {
-  const token = localStorage.getItem('user-token')
+  const token = localStorage.getItem('user-token');
   operation.setContext({
     headers: {
       authorization: token ? `Bearer ${token}` : null
     }
-  })
+  });
   return forward(operation)
-}))
+}));
 
 const client = new ApolloClient({
   link: ApolloLink.from([
@@ -52,20 +52,20 @@ const client = new ApolloClient({
   ]),
   cache,
   connectToDevTools: true,
-})
+});
 
 const apolloProvider = new VueApollo({
   defaultClient: client,
   defaultOptions: {
     $loadingKey: 'loading'
   }
-})
+});
 
-Vue.use(VueApollo)
+Vue.use(VueApollo);
 
 new Vue({
   router,
   provide: apolloProvider.provide(),
   store,
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');

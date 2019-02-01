@@ -46,17 +46,17 @@
     },
     methods: {
       capture() {
-        const {email} = this.form
+        const {email} = this.form;
         if (!email || !validateEmail(email)) {
-          this.error = 'Please enter a valid email'
+          this.error = 'Please enter a valid email';
           return
         }
         this.$apollo.mutate({
           mutation: captureEmail,
           variables: {email}
         }).then(({data}) => {
-          this.submitted = true
-          this.error = false
+          this.submitted = true;
+          this.error = false;
           console.log(data.captureEmail.id)
         }).catch(error => {
           if (error.graphQLErrors.length >= 1) {

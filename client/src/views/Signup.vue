@@ -40,10 +40,10 @@
 		},
 		methods: {
 			async signup() {
-				this.$apollo.provider.clients.defaultClient.cache.reset()
-				const { firstname, lastname, password } = this.form
+				this.$apollo.provider.clients.defaultClient.cache.reset();
+				const { firstname, lastname, password } = this.form;
 				if (!(firstname && lastname && password)) {
-					this.error = 'Please complete the form'
+					this.error = 'Please complete the form';
 					return
 				}
 				this.$apollo.mutate({
@@ -55,18 +55,18 @@
 						password
 					}
 				}).then(({data: {signup}}) => {
-					const id = signup.user.id
-					const token = signup.token
-					this.saveUserData(id, token)
+					const id = signup.user.id;
+					const token = signup.token;
+					this.saveUserData(id, token);
 					this.$router.push({name: 'workspace'})
 				}).catch((error) => {
-					this.error = 'Something went wrong'
+					this.error = 'Something went wrong';
 					console.log(error)
 				})
 			},
 			saveUserData (id, token) {
-				localStorage.setItem('user-id', id)
-				localStorage.setItem('user-token', token)
+				localStorage.setItem('user-id', id);
+				localStorage.setItem('user-token', token);
 				this.$root.$data.userId = localStorage.getItem('user-id')
 			},
 		}
