@@ -1,11 +1,10 @@
-const { GraphQLServer } = require('graphql-yoga');
+const {GraphQLServer} = require('graphql-yoga');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const resolvers = require('./src/resolvers');
+const jwt = require('jsonwebtoken');
 
-const { authMiddleware } = require('./src/middleware')
-
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, "connection error"));
 db.once('open', () => {
@@ -15,8 +14,7 @@ db.once('open', () => {
 const server = new GraphQLServer({
 	typeDefs: './src/schema.graphql',
 	resolvers,
-	context: req => ({ ...req }),
-	middlewares: [authMiddleware]
+	context: req => ({...req})
 })
 
 const options = {
@@ -26,7 +24,8 @@ const options = {
 	playground: '/playground',
 };
 
-server.start(options, ({ port }) => {
+
+server.start(options, ({port}) => {
 	console.log(`Server is running on port ${port}`);
 	console.log(`🚀 Playground ready at http://localhost:${port}/playground`)
 });
