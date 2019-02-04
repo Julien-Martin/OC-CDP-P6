@@ -8,10 +8,21 @@ type Query {
     products: [Product]
     product(id: ID!): Product
     productsByUser(id: ID!): [Product]
+    clients: [Client]
+    client(id: ID!): Client
+    clientsByUser(id: ID!): [Client]
+    legalForms: [LegalForm]
+    legalForm(id: ID!): LegalForm
+    invoices: [Invoice]
+    invoice(id: ID!): Invoice
 
     me: User
     meProducts: [Product]
     meProduct: Product
+    meClients: [Client]
+    meClient: Client
+    meInvoices: [Invoice]
+    meInvoice: Invoice
 }
 
 type Mutation {
@@ -20,8 +31,16 @@ type Mutation {
     login(email: String!, password: String!): AuthPayload
 
     createProduct(description: String!, priceht: Float!, vat: Float!, pricettc: Float!, unit: String): Product
-    updateProduct(id: ID!, description: String, priceht: Float, vat: Float, pricettc: Float, unit: String): Product!
-    deleteProduct(id: ID!): Boolean!
+    updateProduct(id: ID!, description: String, priceht: Float, vat: Float, pricettc: Float, unit: String): Product
+    deleteProduct(id: ID!): Boolean
+
+    createLegalForm(form: String!, title: String!): LegalForm
+    updateLegalForm(id: ID!, form: String, title: String): LegalForm
+    deleteLegalForm(id: ID!): Boolean
+
+    createClient(name: NameCreateOneInput!, legalForm: ID!, email: String, phone: String, address: AddressCreateOneInput!, company: String): Client
+    updateClient(id: ID!, name: NameCreateOneInput, legalForm: ID, email: String, phone: String, address: AddressCreateOneInput, company: String): Client
+    deleteClient(id: ID!): Boolean
 }
 
 type AuthPayload {

@@ -17,8 +17,24 @@ type User {
     status: Status!
     cgv: String
     products: [Product] @relation(name: "UserProduct", link: INLINE, onDelete: CASCADE)
+    clients: [Client]! @relation(name: "UserClient", link: INLINE, onDelete: CASCADE)
+    invoices: [Invoice]! @relation(name: "UserInvoice", link: INLINE, onDelete: CASCADE)
     createdAt: DateTime @createdAt
-    updatedAt: DateTime @updateAt
+    updatedAt: DateTime @updatedAt
+}
+
+type Client {
+    id: ID! @id
+    user: User! @relation(name: "UserClient")
+    name: Name!
+    legalForm: LegalForm! @relation(link: INLINE)
+    email: String
+    phone: String
+    address: Address
+    company: String
+    invoices: [Invoice]! @relation(name: "ClientInvoice", link: INLINE)
+    createdAt: DateTime @createdAt
+    updatedAt: DateTime @updatedAt
 }
 
 type Product {
@@ -30,7 +46,31 @@ type Product {
     pricettc: Float!
     unit: String
     createdAt: DateTime @createdAt
+    updatedAt: DateTime @updatedAt
+}
+
+type Invoice {
+    id: ID! @id
+    user: User! @relation(name: "UserInvoice")
+    client: Client! @relation(name: "ClientInvoice")
+    state: State!
+    invoiceNumber: String!
+    billingDate: DateTime!
+    paymentCondition: Float!
+    deadline: DateTime!
+    lateFee: Float!
+    message: String
+    products: [Item!]!
+    price: Float!
+    footNote: String
+    createdAt: DateTime @createdAt
     updatedAt: DateTime @updateAt
+}
+
+type LegalForm {
+    id: ID! @id
+    form: String!
+    title: String!
 }
 
 enum Role {
@@ -41,6 +81,17 @@ enum Role {
 enum Status {
     NOTACTIVE,
     ACTIVE
+}
+
+enum State {
+    DRAFT,
+    PENDING,
+    DONE
+}
+
+type Item @embedded {
+    product: Product!
+    quantity: Float!
 }
 
 type Name @embedded {
