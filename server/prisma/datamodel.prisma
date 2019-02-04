@@ -1,0 +1,57 @@
+type User {
+    id: ID! @id
+    name: Name
+    email: String! @unique
+    password: String
+    address: Address
+    phone: String
+    siret: String
+    useVAT: Boolean @default(value: false)
+    paymentInfo: String
+    VATnumber: String
+    RCS: String
+    RM: String
+    commercialName: String
+    ape: String
+    role: Role!
+    status: Status!
+    cgv: String
+    products: [Product] @relation(name: "UserProduct", link: INLINE, onDelete: CASCADE)
+    createdAt: DateTime @createdAt
+    updatedAt: DateTime @updateAt
+}
+
+type Product {
+    id: ID! @id
+    user: User @relation(name: "UserProduct")
+    description: String!
+    priceht: Float!
+    vat: Float!
+    pricettc: Float!
+    unit: String
+    createdAt: DateTime @createdAt
+    updatedAt: DateTime @updateAt
+}
+
+enum Role {
+    USER,
+    ADMIN
+}
+
+enum Status {
+    NOTACTIVE,
+    ACTIVE
+}
+
+type Name @embedded {
+    firstname: String!
+    lastname: String!
+}
+
+type Address @embedded {
+    street: String!
+    street2: String
+    postalcode: String!
+    city: String!
+    country: String!
+}

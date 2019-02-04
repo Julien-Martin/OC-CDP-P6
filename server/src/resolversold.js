@@ -20,7 +20,7 @@ const {User, Client, Product, Status, Invoice, Estimate} = require('./models');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const resolvers = {
+const resolversold = {
 	Query: {
 		async getUsers(_, args, context) {
 			const userId = getAuth(context);
@@ -302,4 +302,4 @@ const resolvers = {
 	})
 };
 
-module.exports = resolvers;
+module.exports = resolversold;

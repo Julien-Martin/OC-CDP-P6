@@ -1,20 +1,17 @@
 const {GraphQLServer} = require('graphql-yoga');
-const mongoose = require('mongoose');
 require('dotenv').config();
-const resolvers = require('./src/resolvers');
-const jwt = require('jsonwebtoken');
-
-mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, "connection error"));
-db.once('open', () => {
-	console.log("Connection succeeded")
-});
+const {resolvers} = require('./src/resolvers');
+const { prisma } = require('./src/generated')
 
 const server = new GraphQLServer({
 	typeDefs: './src/schema.graphql',
 	resolvers,
-	context: req => ({...req})
+	context: request => {
+		return {
+			...request,
+			prisma,
+		}
+	}
 })
 
 const options = {

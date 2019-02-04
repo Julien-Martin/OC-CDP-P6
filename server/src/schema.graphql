@@ -1,146 +1,27 @@
-scalar Date
+scalar DateTime
 scalar JSON
-
-enum State {
-    Draft
-    Pending
-    Accepted
-}
-
+# import User from "./generated/prisma.graphql"
+# import Product from "./generated/prisma.graphql"
 type Query {
-    getUsers: [User]
-    getUser(id: ID!): User
-    getMe: User
-    getClients: [Client]
-    getClient(id: ID!): Client
-    getProducts: [Product]
-    getProduct(id: ID!): Product
-    getInvoices: [Invoice]
-    getInvoice(id: ID!): Invoice
-    getEstimates: [Estimate]
-    getEstimate(id: ID!): Estimate
-    getStatus: [Status]
-    getOneStatus(id: ID!): Status
+    users: [User]
+    user(id: ID!): User
+    products: [Product]
+    product(id: ID!): Product
+    productsByUser(id: ID!): [Product]
+
+    me: User
+    meProducts: [Product]
+    meProduct: Product
 }
 
 type Mutation {
     captureEmail(email: String!): User
-    signup(id: ID!, firstname: String!, lastname: String!, password: String!): AuthPayload!
-    login(email: String!, password: String!): AuthPayload!
+    signup(email: String!, password: String!): AuthPayload!
+    login(email: String!, password: String!): AuthPayload
 
-    createClient(lastname: String!, firstname: String!, email: String, address: String, phone: String, company: String): Client!
-    updateClient(id: ID!, lastname: String, firstname: String, email: String, address: String, phone: String, company: String): Client!
-    deleteClient(id: ID!): Boolean
-
-    createProduct(description: String!, priceht: Float!, vat: Float!, pricettc: Float!, unit: String): Product!
+    createProduct(description: String!, priceht: Float!, vat: Float!, pricettc: Float!, unit: String): Product
     updateProduct(id: ID!, description: String, priceht: Float, vat: Float, pricettc: Float, unit: String): Product!
-    deleteProduct(id: ID!): Boolean
-
-    createInvoice(clientId: ID, invoiceNumber: String!, billingDate: Date!, paymentCondition: Float!, lateFee: Float!, message: String, products: [JSON]!, footNote: String): Invoice!
-    validateInvoice(id: ID!): Invoice!
-    updateInvoice(id: ID!, clientId: ID, deliveryDate: Date, paymentDate: Date, products: [JSON]): Invoice!
-    deleteInvoice(id: ID!): Boolean
-
-    createEstimate(clientId: ID!, estimateNumber: String!, startedDate: Date!, deliveryDate: Date!, validityDate: Date!, message: String, products: [JSON]!, footNote: String): Estimate!
-    validateEstimate(id: ID!): Estimate!
-    updateEstimate(id: ID!, clientId: ID, startedDate: Date, deliveryDate: Date, validityDate: Date, message: String, products: [JSON], footNote: String): Estimate!
-    deleteEstimate(id: ID!): Boolean
-
-    createStatus(form: String!, title: String!): Status
-    updateStatus(form: String, title: String): Status
-    deleteStatus(id: ID!): Boolean
-}
-
-type User {
-    id: ID!
-    firstname: String
-    lastname: String
-    email: String
-    address: String
-    phone: String
-    siret: String
-    useVAT: Boolean
-    paymentInfo: String
-    VATnumber: String
-    RCS: String
-    RM: String
-    commercialName: String
-    ape: String
-    role: String
-    createdAt: Date
-    status: String
-    cgv: String
-    clients: [Client]
-    products: [Product]
-    invoices: [Invoice]
-    estimates: [Estimate]
-}
-
-type Client {
-    id: ID!
-    lastname: String
-    firstname: String
-    email: String
-    address: String
-    phone: String
-    company: String
-    invoices: [Invoice]
-    estimates: [Estimate]
-}
-
-type Status {
-    id: ID
-    form: String
-    title: String
-}
-
-type Product {
-    userId: ID
-    id: ID
-    description: String
-    priceht: Float
-    vat: Float
-    pricettc: String
-    unit: String
-}
-
-type Invoice {
-    userId: ID
-    id: ID
-    state: State!
-    user: User
-    client: Client
-    invoiceNumber: String
-    billingDate: Date
-    paymentCondition: Float
-    deadline: Date
-    lateFee: Float
-    message: String
-    products: [Item]
-    price: Float
-    footNote: String
-    isValidate: Boolean
-}
-
-type Estimate {
-    userId: ID
-    id: ID
-    state: State!
-    user: User
-    client: Client
-    estimateNumber: String
-    startedDate: Date
-    deliveryDate: Date
-    validityDate: Date
-    message: String
-    products: [Item]
-    price: Float
-    footNote: String
-}
-
-type Item {
-    product: Product
-    quantity: Float
+    deleteProduct(id: ID!): Boolean!
 }
 
 type AuthPayload {
