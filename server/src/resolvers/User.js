@@ -1,4 +1,4 @@
-const {isAuth, isAdmin} = require('../utils')
+const {isAuth, isAdmin} = require('../utils');
 
 module.exports = {
 	/**
@@ -9,7 +9,7 @@ module.exports = {
 	 * @returns {Promise<*|Promise<*>>}
 	 */
 	products: async (_, args, context) => {
-		const userId = isAuth(context)
+		const userId = isAuth(context);
 		return context.prisma.user({id: _.id}).products()
 	},
 	/**
@@ -20,11 +20,11 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	clients: async (_, args, context) => {
-		const userId = isAuth(context)
+		const userId = isAuth(context);
 		return context.prisma.user({id: _.id}).clients()
 	},
 	invoices: async (_, args, context) => {
-		const userId = isAuth(context)
+		const userId = isAuth(context);
 		return context.prisma.user({id: _.id}).invoices()
 	}
-}
+};

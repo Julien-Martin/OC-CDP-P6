@@ -6,7 +6,13 @@ const moment = require('moment');
 require('dotenv').config();
 
 const {isAuth, isAdmin} = require('../utils');
-const {fragmentUser, fragmentProduct, fragmentClient} = require('../fragments');
+const {fragmentUser, fragmentProduct, fragmentClient, fragmentEstimateState, fragmentInvoiceState} = require('../fragments');
+const StateEnum = {
+	0: "DRAFT",
+	1: "PENDING",
+	2: "SEND",
+	3: "DONE"
+};
 
 module.exports = {
 	/**
@@ -283,7 +289,7 @@ module.exports = {
 	},
 
 	/**
-	 * Create invoice with static client user and product
+	 * Create invoice with static client user and products
 	 * @param _
 	 * @param args
 	 * @param context
@@ -301,12 +307,14 @@ module.exports = {
 			products[i].product = await context.prisma.product({id: products[i].product}).$fragment(fragmentProduct);
 			price += products[i].product.pricettc * products[i].quantity
 		}
-		const invoiceNumber = moment().format('YYYY-MM-') + ((await context.prisma.user({id: userId}).invoices()).length + 1).toString();
+		const invoiceCounter = await context.prisma.invoicesConnection({where: {userId}}).aggregate().count()
+		const invoiceNumber = moment().format('YYYY-MM-') + (invoiceCounter + 1);
 		const deadline = moment(args.billingDate).add(args.paymentCondition, 'days');
 		try {
 			const invoice = await context.prisma.createInvoice({
 				...args,
-				state: 'DRAFT',
+				userId,
+				state: StateEnum["0"],
 				user,
 				client,
 				price,
@@ -348,18 +356,16 @@ module.exports = {
 		const userId = isAuth(context);
 		const id = args.id;
 		delete args.id;
-		if(args.products){
-			let price = 0;
+		if (args.products) {
 			for (let i = 0; i < args.products.length; i++) {
 				args.products[i].product = await context.prisma.product({id: args.products[i].product}).$fragment(fragmentProduct);
 				args.price += args.products[i].product.pricettc * args.products[i].quantity
 			}
 		}
-		args.invoiceNumber = moment().format('YYYY-MM-') + ((await context.prisma.user({id: userId}).invoices()).length + 1).toString();
 		args.deadline = moment(args.billingDate).add(args.paymentCondition, 'days');
 		try {
-			const invoice = await context.prisma.invoice({id: id});
-			if (invoice.state !== "DRAFT") throw new Error("Cette facture a déjà été validé.");
+			const invoiceState = await context.prisma.invoice({id: id}).$fragment(fragmentInvoiceState);
+			if (invoiceState.state !== StateEnum["0"]) throw new Error("Cette facture a déjà été validé. , vous ne pouvez donc pas la modifier.");
 
 			await context.prisma.updateUser({
 				where: {id: userId},
@@ -391,12 +397,6 @@ module.exports = {
 	 */
 	changeInvoiceState: async (_, args, context) => {
 		const userId = isAuth(context);
-		const StateEnum = {
-			0: "DRAFT",
-			1: "PENDING",
-			2: "SEND",
-			3: "DONE"
-		};
 		try {
 			await context.prisma.updateUser({
 				where: {id: userId},
@@ -435,6 +435,141 @@ module.exports = {
 			return true
 		} catch (e) {
 			throw new Error('Impossible de supprimer. ' + e)
+		}
+	},
+
+	/**
+	 * Create estimate with static client user and products
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*|*>}
+	 */
+	createEstimate: async (_, args, context) => {
+		const userId = isAuth(context);
+		const clientId = args.clientId;
+		delete args.clientId
+		const user = await context.prisma.user({id: userId}).$fragment(fragmentUser)
+		const client = await context.prisma.client({id: clientId}).$fragment(fragmentClient)
+		const products = args.products
+		let price = 0
+		for (let i = 0; i < products.length; i++) {
+			products[i].product = await context.prisma.product({id: products[i].product}).$fragment(fragmentProduct)
+			price += products[i].product.pricettc * products[i].quantity
+		}
+		const estimateCounter = await context.prisma.estimatesConnection({where: {userId}}).aggregate().count()
+		const estimateNumber = moment().format('YYYY-MM-') + (estimateCounter + 1);
+		try {
+			const estimate = await context.prisma.createEstimate({
+				...args,
+				state: 'DRAFT',
+				userId,
+				user,
+				client,
+				price,
+				estimateNumber,
+				products: {
+					create: products
+				}
+			})
+			await context.prisma.updateUser({
+				where: {id: userId},
+				data: {
+					estimates: {
+						connect: {id: estimate.id}
+					}
+				}
+			})
+			await context.prisma.updateClient({
+				where: {id: clientId},
+				data: {
+					estimates: {
+						connect: {id: estimate.id}
+					}
+				}
+			})
+			return estimate
+		} catch (e) {
+			throw new Error("Impossible de créer un devis. " + e)
+		}
+	},
+	/**
+	 * Update estimate by id for current user
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*>}
+	 */
+	updateEstimate: async (_, args, context) => {
+		const userId = isAuth(context)
+		const id = args.id
+		delete args.id
+		if (args.products) {
+			for (let i = 0; i < args.products.length; i++) {
+				args.products[i].product = await context.prisma.product({id: args.products[i].product}).$fragment(fragmentProduct)
+				args.price += args.products[i].product.pricettc * args.products[i].quantity
+			}
+		}
+		try {
+			const estimateState = await context.prisma.estimate({id: id}).$fragment(fragmentEstimateState)
+			if (estimateState.state !== "DRAFT") throw new Error("Ce devis a déjà été validé, vous ne pouvez donc pas le modifier. ")
+			await context.prisma.updateUser({
+				where: {id: userId},
+				data: {
+					estimates: {
+						update: {
+							where: {id},
+							data: {
+								...args,
+								products: {
+									create: args.products
+								}
+							}
+						}
+					}
+				}
+			})
+			return await context.prisma.estimate({id})
+		} catch (e) {
+			throw new Error("Impossible de mettre à jour. " + e)
+		}
+	},
+	changeEstimateState: async (_, args, context) => {
+		const userId = isAuth(context)
+		try {
+			const invoiceState = await context.prisma.invoice({id: args.id}).$fragment(fragmentInvoiceState)
+			if(invoiceState.state !== StateEnum["0"]) throw new Error("Vous ne pouvez pas supprimer un devis déjà validé. ")
+			await context.prisma.updateUser({
+				where: {id: userId},
+				data: {
+					invoices: {
+						update: {
+							where: {id: args.id},
+							data: {state: StateEnum[args.state]}
+						}
+					}
+				}
+			})
+		} catch (e) {
+			throw new Error("Impossible de valider. " + e)
+		}
+	},
+	deleteEstimate: async(_, args, context) => {
+		const userId = isAuth(context);
+		try {
+			const estimateState = await context.prisma.estimate({id: args.id}).$fragment(fragmentEstimateState)
+			if(estimateState.state !== StateEnum["0"]) throw new Error("Vous ne pouvez pas supprimer une facture déjà validé. ")
+			await context.prisma.updateUser({
+				where: {id: userId},
+				data: {
+					invoices: {
+						delete: {id: args.id}
+					}
+				}
+			})
+			return true
+		} catch (e) {
+			throw new Error("Impossible de supprimer. " + e)
 		}
 	},
 };

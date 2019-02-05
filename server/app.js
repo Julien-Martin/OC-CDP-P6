@@ -1,7 +1,7 @@
 const {GraphQLServer} = require('graphql-yoga');
 require('dotenv').config();
 const {resolvers} = require('./src/resolvers');
-const { prisma } = require('./src/generated')
+const { prisma } = require('./src/generated');
 
 const server = new GraphQLServer({
 	typeDefs: './src/schema.graphql',
@@ -12,7 +12,7 @@ const server = new GraphQLServer({
 			prisma,
 		}
 	}
-})
+});
 
 const options = {
 	port: process.env.PORT || 5500,

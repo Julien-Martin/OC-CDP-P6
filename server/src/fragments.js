@@ -48,4 +48,14 @@ module.exports = {
 			phone
 		}
 	`,
-}
+	fragmentEstimateState: `
+		fragment EstimateState on Estimate {
+			state
+		}
+	`,
+	fragmentInvoiceState: `
+		fragment InvoiceState on Invoice {
+			state
+		}
+	`
+};

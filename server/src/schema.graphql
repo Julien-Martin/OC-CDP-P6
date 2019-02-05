@@ -16,6 +16,9 @@ type Query {
     invoices: [Invoice]
     invoice(id: ID!): Invoice
     invoicesByUser(id: ID!): [Invoice]
+    estimates: [Estimate]
+    estimate(id: ID!): Estimate
+    estimatesByUser(id: ID!): [Estimate]
 
     me: User
     meProducts: [Product]
@@ -24,6 +27,8 @@ type Query {
     meClient(id: ID!): Client
     meInvoices: [Invoice]
     meInvoice(id: ID!): Invoice
+    meEstimates: [Estimate]
+    meEstimate(id: ID!): Estimate
 }
 
 type Mutation {
@@ -47,6 +52,11 @@ type Mutation {
     updateInvoice(id: ID!, billingDate: DateTime, paymentCondition: Float, lateFee: Float, message: String, products: [ItemCreateInput], footNote: String, state: String): Invoice
     changeInvoiceState(id: ID!, state: Int!): Invoice
     deleteInvoice(id: ID!): Boolean
+
+    createEstimate(clientId: ID!, startedDate: DateTime!, deliveryDate: DateTime!, validityDate: DateTime!, message: String, products: [ItemCreateInput!]!, footNote: String): Estimate
+    updateEstimate(id: ID!, startedDate: DateTime, deliveryDate: DateTime, validityDate: DateTime, message: String, products: [ItemCreateInput], footNote: String): Estimate
+    changeEstimateState(id: ID!, state: Int!): Estimate
+    deleteEstimate(id: ID!): Boolean
 }
 
 type AuthPayload {

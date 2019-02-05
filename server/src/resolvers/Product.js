@@ -1,4 +1,4 @@
-const {isAuth, isAdmin} = require('../utils')
+const {isAuth, isAdmin} = require('../utils');
 
 module.exports = {
 	/**
@@ -9,7 +9,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	user: async (_, args, context) => {
-		const userId = isAuth(context)
+		const userId = isAuth(context);
 		return context.prisma.product({id: _.id}).user()
 	}
-}
+};

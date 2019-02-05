@@ -19,6 +19,7 @@ type User {
     products: [Product] @relation(name: "UserProduct", link: INLINE, onDelete: CASCADE)
     clients: [Client]! @relation(name: "UserClient", link: INLINE, onDelete: CASCADE)
     invoices: [Invoice]! @relation(name: "UserInvoice", link: INLINE, onDelete: CASCADE)
+    estimates: [Estimate]! @relation(name: "UserEstimate", link: INLINE, onDelete: CASCADE)
     createdAt: DateTime @createdAt
     updatedAt: DateTime @updatedAt
 }
@@ -33,6 +34,7 @@ type Client {
     address: Address
     company: String
     invoices: [Invoice]! @relation(name: "ClientInvoice", link: INLINE)
+    estimates: [Estimate]! @relation(name: "ClientEstimate", link: INLINE)
     createdAt: DateTime @createdAt
     updatedAt: DateTime @updatedAt
 }
@@ -51,6 +53,7 @@ type Product {
 
 type Invoice {
     id: ID! @id
+    userId: ID
     user: Json
     client: Json
     state: State!
@@ -64,7 +67,25 @@ type Invoice {
     price: Float!
     footNote: String
     createdAt: DateTime @createdAt
-    updatedAt: DateTime @updateAt
+    updatedAt: DateTime @updatedAt
+}
+
+type Estimate {
+    id: ID! @id
+    userId: ID
+    user: Json
+    client: Json
+    state: State!
+    estimateNumber: String!
+    startedDate: DateTime!
+    deliveryDate: DateTime!
+    validityDate: DateTime!
+    message: String
+    products: [Item]!
+    price: Float!
+    footNote: String
+    createdAt: DateTime @createdAt
+    updatedAt: DateTime @updatedAt
 }
 
 type LegalForm {
