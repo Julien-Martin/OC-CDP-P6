@@ -1,7 +1,7 @@
 scalar DateTime
 scalar JSON
-# import User from "./generated/prisma.graphql"
-# import Product from "./generated/prisma.graphql"
+# import * from "./generated/prisma.graphql"
+
 type Query {
     users: [User]
     user(id: ID!): User
@@ -15,14 +15,15 @@ type Query {
     legalForm(id: ID!): LegalForm
     invoices: [Invoice]
     invoice(id: ID!): Invoice
+    invoicesByUser(id: ID!): [Invoice]
 
     me: User
     meProducts: [Product]
     meProduct: Product
     meClients: [Client]
-    meClient: Client
+    meClient(id: ID!): Client
     meInvoices: [Invoice]
-    meInvoice: Invoice
+    meInvoice(id: ID!): Invoice
 }
 
 type Mutation {
@@ -30,8 +31,8 @@ type Mutation {
     signup(email: String!, password: String!): AuthPayload!
     login(email: String!, password: String!): AuthPayload
 
-    createProduct(description: String!, priceht: Float!, vat: Float!, pricettc: Float!, unit: String): Product
-    updateProduct(id: ID!, description: String, priceht: Float, vat: Float, pricettc: Float, unit: String): Product
+    createProduct(description: String!, vat: Float!, pricettc: Float!, unit: String): Product
+    updateProduct(id: ID!, description: String, vat: Float, pricettc: Float, unit: String): Product
     deleteProduct(id: ID!): Boolean
 
     createLegalForm(form: String!, title: String!): LegalForm
@@ -41,6 +42,11 @@ type Mutation {
     createClient(name: NameCreateOneInput!, legalForm: ID!, email: String, phone: String, address: AddressCreateOneInput!, company: String): Client
     updateClient(id: ID!, name: NameCreateOneInput, legalForm: ID, email: String, phone: String, address: AddressCreateOneInput, company: String): Client
     deleteClient(id: ID!): Boolean
+
+    createInvoice(clientId: ID!, billingDate: DateTime!, paymentCondition: Float!, lateFee: Float!, message: String, products: [ItemCreateInput!]!, footNote: String): Invoice
+    updateInvoice(id: ID!, billingDate: DateTime, paymentCondition: Float, lateFee: Float, message: String, products: [ItemCreateInput], footNote: String, state: String): Invoice
+    changeInvoiceState(id: ID!, state: Int!): Invoice
+    deleteInvoice(id: ID!): Boolean
 }
 
 type AuthPayload {

@@ -22,5 +22,9 @@ module.exports = {
 	clients: async (_, args, context) => {
 		const userId = isAuth(context)
 		return context.prisma.user({id: _.id}).clients()
+	},
+	invoices: async (_, args, context) => {
+		const userId = isAuth(context)
+		return context.prisma.user({id: _.id}).invoices()
 	}
 }

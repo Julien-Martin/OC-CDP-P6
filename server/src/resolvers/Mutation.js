@@ -2,9 +2,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const privateKey = fs.readFileSync('./private_key.pem');
+const moment = require('moment');
 require('dotenv').config();
 
 const {isAuth, isAdmin} = require('../utils');
+const {fragmentUser, fragmentProduct, fragmentClient} = require('../fragments');
 
 module.exports = {
 	/**
@@ -76,8 +78,10 @@ module.exports = {
 	createProduct: async (_, args, context) => {
 		const userId = isAuth(context);
 		try {
+			const priceht = args.pricettc / (1 + args.vat / 100);
 			return await context.prisma.createProduct({
 				...args,
+				priceht: priceht,
 				user: {
 					connect: {
 						id: userId
@@ -100,13 +104,17 @@ module.exports = {
 		const id = args.id;
 		delete args.id;
 		try {
+			const priceht = args.pricettc / (1 + args.vat / 100);
 			await context.prisma.updateUser({
 				where: {id: userId},
 				data: {
 					products: {
 						update: {
 							where: {id: id},
-							data: args
+							data: {
+								...args,
+								priceht: priceht
+							}
 						}
 					}
 				}
@@ -202,8 +210,8 @@ module.exports = {
 	 */
 	createClient: async (_, args, context) => {
 		const userId = isAuth(context);
-		const legalFormId = args.legalForm
-		delete args.legalForm
+		const legalFormId = args.legalForm;
+		delete args.legalForm;
 		try {
 			return await context.prisma.createClient({
 				...args,
@@ -222,7 +230,6 @@ module.exports = {
 			throw new Error("Création impossible. " + e)
 		}
 	},
-
 	/**
 	 * Update client by id for current user
 	 * @param _
@@ -251,7 +258,6 @@ module.exports = {
 			throw new Error("Impossible de mettre à jour. " + e)
 		}
 	},
-
 	/**
 	 * Delete client by id for current user
 	 * @param _
@@ -273,6 +279,162 @@ module.exports = {
 			return true
 		} catch (e) {
 			throw new Error("Impossible de supprimer. " + e)
+		}
+	},
+
+	/**
+	 * Create invoice with static client user and product
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*|*>}
+	 */
+	createInvoice: async (_, args, context) => {
+		const userId = isAuth(context);
+		const clientId = args.clientId;
+		delete args.clientId;
+		const user = await context.prisma.user({id: userId}).$fragment(fragmentUser);
+		const client = await context.prisma.client({id: clientId}).$fragment(fragmentClient);
+		const products = args.products;
+		let price = 0;
+		for (let i = 0; i < products.length; i++) {
+			products[i].product = await context.prisma.product({id: products[i].product}).$fragment(fragmentProduct);
+			price += products[i].product.pricettc * products[i].quantity
+		}
+		const invoiceNumber = moment().format('YYYY-MM-') + ((await context.prisma.user({id: userId}).invoices()).length + 1).toString();
+		const deadline = moment(args.billingDate).add(args.paymentCondition, 'days');
+		try {
+			const invoice = await context.prisma.createInvoice({
+				...args,
+				state: 'DRAFT',
+				user,
+				client,
+				price,
+				deadline,
+				invoiceNumber,
+				products: {
+					create: products
+				}
+			});
+			await context.prisma.updateUser({
+				where: {id: userId},
+				data: {
+					invoices: {
+						connect: {id: invoice.id}
+					}
+				}
+			});
+			await context.prisma.updateClient({
+				where: {id: clientId},
+				data: {
+					invoices: {
+						connect: {id: invoice.id}
+					}
+				}
+			});
+			return invoice
+		} catch (e) {
+			throw new Error("Impossible de créer une facture. " + e)
+		}
+	},
+	/**
+	 * Update invoice by id for current user
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*|boolean>}
+	 */
+	updateInvoice: async (_, args, context) => {
+		const userId = isAuth(context);
+		const id = args.id;
+		delete args.id;
+		if(args.products){
+			let price = 0;
+			for (let i = 0; i < args.products.length; i++) {
+				args.products[i].product = await context.prisma.product({id: args.products[i].product}).$fragment(fragmentProduct);
+				args.price += args.products[i].product.pricettc * args.products[i].quantity
+			}
+		}
+		args.invoiceNumber = moment().format('YYYY-MM-') + ((await context.prisma.user({id: userId}).invoices()).length + 1).toString();
+		args.deadline = moment(args.billingDate).add(args.paymentCondition, 'days');
+		try {
+			const invoice = await context.prisma.invoice({id: id});
+			if (invoice.state !== "DRAFT") throw new Error("Cette facture a déjà été validé.");
+
+			await context.prisma.updateUser({
+				where: {id: userId},
+				data: {
+					invoices: {
+						update: {
+							where: {id: id},
+							data: {
+								...args,
+								products: {
+									create: args.products
+								}
+							}
+						}
+					}
+				}
+			});
+			return await context.prisma.invoice({id: id})
+		} catch (e) {
+			throw new Error('Impossible de mettre à jour. ' + e)
+		}
+	},
+	/**
+	 * Change invoice state to PENDING, SEND or DONE
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*|Promise<*>|Promise<boolean>|InvoicePromise|InvoiceSubscriptionPayloadSubscription>}
+	 */
+	changeInvoiceState: async (_, args, context) => {
+		const userId = isAuth(context);
+		const StateEnum = {
+			0: "DRAFT",
+			1: "PENDING",
+			2: "SEND",
+			3: "DONE"
+		};
+		try {
+			await context.prisma.updateUser({
+				where: {id: userId},
+				data: {
+					invoices: {
+						update: {
+							where: {id: args.id},
+							data: {state: StateEnum[args.state]}
+						}
+					}
+				}
+			});
+			return context.prisma.invoice({id: args.id})
+		} catch (e) {
+			throw new Error("Impossible de valider. " + e)
+		}
+	},
+	/**
+	 * Delete invoice by id for current user
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<boolean>}
+	 */
+	deleteInvoice: async (_, args, context) => {
+		const userId = isAuth(context);
+		try {
+			await context.prisma.updateUser({
+				where: {id: userId},
+				data: {
+					invoices: {
+						delete: {id: args.id}
+					}
+				}
+			});
+			return true
+		} catch (e) {
+			throw new Error('Impossible de supprimer. ' + e)
 		}
 	},
 };

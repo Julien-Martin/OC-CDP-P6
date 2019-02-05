@@ -6,7 +6,7 @@ module.exports = {
 	 * @param _
 	 * @param args
 	 * @param context
-	 * @returns {Promise<*|Promise<*>|Promise<boolean>|LegalFormPromise|LegalFormSubscriptionPayloadSubscription|never|LegalFormSubscription>}
+	 * @returns {Promise<*|Promise<*>>}
 	 */
 	legalForm: async (_, args, context) => {
 		const userId = isAuth(context)
@@ -22,5 +22,9 @@ module.exports = {
 	user: async (_, args, context) => {
 		const userId = isAuth(context)
 		return context.prisma.client({id: _.id}).user()
+	},
+	invoices: async (_, args, context) => {
+		const userId = isAuth(context)
+		return context.prisma.client({id: _.id}).invoices()
 	}
 }

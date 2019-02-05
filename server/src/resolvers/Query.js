@@ -114,6 +114,39 @@ module.exports = {
 		const userId = isAuth(context)
 		return await context.prisma.legalForm({id: args.id})
 	},
+	/**
+	 * Get all Invoices
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*>}
+	 */
+	invoices: async (_, args, context) => {
+		const userId = isAuth(context)
+		return await context.prisma.invoices()
+	},
+	/**
+	 * Get one Invoice by ID
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*>}
+	 */
+	invoice: async (_, args, context) => {
+		const userId = isAuth(context)
+		return await context.prisma.invoice({id: args.id})
+	},
+	/**
+	 * Get all invoices by User ID
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*>}
+	 */
+	invoicesByUser: async(_, args, context) => {
+		const userId = isAuth(context)
+		return await context.prisma.invoices({where: {user: {id: args.id}}})
+	},
 
 	/**
 	 * Standard user
@@ -150,5 +183,38 @@ module.exports = {
 	meClients: async (_, args, context) => {
 		const userId = isAuth(context)
 		return await context.prisma.user({id: userId}).clients()
+	},
+	/**
+	 * Get one product by ID and only from current user
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*>}
+	 */
+	meClient: async(_, args, context) => {
+		const userID = isAuth(context)
+		return await context.prisma.user({id: userID}).product({id: args.id})
+	},
+	/**
+	 * Get current user invoices
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*>}
+	 */
+	meInvoices: async(_, args, context) => {
+		const userId = isAuth(context)
+		return await context.prisma.user({id: userId}).invoices()
+	},
+	/**
+	 * Get one invoice by ID and only from current user
+	 * @param _
+	 * @param args
+	 * @param context
+	 * @returns {Promise<*>}
+	 */
+	meInvoice: async(_, args, context) => {
+		const userId = isAuth(context)
+		return await context.prisma.user({id: userId}).invoice({id: args.id})
 	},
 }

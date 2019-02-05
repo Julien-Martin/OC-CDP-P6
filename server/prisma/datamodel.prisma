@@ -51,8 +51,8 @@ type Product {
 
 type Invoice {
     id: ID! @id
-    user: User! @relation(name: "UserInvoice")
-    client: Client! @relation(name: "ClientInvoice")
+    user: Json
+    client: Json
     state: State!
     invoiceNumber: String!
     billingDate: DateTime!
@@ -60,7 +60,7 @@ type Invoice {
     deadline: DateTime!
     lateFee: Float!
     message: String
-    products: [Item!]!
+    products: [Item]!
     price: Float!
     footNote: String
     createdAt: DateTime @createdAt
@@ -86,11 +86,12 @@ enum Status {
 enum State {
     DRAFT,
     PENDING,
+    SEND,
     DONE
 }
 
 type Item @embedded {
-    product: Product!
+    product: Json!
     quantity: Float!
 }
 
