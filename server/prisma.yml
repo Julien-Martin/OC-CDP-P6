@@ -1,0 +1,14 @@
+endpoint: http://localhost:4466
+datamodel: prisma/datamodel.prisma
+databaseType: document
+
+generate:
+  - generator: javascript-client
+    output: src/generated
+  - generator: graphql-schema
+    output: src/generated
+hooks:
+  post-deploy:
+    - echo "Deployment finished"
+    - prisma generate
+    - echo "Generation finished"

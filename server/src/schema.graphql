@@ -1,0 +1,67 @@
+scalar DateTime
+scalar JSON
+# import * from "./generated/prisma.graphql"
+type Query {
+    users: [User]
+    user(id: ID!): User
+    me: User
+    products: [Product]
+    product(id: ID!): Product
+    productsByUser(id: ID!): [Product]
+    clients: [Client]
+    client(id: ID!): Client
+    clientsByUser(id: ID!): [Client]
+    legalForms: [LegalForm]
+    legalForm(id: ID!): LegalForm
+    invoices: [Invoice]
+    invoice(id: ID!): Invoice
+    invoicesByUser(id: ID!): [Invoice]
+    estimates: [Estimate]
+    estimate(id: ID!): Estimate
+    estimatesByUser(id: ID!): [Estimate]
+
+    meProducts: [Product]
+    meProduct: Product
+    meClients: [Client]
+    meClient(id: ID!): Client
+    meInvoices: [Invoice]
+    meInvoice(id: ID!): Invoice
+    meEstimates: [Estimate]
+    meEstimate(id: ID!): Estimate
+}
+
+type Mutation {
+    captureEmail(email: String!): User
+    signup(email: String!, password: String!, name: NameCreateOneInput!, address: AddressCreateOneInput!, phone: String, siret: String!, useVAT: Boolean!, paymentInfo: String!, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): AuthPayload!
+    login(email: String!, password: String!): AuthPayload
+
+    updateMe(email: String, password: String, name: NameCreateOneInput, phone: String, siret: String, useVat: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
+    deleteMe(password: String): Boolean
+
+    createProduct(description: String!, vat: Float!, pricettc: Float!, unit: String): Product
+    updateProduct(id: ID!, description: String, vat: Float, pricettc: Float, unit: String): Product
+    deleteProduct(id: ID!): Boolean
+
+    createLegalForm(form: String!, title: String!): LegalForm
+    updateLegalForm(id: ID!, form: String, title: String): LegalForm
+    deleteLegalForm(id: ID!): Boolean
+
+    createClient(name: NameCreateOneInput!, legalForm: ID!, email: String, phone: String, address: AddressCreateOneInput!, company: String): Client
+    updateClient(id: ID!, name: NameCreateOneInput, legalForm: ID, email: String, phone: String, address: AddressCreateOneInput, company: String): Client
+    deleteClient(id: ID!): Boolean
+
+    createInvoice(clientId: ID!, billingDate: DateTime!, paymentCondition: Float!, lateFee: Float!, message: String, products: [ItemCreateInput!]!, footNote: String): Invoice
+    updateInvoice(id: ID!, billingDate: DateTime, paymentCondition: Float, lateFee: Float, message: String, products: [ItemCreateInput], footNote: String, state: String): Invoice
+    changeInvoiceState(id: ID!, state: Int!): Invoice
+    deleteInvoice(id: ID!): Boolean
+
+    createEstimate(clientId: ID!, startedDate: DateTime!, deliveryDate: DateTime!, validityDate: DateTime!, message: String, products: [ItemCreateInput!]!, footNote: String): Estimate
+    updateEstimate(id: ID!, startedDate: DateTime, deliveryDate: DateTime, validityDate: DateTime, message: String, products: [ItemCreateInput], footNote: String): Estimate
+    changeEstimateState(id: ID!, state: Int!): Estimate
+    deleteEstimate(id: ID!): Boolean
+}
+
+type AuthPayload {
+    token: String!
+    user: User!
+}
