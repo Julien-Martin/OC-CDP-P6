@@ -1,5 +1,5 @@
 const url = process.env.CLIENT_URL;
-const fromEmail = process.env.FROM_EMAIL;
+const mailEmail = process.env.MAILER_EMAIL;
 
 module.exports.welcomeEmail = (email, user) => {
 	const text = `
@@ -7,13 +7,13 @@ module.exports.welcomeEmail = (email, user) => {
 	Merci d'avoir choisi ME Assistant!
 	Vous avez presque fini votre inscription.
 	
-	Confirmer votre email:\n
+	Confirmer votre email:
 	${url}/signup/${user.id}
 	`;
 	return {
 		to: `${email}`,
 		from: {
-			address: fromEmail,
+			address: mailEmail,
 			name: 'ME Assistant'
 		},
 		subject: 'Merci de terminer votre inscription',

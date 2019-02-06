@@ -1,4 +1,4 @@
-const {isAuth, isAdmin} = require('../utils');
+const {isAuth, isAdmin} = require('../middlewares/utils');
 
 module.exports = {
 	/**
@@ -12,7 +12,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	users: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.users()
 	},
 	/**
@@ -23,7 +23,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	user: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: args.id})
 	},
 	/**
@@ -34,7 +34,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	products: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.products()
 	},
 	/**
@@ -45,7 +45,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	product: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.product({id: args.id})
 	},
 	/**
@@ -56,7 +56,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	productsByUser: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.products({where: {user: {id: args.id}}})
 	},
 	/**
@@ -67,7 +67,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	clients: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.clients()
 	},
 	/**
@@ -78,7 +78,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	client: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.product({id: args.id})
 	},
 	/**
@@ -89,7 +89,7 @@ module.exports = {
 	 * @returns {Promise<*|Promise<*>>}
 	 */
 	clientsByUser: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.products({where: {user: {id: args.id}}})
 	},
 	/**
@@ -100,7 +100,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	legalForms: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.legalForms()
 	},
 	/**
@@ -111,7 +111,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	legalForm: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.legalForm({id: args.id})
 	},
 	/**
@@ -122,7 +122,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	invoices: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.invoices()
 	},
 	/**
@@ -133,7 +133,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	invoice: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.invoice({id: args.id})
 	},
 	/**
@@ -144,7 +144,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	invoicesByUser: async(_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: args.id}).invoices()
 	},
 	/**
@@ -155,7 +155,7 @@ module.exports = {
 	 * @returns {Promise<*|Estimate>}
 	 */
 	estimates: async(_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.estimates()
 	},
 	/**
@@ -166,7 +166,7 @@ module.exports = {
 	 * @returns {Promise<*|boolean|StorageEstimate>}
 	 */
 	estimate: async(_, args, context) => {
-		const userId = isAuth(context)
+		const userId = await isAuth(context);
 		return await context.prisma.estimate({id: args.id})
 	},
 	/**
@@ -177,7 +177,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	estimatesByUser: async(_, args, context) => {
-		const userId = isAuth(context)
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: args.id}).estimates()
 	},
 
@@ -192,7 +192,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	me: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: userId})
 	},
 	/**
@@ -203,7 +203,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	meProducts: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: userId}).products()
 	},
 	/**
@@ -214,7 +214,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	meClients: async (_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: userId}).clients()
 	},
 	/**
@@ -225,7 +225,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	meClient: async(_, args, context) => {
-		const userID = isAuth(context);
+		const userID = await isAuth(context);
 		return await context.prisma.user({id: userID}).product({id: args.id})
 	},
 	/**
@@ -236,7 +236,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	meInvoices: async(_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: userId}).invoices()
 	},
 	/**
@@ -247,7 +247,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	meInvoice: async(_, args, context) => {
-		const userId = isAuth(context);
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: userId}).invoice({id: args.id})
 	},
 	/**
@@ -258,7 +258,7 @@ module.exports = {
 	 * @returns {Promise<*>}
 	 */
 	meEstimates: async(_, args, context) => {
-		const userId = isAuth(context)
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: userId}).estimates()
 	},
 	/**
@@ -269,7 +269,7 @@ module.exports = {
 	 * @returns {Promise<*|boolean|StorageEstimate|StorageEstimate>}
 	 */
 	meEstimate: async(_, args, context) => {
-		const userId = isAuth(context)
+		const userId = await isAuth(context);
 		return await context.prisma.user({id: userid}).estimate({id: args.id})
 	},
 };

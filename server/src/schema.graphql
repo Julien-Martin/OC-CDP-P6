@@ -1,10 +1,10 @@
 scalar DateTime
 scalar JSON
 # import * from "./generated/prisma.graphql"
-
 type Query {
     users: [User]
     user(id: ID!): User
+    me: User
     products: [Product]
     product(id: ID!): Product
     productsByUser(id: ID!): [Product]
@@ -20,7 +20,6 @@ type Query {
     estimate(id: ID!): Estimate
     estimatesByUser(id: ID!): [Estimate]
 
-    me: User
     meProducts: [Product]
     meProduct: Product
     meClients: [Client]
@@ -33,8 +32,11 @@ type Query {
 
 type Mutation {
     captureEmail(email: String!): User
-    signup(email: String!, password: String!): AuthPayload!
+    signup(email: String!, password: String!, name: NameCreateOneInput!, address: AddressCreateOneInput!, phone: String, siret: String!, useVAT: Boolean!, paymentInfo: String!, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): AuthPayload!
     login(email: String!, password: String!): AuthPayload
+
+    updateMe(email: String, password: String, name: NameCreateOneInput, phone: String, siret: String, useVat: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
+    deleteMe(password: String): Boolean
 
     createProduct(description: String!, vat: Float!, pricettc: Float!, unit: String): Product
     updateProduct(id: ID!, description: String, vat: Float, pricettc: Float, unit: String): Product
