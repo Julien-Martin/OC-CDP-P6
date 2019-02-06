@@ -1,6 +1,6 @@
-const {isAuth, isAdmin} = require('../middlewares/utils');
+import {Context, isAuth} from "../utils";
 
-module.exports = {
+export const Client = {
 	/**
 	 * Return LegalForm for Client Query
 	 * @param _
@@ -8,7 +8,7 @@ module.exports = {
 	 * @param context
 	 * @returns {Promise<*|Promise<*>>}
 	 */
-	legalForm: async (_, args, context) => {
+	legalForm: async (_, args, context: Context) => {
 		const userId = await isAuth(context);
 		return context.prisma.client({id: _.id}).legalForm()
 	},
@@ -19,7 +19,7 @@ module.exports = {
 	 * @param context
 	 * @returns {Promise<*>}
 	 */
-	user: async (_, args, context) => {
+	user: async (_, args, context: Context) => {
 		const userId = await isAuth(context);
 		return context.prisma.client({id: _.id}).user()
 	},
@@ -30,7 +30,7 @@ module.exports = {
 	 * @param context
 	 * @returns {Promise<*>}
 	 */
-	invoices: async (_, args, context) => {
+	invoices: async (_, args, context: Context) => {
 		const userId = await isAuth(context);
 		return context.prisma.client({id: _.id}).invoices()
 	},
@@ -41,7 +41,7 @@ module.exports = {
 	 * @param context
 	 * @returns {Promise<*>}
 	 */
-	estimates: async(_, args, context) => {
+	estimates: async(_, args, context: Context) => {
 		const userId = await isAuth(context)
 		return context.prisma.client({id: _.id}).estimates()
 	}

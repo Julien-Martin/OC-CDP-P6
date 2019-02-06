@@ -1,4 +1,4 @@
-module.exports = {
+export const fragment = {
 	fragmentUser: `
 		fragment CleanUser on User {
 			name {
