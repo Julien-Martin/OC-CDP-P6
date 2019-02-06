@@ -23,7 +23,10 @@
     "prisma-client-lib": "^1.25.7"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9"
+    "@types/bcryptjs": "^2.4.2",
+    "@types/node": "^10.12.21",
+    "nodemon": "^1.18.9",
+    "ts-node": "^8.0.2"
   },
   "nodemonConfig": {
     "ext": "js,json,graphql"
