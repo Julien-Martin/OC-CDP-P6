@@ -1,6 +1,6 @@
 import {Context, isAuth, StateEnum} from "../../utils";
 import * as moment from 'moment'
-import {fragment} from '../../fragments'
+import {fragment} from '../../utils/fragments'
 
 export const invoiceMutation = {
     /**
@@ -82,7 +82,7 @@ export const invoiceMutation = {
         args.deadline = moment(args.billingDate).add(args.paymentCondition, 'days');
         try {
             const invoiceState = await context.prisma.invoice({id: id}).$fragment(fragment.fragmentInvoiceState);
-            if (invoiceState.state !== StateEnum["0"]) throw new Error("Cette facture a déjà été validé. , vous ne pouvez donc pas la modifier.");
+            if (invoiceState['state'] !== StateEnum["0"]) throw new Error("Cette facture a déjà été validé. , vous ne pouvez donc pas la modifier.");
 
             await context.prisma.updateUser({
                 where: {id: userId},
@@ -141,7 +141,7 @@ export const invoiceMutation = {
         const userId = await isAuth(context);
         try {
             const invoiceState = await context.prisma.estimate({id: args.id}).$fragment(fragment.fragmentInvoiceState);
-            if (invoiceState.state !== StateEnum["0"]) throw new Error("Vous ne pouvez pas supprimer une facture déjà validé. ");
+            if (invoiceState['state'] !== StateEnum["0"]) throw new Error("Vous ne pouvez pas supprimer une facture déjà validé. ");
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {

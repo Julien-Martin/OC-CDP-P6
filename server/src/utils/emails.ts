@@ -1,6 +1,3 @@
-import * as dotenv from "dotenv"
-dotenv.config()
-
 const url = process.env.CLIENT_URL;
 const mailEmail = process.env.MAILER_EMAIL;
 

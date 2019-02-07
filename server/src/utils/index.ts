@@ -1,9 +1,15 @@
 import * as jwt from 'jsonwebtoken'
-import {Prisma} from './generated'
+import {Prisma} from '../generated'
 import * as fs from 'fs'
 import * as nodemailer from "nodemailer";
+import {welcomeEmail} from "./emails";
+import {ErrorHandling} from "./errors";
+
+import * as dotenv from "dotenv"
+dotenv.config()
 
 const publicKey = fs.readFileSync('./public_key.pem');
+
 
 export interface Context {
     prisma: Prisma
@@ -17,33 +23,35 @@ export const StateEnum = {
     3: "DONE"
 }
 
-const pass = process.env.MAILER_PASSWORD
-const user = process.env.MAILER_EMAIL
-
 export const transporter: nodemailer.Transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
-    secure: false,
+    secure: true,
     auth: {
-        user: user,
-        pass: pass
+        user: process.env.MAILER_EMAIL,
+        pass: process.env.MAILER_PASSWORD
     }
 })
+
+export const sendConfirmationMail = async (email, id) => {
+    await transporter.sendMail(welcomeEmail(email, id));
+}
 
 export const isAuth = async (context: Context) => {
     const Authorization = context.request.get('Authorization');
     if (Authorization) {
-        const token = Authorization.replace('Bearer ', '');
         try {
+            const token = Authorization.replace('Bearer ', '');
             const {id} = jwt.verify(token, publicKey);
             const user = await context.prisma.$exists.user({id: id})
-            if (!user) throw new Error("L'utilisateur n'existe pas.")
+            if (user) throw new ErrorHandling("AUTH-003")
             return id
         } catch (e) {
-            throw new AuthError('Le token est invalide. ' + e)
+            throw new ErrorHandling(e)
         }
+    } else {
+        throw new ErrorHandling("AUTH-002")
     }
-    throw new AuthError("L'authentification a échoué")
 }
 
 export const isAdmin = async (context: Context) => {
@@ -55,17 +63,11 @@ export const isAdmin = async (context: Context) => {
             const user = await context.prisma.$exists.user({id})
             if (!user) throw new Error("L'utilisateur n'existe pas")
             else {
-                if (role !== "ADMIN") throw new AuthError("Vous n'êtes pas administrateur");
+                if (role !== "ADMIN") console.log('not admin')
                 return id
             }
         } catch (e) {
-            throw new AuthError("L'authentification a échoué. " + e)
+            console.log(e)
         }
-    }
-}
-
-export class AuthError extends Error {
-    constructor(prop) {
-        super(prop);
     }
 }

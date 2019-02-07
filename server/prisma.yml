@@ -3,7 +3,7 @@ datamodel: prisma/datamodel.prisma
 databaseType: document
 
 generate:
-  - generator: javascript-client
+  - generator: typescript-client
     output: src/generated
   - generator: graphql-schema
     output: src/generated

@@ -1,21 +1,21 @@
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
-import {Context, transporter} from '../../utils'
+import {Context, sendConfirmationMail} from '../../utils'
 import * as fs from 'fs'
-import {welcomeEmail} from "../../emails";
 
 const privateKey = fs.readFileSync('./private_key.pem');
 
 export const authMutation = {
     captureEmail: async (_, args, context: Context) => {
         const isEmailTaken = await context.prisma.user({email: args.email});
-        //if (isEmailTaken) throw new Error("L'email est déjà utilisé.");
-        /*const user = await context.prisma.createUser({
+
+        if (isEmailTaken) throw new Error("L'email est déjà utilisé.");
+        const user = await context.prisma.createUser({
             email: args.email,
             role: "USER",
             status: "NOTACTIVE"
-        });*/
-        await transporter.sendMail(welcomeEmail(args.email, 'qsdqsdd'));
+        });
+        await sendConfirmationMail(args.email, user.id)
     },
     signup: async (_, args, context: Context) => {
         const password = await bcrypt.hash(args.password, 10);

@@ -1,5 +1,5 @@
 import {Context, isAuth, StateEnum} from "../../utils";
-import {fragment} from '../../fragments'
+import {fragment} from '../../utils/fragments'
 import * as moment from 'moment'
 
 export const estimateMutation = {
@@ -79,7 +79,7 @@ export const estimateMutation = {
         }
         try {
             const estimateState = await context.prisma.estimate({id: id}).$fragment(fragment.fragmentEstimateState);
-            if (estimateState.state !== "DRAFT") throw new Error("Ce devis a déjà été validé, vous ne pouvez donc pas le modifier. ");
+            if (estimateState['state'] !== StateEnum["0"]) throw new Error("Ce devis a déjà été validé, vous ne pouvez donc pas le modifier. ");
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {
@@ -137,7 +137,7 @@ export const estimateMutation = {
         const userId = await isAuth(context);
         try {
             const estimateState = await context.prisma.estimate({id: args.id}).$fragment(fragment.fragmentEstimateState);
-            if (estimateState.state !== StateEnum["0"]) throw new Error("Vous ne pouvez pas supprimer un devis déjà validé. ");
+            if (estimateState['state'] !== StateEnum["0"]) throw new Error("Vous ne pouvez pas supprimer un devis déjà validé. ");
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {

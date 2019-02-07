@@ -1,4 +1,5 @@
 import {Context, isAuth} from "../../utils";
+import {fragment} from "../../utils/fragments";
 
 export const userQuery = {
     /**
@@ -43,7 +44,7 @@ export const userQuery = {
      */
     meClient: async (_, args, context: Context) => {
         const userID = await isAuth(context);
-        return await context.prisma.user({id: userID}).product({id: args.id})
+        return await context.prisma.user({id: userID}).products({where: {id: args.id}})
     },
     /**
      * Get current user invoices
@@ -65,7 +66,7 @@ export const userQuery = {
      */
     meInvoice: async (_, args, context: Context) => {
         const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).invoice({id: args.id})
+        return await context.prisma.user({id: userId}).invoices({where: {id: args.id}})
     },
     /**
      * Get current user's estimates
@@ -87,6 +88,6 @@ export const userQuery = {
      */
     meEstimate: async (_, args, context: Context) => {
         const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).estimate({id: args.id})
+        return await context.prisma.user({id: userId}).estimates({where: {id: args.id}})
     },
 }
