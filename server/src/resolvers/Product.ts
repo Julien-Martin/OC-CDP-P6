@@ -1,6 +1,6 @@
-const {isAuth, isAdmin} = require('../middlewares/utils');
+import {Context, isAuth} from "../utils";
 
-module.exports = {
+export const Product = {
 	/**
 	 * Return user info in Product Query
 	 * @param _
@@ -8,7 +8,7 @@ module.exports = {
 	 * @param context
 	 * @returns {Promise<*>}
 	 */
-	user: async (_, args, context) => {
+	user: async (_, args, context: Context) => {
 		const userId = await isAuth(context);
 		return context.prisma.product({id: _.id}).user()
 	}

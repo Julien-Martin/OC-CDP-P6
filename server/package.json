@@ -5,30 +5,31 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon -x ts-node src/app.ts",
+    "build": "rimraf dist && tsc"
   },
-  "author": "",
+  "author": "Julien Martin",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "3.0.3",
-    "dotenv": "^6.0.0",
-    "graphql": "^14.1.1",
     "graphql-import": "^0.7.1",
     "graphql-yoga": "1.17.2",
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.24.0",
-    "nodemailer": "^5.1.1",
-    "prisma": "^1.25.7",
-    "prisma-binding": "^2.3.2",
-    "prisma-client-lib": "^1.25.7"
+    "nodemailer": "^5.1.1"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.2",
+    "@types/bcrypt": "^3.0.0",
     "@types/node": "^10.12.21",
+    "@types/nodemailer": "^4.6.5",
+    "dotenv": "^6.0.0",
     "nodemon": "^1.18.9",
-    "ts-node": "^8.0.2"
+    "prisma": "^1.25.7",
+    "rimraf": "^2.6.3",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.1"
   },
   "nodemonConfig": {
-    "ext": "js,json,graphql"
+    "ext": "ts,json,graphql"
   }
 }
