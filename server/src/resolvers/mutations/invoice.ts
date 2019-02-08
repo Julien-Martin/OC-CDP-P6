@@ -1,6 +1,7 @@
 import {Context, isAuth, StateEnum} from "../../utils";
 import * as moment from 'moment'
 import {fragment} from '../../utils/fragments'
+import {ErrorHandling} from "../../utils/errors";
 
 export const invoiceMutation = {
     /**
@@ -16,9 +17,9 @@ export const invoiceMutation = {
             const clientId = args.clientId;
             delete args.clientId;
             const user = await context.prisma.user({id: userId}).$fragment(fragment.fragmentUser);
-            if(!user) throw new Error("Utilisateur introuvable.")
+            if(!user) throw new Error("Utilisateur introuvable.");
             const client = await context.prisma.client({id: clientId}).$fragment(fragment.fragmentClient);
-            if(!client) throw new Error("Client introuvable.")
+            if(!client) throw new Error("Client introuvable.");
             const products = args.products;
             let price = 0;
             for (let i = 0; i < products.length; i++) {
@@ -59,7 +60,7 @@ export const invoiceMutation = {
             });
             return invoice
         } catch (e) {
-            throw new Error("Impossible de créer une facture. " + e)
+            throw new ErrorHandling("INVOICE001")
         }
     },
     /**
@@ -102,7 +103,7 @@ export const invoiceMutation = {
             });
             return await context.prisma.invoice({id: id})
         } catch (e) {
-            throw new Error('Impossible de mettre à jour. ' + e)
+            throw new ErrorHandling("INVOICE002")
         }
     },
     /**
@@ -127,7 +128,7 @@ export const invoiceMutation = {
             });
             return context.prisma.invoice({id: args.id})
         } catch (e) {
-            throw new Error("Impossible de valider. " + e)
+            throw new ErrorHandling("INVOICE003")
         }
     },
     /**
@@ -152,7 +153,7 @@ export const invoiceMutation = {
             });
             return true
         } catch (e) {
-            throw new Error('Impossible de supprimer. ' + e)
+            throw new ErrorHandling("INVOICE004")
         }
     },
-}
+};

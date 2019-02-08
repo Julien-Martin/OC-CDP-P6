@@ -176,4 +176,4 @@ export const adminQuery = {
         const userId = await isAdmin(context);
         return await context.prisma.user({id: args.id}).estimates()
     },
-}
+};

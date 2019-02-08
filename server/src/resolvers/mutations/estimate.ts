@@ -1,6 +1,7 @@
 import {Context, isAuth, StateEnum} from "../../utils";
 import {fragment} from '../../utils/fragments'
 import * as moment from 'moment'
+import {ErrorHandling} from "../../utils/errors";
 
 export const estimateMutation = {
     /**
@@ -16,9 +17,9 @@ export const estimateMutation = {
             const clientId = args.clientId;
             delete args.clientId;
             const user = await context.prisma.user({id: userId}).$fragment(fragment.fragmentUser);
-            if(!user) throw new Error("Utilisateur introuvable.")
+            if(!user) throw new Error("Utilisateur introuvable.");
             const client = await context.prisma.client({id: clientId}).$fragment(fragment.fragmentClient);
-            if(!client) throw new Error("Client introuvable.")
+            if(!client) throw new Error("Client introuvable.");
             const products = args.products;
             let price = 0;
             for (let i = 0; i < products.length; i++) {
@@ -57,7 +58,7 @@ export const estimateMutation = {
             });
             return estimate
         } catch (e) {
-            throw new Error("Impossible de créer un devis. " + e)
+            throw new ErrorHandling("ESTIMATE001")
         }
     },
     /**
@@ -98,7 +99,7 @@ export const estimateMutation = {
             });
             return await context.prisma.estimate({id})
         } catch (e) {
-            throw new Error("Impossible de mettre à jour. " + e)
+            throw new ErrorHandling("ESTIMATE002")
         }
     },
     /**
@@ -123,7 +124,7 @@ export const estimateMutation = {
                 }
             })
         } catch (e) {
-            throw new Error("Impossible de valider. " + e)
+            throw new ErrorHandling("ESTIMATE003")
         }
     },
     /**
@@ -148,7 +149,7 @@ export const estimateMutation = {
             });
             return true
         } catch (e) {
-            throw new Error("Impossible de supprimer. " + e)
+            throw new ErrorHandling("ESTIMATE004")
         }
     },
-}
+};

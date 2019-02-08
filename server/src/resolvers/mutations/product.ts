@@ -1,4 +1,5 @@
 import {Context, isAuth} from '../../utils'
+import {ErrorHandling} from "../../utils/errors";
 
 export const productMutation = {
     createProduct: async (_, args, context: Context) => {
@@ -15,7 +16,7 @@ export const productMutation = {
                 },
             })
         } catch (e) {
-            throw new Error('Création impossible. ' + e)
+            throw new ErrorHandling("PRODUCT001")
         }
     },
     /**
@@ -47,7 +48,7 @@ export const productMutation = {
             });
             return await context.prisma.product({id: id})
         } catch (e) {
-            throw new Error('Impossible de mettre à jour. ' + e)
+            throw new ErrorHandling("PRODUCT002")
         }
     },
     /**
@@ -72,7 +73,7 @@ export const productMutation = {
             });
             return true
         } catch (e) {
-            throw new Error('Impossible de supprimer. ' + e)
+            throw new ErrorHandling("PRODUCT003")
         }
     },
-}
+};

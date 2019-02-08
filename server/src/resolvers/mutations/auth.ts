@@ -44,4 +44,4 @@ export const authMutation = {
         });
         return {token, user}
     },
-}
+};

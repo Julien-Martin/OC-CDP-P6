@@ -42,7 +42,7 @@ export const User = {
 	 * @returns {Promise<*>}
 	 */
 	estimates: async(_, args, context: Context) => {
-		const userId = await isAuth(context)
+		const userId = await isAuth(context);
 		return context.prisma.user({id: _.id}).estimates()
 	}
 };

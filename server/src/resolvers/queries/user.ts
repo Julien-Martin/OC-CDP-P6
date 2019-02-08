@@ -90,4 +90,4 @@ export const userQuery = {
         const userId = await isAuth(context);
         return await context.prisma.user({id: userId}).estimates({where: {id: args.id}})
     },
-}
+};

@@ -1,4 +1,5 @@
 import {Context, isAuth} from "../../utils";
+import {ErrorHandling} from "../../utils/errors";
 
 export const clientMutation = {
     /**
@@ -27,7 +28,7 @@ export const clientMutation = {
                 }
             })
         } catch (e) {
-            throw new Error("Création impossible. " + e)
+            throw new ErrorHandling("CLIENT001")
         }
     },
     /**
@@ -55,7 +56,7 @@ export const clientMutation = {
             });
             return await context.prisma.client({id: id})
         } catch (e) {
-            throw new Error("Impossible de mettre à jour. " + e)
+            throw new ErrorHandling("CLIENT002")
         }
     },
     /**
@@ -78,7 +79,7 @@ export const clientMutation = {
             });
             return true
         } catch (e) {
-            throw new Error("Impossible de supprimer. " + e)
+            throw new ErrorHandling("CLIENT003")
         }
     },
-}
+};

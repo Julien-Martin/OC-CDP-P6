@@ -2,7 +2,7 @@ import {GraphQLServer} from "graphql-yoga";
 import {prisma} from "./generated";
 import resolvers from "./resolvers"
 import * as dotenv from "dotenv"
-dotenv.config()
+dotenv.config();
 
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',

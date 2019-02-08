@@ -1,4 +1,5 @@
 import {Context, isAdmin} from "../../utils";
+import {ErrorHandling} from "../../utils/errors";
 
 export const legalFormMutation = {
     /**
@@ -15,7 +16,7 @@ export const legalFormMutation = {
                 ...args
             })
         } catch (e) {
-            throw new Error('Création impossible. ' + e)
+            throw new ErrorHandling("LEGALFORM001")
         }
     },
     /**
@@ -33,7 +34,7 @@ export const legalFormMutation = {
                 data: args
             })
         } catch (e) {
-            throw new Error("Impossible de mettre à jour. " + e)
+            throw new ErrorHandling("LEGALFORM002")
         }
     },
     /**
@@ -48,7 +49,7 @@ export const legalFormMutation = {
         try {
             await context.prisma.deleteLegalForm({id: args.id})
         } catch (e) {
-            throw new Error("Impossible de supprimer. " + e)
+            throw new ErrorHandling("LEGALFORM003")
         }
     },
-}
+};
