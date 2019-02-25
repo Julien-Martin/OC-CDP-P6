@@ -2,6 +2,9 @@ import {Context, isAuth} from "../../utils";
 import {fragment} from "../../utils/fragments";
 
 export const userQuery = {
+    hello: async(_, args, context: Context) => {
+      return 'Hello world'
+    },
     /**
      * Get current user profile
      * @param _

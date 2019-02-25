@@ -45,17 +45,7 @@ export const adminQuery = {
         const userId = await isAdmin(context);
         return await context.prisma.product({id: args.id})
     },
-    /**
-     * Get all product by user
-     * @param _
-     * @param args
-     * @param context
-     * @returns {Promise<*>}
-     */
-    productsByUser: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
-        return await context.prisma.products({where: {user: {id: args.id}}})
-    },
+
     /**
      * Get all clients
      * @param _
@@ -77,17 +67,6 @@ export const adminQuery = {
     client: async (_, args, context: Context) => {
         const userId = await isAdmin(context);
         return await context.prisma.product({id: args.id})
-    },
-    /**
-     * Get all client by user
-     * @param _
-     * @param args
-     * @param context
-     * @returns {Promise<*|Promise<*>>}
-     */
-    clientsByUser: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
-        return await context.prisma.products({where: {user: {id: args.id}}})
     },
     /**
      * Get all Legal Form

@@ -1,25 +1,61 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+import Dashboard from './views/Dashboard'
+import Estimate from './views/Estimate'
+import Client from './views/Client'
+import Product from './views/Product'
+import Invoice from './views/Invoice'
+import Settings from './views/Settings'
+import Signup from './views/Signup'
+import Confirmation from './views/Confirmation'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      name: 'signup',
+      component: Signup
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      path: '/signup/:id',
+      name: 'confirmation',
+      component: Confirmation
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: Dashboard
+    },
+    {
+      path: '/clients',
+      name: 'client',
+      component: Client
+    },
+    {
+      path: '/products',
+      name: 'product',
+      component: Product
+    },
+    {
+      path: '/estimates',
+      name: 'estimate',
+      component: Estimate
+    },
+    {
+      path: '/invoices',
+      name: 'invoice',
+      component: Invoice
+    },
+    {
+      path: '/settings',
+      name: 'setting',
+      component: Settings
     }
   ]
 })
+
+export default router

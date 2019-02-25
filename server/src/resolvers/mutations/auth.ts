@@ -19,13 +19,15 @@ export const authMutation = {
     },
     signup: async (_, args, context: Context) => {
         const password = await bcrypt.hash(args.password, 10);
+        const id = args.id
+        delete args.id
         const user = await context.prisma.updateUser({
             data: {
                 ...args,
                 password,
                 role: "USER",
                 status: "ACTIVE"
-            }, where: {email: args.email}
+            }, where: {id: id}
         });
         const token = jwt.sign({id: user.id, role: user.role}, privateKey, {
             algorithm: process.env.JWT_ALGO,
