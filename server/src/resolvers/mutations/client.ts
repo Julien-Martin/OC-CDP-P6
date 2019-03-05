@@ -42,17 +42,20 @@ export const clientMutation = {
     updateClient: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         const id = args.id;
+        const legalFormId = args.legalForm;
+        console.log("Clients args : "+ args)
+        delete args.legalForm;
         delete args.id;
         try {
-            await context.prisma.updateUser({
-                where: {id: userId},
+            await context.prisma.updateClient({
+                where: {id: id},
                 data: {
-                    clients: {
-                        update: {
-                            where: {id: id},
-                            data: args
+                    ...args,
+                    legalForm: {
+                        connect: {
+                            id: legalFormId
                         }
-                    }
+                    },
                 }
             });
             return await context.prisma.client({id: id})

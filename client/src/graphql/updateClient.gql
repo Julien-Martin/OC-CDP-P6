@@ -1,19 +1,11 @@
-mutation UpdateClient($id: ID!, $firstname: String!, $lastname: String!, $legalForm: ID, $phone: String, $email: String, $street: String!, $street2: String, $postalcode: String!, $city: String!, $country: String!, $company: String){
+mutation UpdateClient($id: ID!, $name: NameCreateOneInput!, $legalForm: ID, $phone: String, $email: String, $address: AddressCreateOneInput!, $company: String){
     updateClient(
         id: $id,
-        name: { create: { firstname: $firstname, lastname: $lastname } },
+        name: $name,
         legalForm: $legalForm,
         phone: $phone,
         email: $email,
-        address: {
-              create: {
-                street: $street,
-                street2: $street2,
-                postalcode: $postalcode,
-                city: $city,
-                country: $country,
-              }
-            }
+        address: $address
         company: $company
     ){
         id

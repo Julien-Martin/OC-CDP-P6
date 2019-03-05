@@ -1,10 +1,11 @@
-mutation CreateClient($firstname: String!, $lastname: String!, $legalForm: ID!, $email: String, $phone: String, $street: String!, $street2: String, $postalcode: String!, $city: String!, $country: String!) {
+mutation CreateClient($name: NameCreateOneInput!, $legalForm: ID!, $email: String, $phone: String, $address: AddressCreateOneInput!, $company: String) {
   createClient(
-    name: { create: { firstname: $firstname, lastname: $lastname } }
-    legalForm: $legalForm
-    email: $email
-    phone: $phone
-    address: { create: { street: $street, street2: $street2, postalcode: $postalcode, city: $city, country: $country } }
+    name: $name,
+    legalForm: $legalForm,
+    email: $email,
+    phone: $phone,
+    address: $address,
+    company: $company
   ) {
     id
   }

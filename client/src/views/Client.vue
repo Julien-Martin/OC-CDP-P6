@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<v-container fluid>
+			{{meClients}}
 			<v-card>
 				<v-toolbar flat color="white">
 					<v-toolbar-title>Mes clients</v-toolbar-title>
@@ -23,9 +24,6 @@
 										</v-flex>
 										<v-flex xs12 sm6>
 											<v-text-field v-model="editedItem.name.lastname" label="Nom"></v-text-field>
-										</v-flex>
-										<v-flex xs12>
-											{{editedItem.legalForm}}
 										</v-flex>
 										<v-flex xs12>
 											<v-select v-model="editedItem.legalForm" :items="legalForms" item-text="title" item-value="id"
@@ -183,28 +181,54 @@
 				this.$apollo.queries.meClients.refetch()
 			},
 
-			updateClient(){
-				const id = this.clientId
-				const firstname = this.editedItem.name.firstname
-				const lastname = this.editedItem.name.lastname
-				const legalForm = this.editedItem.legalForm
-				const email = this.editedItem.email
-				const phone = this.editedItem.phone
-				const street = this.editedItem.address.street
-				const street2 = this.editedItem.address.street2
-				const postalcode = this.editedItem.address.postalcode
-				const city = this.editedItem.address.city
-				const country = this.editedItem.address.country
-				const company = this.editedItem.company
+			updateOrCreateClient() {
+				delete this.editedItem.address.__typename
+				delete this.editedItem.name.__typename
+				this.editedItem.legalForm = this.editedItem.legalForm.id ? this.editedItem.legalForm.id : this.editedItem.legalForm
+				this.editedItem.name = {create: {...this.editedItem.name}}
+				this.editedItem.address = {create: {...this.editedItem.address}}
+				if (this.editedIndex > -1) {
+					this.$apollo.mutate({
+						mutation: UPDATE_CLIENT,
+						variables: {
+							...this.editedItem
+						}
+					}).then(() => {
+						this.getClients()
+					}).catch(error => {
+						console.log(error)
+					})
+				} else {
+					this.$apollo.mutate({
+						mutation: CREATE_CLIENT,
+						variables: {
+							...this.editedItem
+						}
+					}).then(() => {
+						this.getClients()
+					}).catch((error) => {
+						console.log("Erreur : " + error)
+					})
+				}
+			},
+
+			updateClient() {
+				delete this.editedItem.address.__typename
+				delete this.editedItem.name.__typename
+				this.editedItem.legalForm = this.editedItem.legalForm.id ? this.editedItem.legalForm.id : this.editedItem.legalForm
+				this.editedItem.name = {create: {...this.editedItem.name}}
+				this.editedItem.address = {create: {...this.editedItem.address}}
 				this.$apollo.mutate({
 					mutation: UPDATE_CLIENT,
 					variables: {
-						id, firstname, lastname, legalForm, email, phone, street, street2, postalcode, city, country, company
+						...this.editedItem,
 					}
 				}).then(response => {
+					console.log(this.editedItem)
 					this.getClients()
 					console.log("Response : " + JSON.stringify(response))
 				}).catch(error => {
+					console.log(this.editedItem)
 					this.getClients()
 					console.log("Erreur : " + error)
 				})
@@ -267,14 +291,7 @@
 			},
 
 			save() {
-				if (this.editedIndex > -1) {
-					console.log('udpate')
-					this.updateClient()
-					//Object.assign(this.meClients[this.editedIndex], this.editedItem)
-				} else {
-					console.log('create')
-					this.createClient()
-				}
+				this.updateOrCreateClient()
 				this.close()
 			}
 		}
