@@ -57,7 +57,7 @@ export const clientMutation = {
             });
             return await context.prisma.client({id: id})
         } catch (e) {
-            throw new ErrorHandling("CLIENT002")
+            throw new Error(e)
         }
     },
     /**

@@ -67,7 +67,7 @@
 						</v-card>
 					</v-dialog>
 				</v-toolbar>
-				<v-data-table :headers="headers" :items="meClients" class="elevation-1">
+				<v-data-table :headers="headers" :items="meClients" class="elevation-1" hide-actions>
 					<template v-slot:items="props">
 						<td>{{ props.item.name.firstname }} {{ props.item.name.lastname }}</td>
 						<td>{{ props.item.company }}</td>
@@ -82,7 +82,6 @@
 						Aucune donnée
 					</template>
 				</v-data-table>
-				<v-btn @click="getClient">Test</v-btn>
 			</v-card>
 		</v-container>
 	</div>
@@ -92,6 +91,8 @@
 	import GET_LEGALFORMS from '../graphql/getLegalForm.gql'
 	import CREATE_CLIENT from '../graphql/createClient.gql'
 	import GET_CLIENTS from '../graphql/meClients.gql'
+	import DELETE_CLIENT from '../graphql/deleteClient.gql'
+	import UPDATE_CLIENT from '../graphql/updateClient.gql'
 
 	export default {
 		data: () => ({
@@ -118,6 +119,7 @@
 			meClients: [],
 			legalForms: [],
 			editedIndex: -1,
+			clientId: '',
 			editedItem: {
 				name: {
 					firstname: '',
@@ -166,10 +168,6 @@
 			}
 		},
 
-		created() {
-			this.initialize()
-		},
-
 		apollo: {
 			legalForms: {
 				query: GET_LEGALFORMS
@@ -180,26 +178,36 @@
 		},
 
 		methods: {
-			getClient() {
-				this.$apollo.queries.meClients.refresh()
-						.then((res) => {
-							console.log(res)
-						}).catch((err) => {
-							console.log(err)
-				})
+
+			getClients() {
+				this.$apollo.queries.meClients.refetch()
 			},
-			initialize() {
-				/*this.clients = [
-					{
-						name: {
-							firstname: 'Elon',
-							lastname: 'Musk'
-						},
-						company: 'Tesla',
-						email: 'Tesla@tesla.com',
-						phone: '5678°984567890',
-					},
-				]*/
+
+			updateClient(){
+				const id = this.clientId
+				const firstname = this.editedItem.name.firstname
+				const lastname = this.editedItem.name.lastname
+				const legalForm = this.editedItem.legalForm
+				const email = this.editedItem.email
+				const phone = this.editedItem.phone
+				const street = this.editedItem.address.street
+				const street2 = this.editedItem.address.street2
+				const postalcode = this.editedItem.address.postalcode
+				const city = this.editedItem.address.city
+				const country = this.editedItem.address.country
+				const company = this.editedItem.company
+				this.$apollo.mutate({
+					mutation: UPDATE_CLIENT,
+					variables: {
+						id, firstname, lastname, legalForm, email, phone, street, street2, postalcode, city, country, company
+					}
+				}).then(response => {
+					this.getClients()
+					console.log("Response : " + JSON.stringify(response))
+				}).catch(error => {
+					this.getClients()
+					console.log("Erreur : " + error)
+				})
 			},
 
 			createClient() {
@@ -220,22 +228,34 @@
 						firstname, lastname, legalForm, email, phone, street, street2, postalcode, city, country, company
 					}
 				}).then((response) => {
-					this.getClient()
-					console.log("Response : " + response)
+					this.getClients()
+					console.log("Response : " + JSON.stringify(response))
 				}).catch((error) => {
+					this.getClients()
 					console.log("Erreur : " + error)
 				})
 			},
 
 			editItem(item) {
 				this.editedIndex = this.meClients.indexOf(item)
+				this.clientId = item.id
 				this.editedItem = Object.assign({}, item)
 				this.dialog = true
 			},
 
 			deleteItem(item) {
-				const index = this.meClients.indexOf(item)
-				confirm('Etes vous sur de vouloir supprimer ce client ?') && this.meClients.splice(index, 1)
+				const id = item.id
+				this.$apollo.mutate({
+					mutation: DELETE_CLIENT,
+					variables: {
+						id
+					}
+				}).then(res => {
+					this.getClients()
+					console.log(res)
+				}).catch(error => {
+					console.log(error)
+				})
 			},
 
 			close() {
@@ -248,10 +268,12 @@
 
 			save() {
 				if (this.editedIndex > -1) {
-					Object.assign(this.meClients[this.editedIndex], this.editedItem)
+					console.log('udpate')
+					this.updateClient()
+					//Object.assign(this.meClients[this.editedIndex], this.editedItem)
 				} else {
+					console.log('create')
 					this.createClient()
-					//this.meClients.push(this.editedItem)
 				}
 				this.close()
 			}
