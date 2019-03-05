@@ -139,21 +139,21 @@
 				error: '',
 				stepper: 1,
 				signup: {
-					password: 'test',
-					confirmedPassword: 'test',
+					password: '',
+					confirmedPassword: '',
 					name: {
-						firstname: 'Juline',
-						lastname: 'Martin',
+						firstname: '',
+						lastname: '',
 					},
 					address: {
-						street: '18 rue du petit clos saint marc',
+						street: '',
 						street2: '',
-						postalcode: '14000',
-						city: 'Caen',
-						country: 'France'
+						postalcode: '',
+						city: '',
+						country: ''
 					},
-					phone: '0676132431',
-					siret: '0102031203012',
+					phone: '',
+					siret: '',
 					useVAT: false,
 					VATnumber: '',
 					paymentInfo: '',

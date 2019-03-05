@@ -1,0 +1,11 @@
+mutation CreateClient($firstname: String!, $lastname: String!, $legalForm: ID!, $email: String, $phone: String, $street: String!, $street2: String, $postalcode: String!, $city: String!, $country: String!) {
+  createClient(
+    name: { create: { firstname: $firstname, lastname: $lastname } }
+    legalForm: $legalForm
+    email: $email
+    phone: $phone
+    address: { create: { street: $street, street2: $street2, postalcode: $postalcode, city: $city, country: $country } }
+  ) {
+    id
+  }
+}

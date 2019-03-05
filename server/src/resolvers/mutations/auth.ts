@@ -6,6 +6,12 @@ import * as fs from 'fs'
 const privateKey = fs.readFileSync('./private_key.pem');
 
 export const authMutation = {
+    /**
+     * Capture email and send confirmation email
+     * @param _
+     * @param args
+     * @param context
+     */
     captureEmail: async (_, args, context: Context) => {
         const isEmailTaken = await context.prisma.user({email: args.email});
 

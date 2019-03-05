@@ -76,7 +76,7 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     legalForms: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
+        const userId = await isAuth(context);
         return await context.prisma.legalForms()
     },
     /**
@@ -87,7 +87,7 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     legalForm: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
+        const userId = await isAuth(context);
         return await context.prisma.legalForm({id: args.id})
     },
     /**

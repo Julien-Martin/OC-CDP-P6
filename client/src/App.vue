@@ -14,9 +14,10 @@
 	export default {
 		name: 'App',
 		components: {AppToolbar},
-		data() {
-			return {
-				isAuth: false
+
+		computed: {
+			isAuth() {
+				return this.$store.getters.isAuthentificated
 			}
 		}
 	}

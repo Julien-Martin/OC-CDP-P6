@@ -28,7 +28,8 @@ export const clientMutation = {
                 }
             })
         } catch (e) {
-            throw new ErrorHandling("CLIENT001")
+            throw new Error(e)
+            //throw new ErrorHandling("CLIENT001")
         }
     },
     /**
@@ -79,7 +80,7 @@ export const clientMutation = {
             });
             return true
         } catch (e) {
-            throw new ErrorHandling("CLIENT003")
+            throw new Error(e)
         }
     },
 };

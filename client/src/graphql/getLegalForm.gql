@@ -1,0 +1,7 @@
+{
+    legalForms {
+        id
+        form
+        title
+    }
+}

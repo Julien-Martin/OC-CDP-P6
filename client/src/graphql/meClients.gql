@@ -1,0 +1,22 @@
+{
+    meClients {
+        id
+        name {
+            firstname
+            lastname
+        }
+        email
+        phone
+        legalForm {
+            title
+        }
+        address {
+            street
+            street2
+            postalcode
+            city
+            country
+        }
+        company
+    }
+}

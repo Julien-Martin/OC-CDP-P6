@@ -88,6 +88,7 @@
 <script>
 	import CAPTURE_EMAIL from '../graphql/captureEmail.gql'
 	import LOGIN from '../graphql/login.gql'
+	import { onLogin } from '../vue-apollo'
 
 	export default {
 		data() {
@@ -113,8 +114,15 @@
 					variables: {
 						email, password
 					}
-				}).then((result) => {
-					this.$router.push('dashboard')
+				}).then((response) => {
+					if(!response.data.login) return
+					const apolloClient = this.$apollo.provider.defaultClient
+					const token = response.data.login.token
+					onLogin(apolloClient, token).then(() => {
+						this.$store.dispatch('login').then(() => {
+							this.$router.push('dashboard')
+						})
+					})
 				}).catch(error => {
 					this.error = error.message
 				})
@@ -143,7 +151,7 @@
 					}
 				})
 			}
-		}
+		},
 	}
 </script>
 

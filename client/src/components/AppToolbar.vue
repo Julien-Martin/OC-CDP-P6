@@ -8,47 +8,31 @@
 				<v-btn icon slot="activator">
 					<v-icon>account_circle</v-icon>
 				</v-btn>
-				<v-list>
-					<v-list-tile>
-						<v-list-tile-title>Paramètres</v-list-tile-title>
-					</v-list-tile>
-					<v-list-tile>
-						<v-list-tile-title>Déconnexion</v-list-tile-title>
-					</v-list-tile>
-				</v-list>
+				<v-card>
+					<v-list>
+						<v-list-tile router to="settings">
+							<v-list-tile-action>
+								<v-icon>settings</v-icon>
+							</v-list-tile-action>
+							<v-list-tile-title>Paramètres</v-list-tile-title>
+						</v-list-tile>
+						<v-list-tile @click="logout">
+							<v-list-tile-action>
+								<v-icon>exit_to_app</v-icon>
+							</v-list-tile-action>
+							<v-list-tile-title>Déconnexion</v-list-tile-title>
+						</v-list-tile>
+					</v-list>
+				</v-card>
 			</v-menu>
 		</v-toolbar>
 		<v-navigation-drawer v-model="drawer" fixed app>
 			<v-list>
-				<v-list-tile>
+				<v-list-tile v-for="route in routes" :key="route.path" router :to="route.path">
 					<v-list-tile-action>
-						<v-icon>home</v-icon>
+						<v-icon>{{route.icon}}</v-icon>
 					</v-list-tile-action>
-					<v-list-tile-title>Tableau de bord</v-list-tile-title>
-				</v-list-tile>
-				<v-list-tile>
-					<v-list-tile-action>
-						<v-icon>contacts</v-icon>
-					</v-list-tile-action>
-					<v-list-tile-title>Clients</v-list-tile-title>
-				</v-list-tile>
-				<v-list-tile>
-					<v-list-tile-action>
-						<v-icon>extension</v-icon>
-					</v-list-tile-action>
-					<v-list-tile-title>Produits/Prestations</v-list-tile-title>
-				</v-list-tile>
-				<v-list-tile>
-					<v-list-tile-action>
-						<v-icon>dashboard</v-icon>
-					</v-list-tile-action>
-					<v-list-tile-title>Devis</v-list-tile-title>
-				</v-list-tile>
-				<v-list-tile>
-					<v-list-tile-action>
-						<v-icon>receipt</v-icon>
-					</v-list-tile-action>
-					<v-list-tile-title>Factures</v-list-tile-title>
+					<v-list-tile-title>{{route.name}}</v-list-tile-title>
 				</v-list-tile>
 			</v-list>
 		</v-navigation-drawer>
@@ -56,10 +40,27 @@
 </template>
 
 <script>
+	import {routes} from "../utils";
+	import { onLogout } from '../vue-apollo'
 	export default {
 		data() {
 			return {
 				drawer: null,
+			}
+		},
+		methods: {
+			logout() {
+				const apolloClient = this.$apollo.provider.defaultClient
+				onLogout(apolloClient).then(() => {
+					this.$store.dispatch('logout').then(() => {
+						this.$router.push('/')
+					})
+				})
+			}
+		},
+		computed: {
+			routes() {
+				return routes
 			}
 		}
 	}

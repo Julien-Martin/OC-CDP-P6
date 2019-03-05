@@ -6,7 +6,7 @@ import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/gra
 Vue.use(VueApollo)
 
 // Name of the localStorage item
-const AUTH_TOKEN = 'apollo-token'
+const AUTH_TOKEN = 'user-token'
 
 // Http endpoint
 const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/graphql'
@@ -41,7 +41,10 @@ const defaultOptions = {
   // cache: myCache
 
   // Override the way the Authorization header is set
-  // getAuth: (tokenName) => ...
+  getAuth: (tokenName) => {
+    const token = localStorage.getItem(tokenName)
+    return token || ''
+  }
 
   // Additional ApolloClient options
   // apollo: { ... }
