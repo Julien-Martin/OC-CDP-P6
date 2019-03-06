@@ -28,8 +28,7 @@ export const clientMutation = {
                 }
             })
         } catch (e) {
-            throw new Error(e)
-            //throw new ErrorHandling("CLIENT001")
+            throw new ErrorHandling("CLIENT001", e.message)
         }
     },
     /**
@@ -60,7 +59,7 @@ export const clientMutation = {
             });
             return await context.prisma.client({id: id})
         } catch (e) {
-            throw new Error(e)
+            throw new ErrorHandling("CLIENT002", e.message)
         }
     },
     /**
@@ -83,7 +82,7 @@ export const clientMutation = {
             });
             return true
         } catch (e) {
-            throw new Error(e)
+            throw new ErrorHandling("CLIENT003", e.message)
         }
     },
 };

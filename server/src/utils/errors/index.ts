@@ -21,6 +21,6 @@ export class ErrorHandling extends Error {
             else {
                 this.message = errors[element]
             }
-        } else this.message = message
+        } else this.message = errors[element["name"]] + message
     }
 }

@@ -58,7 +58,7 @@ export const estimateMutation = {
             });
             return estimate
         } catch (e) {
-            throw new ErrorHandling("ESTIMATE001")
+            throw new ErrorHandling("ESTIMATE001", e.message)
         }
     },
     /**
@@ -99,7 +99,7 @@ export const estimateMutation = {
             });
             return await context.prisma.estimate({id})
         } catch (e) {
-            throw new ErrorHandling("ESTIMATE002")
+            throw new ErrorHandling("ESTIMATE002", e.message)
         }
     },
     /**
@@ -124,7 +124,7 @@ export const estimateMutation = {
                 }
             })
         } catch (e) {
-            throw new ErrorHandling("ESTIMATE003")
+            throw new ErrorHandling("ESTIMATE003", e.message)
         }
     },
     /**
@@ -149,7 +149,7 @@ export const estimateMutation = {
             });
             return true
         } catch (e) {
-            throw new ErrorHandling("ESTIMATE004")
+            throw new ErrorHandling("ESTIMATE004", e.message)
         }
     },
 };

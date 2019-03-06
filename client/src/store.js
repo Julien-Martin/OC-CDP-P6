@@ -4,14 +4,17 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem('user-token') || ''
+    token: localStorage.getItem('user-token') || '',
+    role: localStorage.getItem('user-role') || ''
   },
   mutations: {
     auth_success(state){
       state.token = localStorage.getItem('user-token')
+      state.role = localStorage.getItem('user-role')
     },
     logout(state){
       state.token = ''
+      state.role = ''
     }
   },
   actions: {
@@ -23,6 +26,7 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    isAuthentificated: state => !!state.token
+    isAuthentificated: state => !!state.token,
+    isAdmin: state => state.role === 'ADMIN'
   }
 })

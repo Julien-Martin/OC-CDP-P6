@@ -118,7 +118,8 @@
 					if(!response.data.login) return
 					const apolloClient = this.$apollo.provider.defaultClient
 					const token = response.data.login.token
-					onLogin(apolloClient, token).then(() => {
+					const role = response.data.login.user.role
+					onLogin(apolloClient, token, role).then(() => {
 						this.$store.dispatch('login').then(() => {
 							this.$router.push('dashboard')
 						})

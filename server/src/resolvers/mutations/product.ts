@@ -16,7 +16,7 @@ export const productMutation = {
                 },
             })
         } catch (e) {
-            throw new ErrorHandling("PRODUCT001")
+            throw new ErrorHandling("PRODUCT001", e.message)
         }
     },
     /**
@@ -48,7 +48,7 @@ export const productMutation = {
             });
             return await context.prisma.product({id: id})
         } catch (e) {
-            throw new ErrorHandling("PRODUCT002")
+            throw new ErrorHandling("PRODUCT002", e.message)
         }
     },
     /**
@@ -73,7 +73,7 @@ export const productMutation = {
             });
             return true
         } catch (e) {
-            throw new ErrorHandling("PRODUCT003")
+            throw new ErrorHandling("PRODUCT003", e.message)
         }
     },
 };

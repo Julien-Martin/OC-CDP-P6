@@ -9,6 +9,7 @@ import Estimate from './views/Estimate'
 import Client from './views/Client'
 import Product from './views/Product'
 import Invoice from './views/Invoice'
+import LegalForm from './views/LegalForm'
 
 import {isAuth, isNotAuth} from "./utils";
 
@@ -40,37 +41,37 @@ const router = new Router({
 			path: '/dashboard',
 			name: 'Tableau de bord',
 			component: Dashboard,
-			icon: 'home',
 			beforeEnter: isAuth
 		},
 		{
 			path: '/clients',
 			name: 'Clients',
 			component: Client,
-			icon: 'contacts',
 			beforeEnter: isAuth
 		},
 		{
 			path: '/products',
 			name: 'Produits/Prestations',
 			component: Product,
-			icon: 'extension',
 			beforeEnter: isAuth
 		},
 		{
 			path: '/estimates',
 			name: 'Devis',
 			component: Estimate,
-			icon: 'dashboard',
 			beforeEnter: isAuth
 		},
 		{
 			path: '/invoices',
 			name: 'Factures',
 			component: Invoice,
-			icon: 'receipt',
 			beforeEnter: isAuth
 		},
+		{
+			path: '/admin/legalForm',
+			name: 'LegalForms',
+			component: LegalForm
+		}
 	]
 })
 

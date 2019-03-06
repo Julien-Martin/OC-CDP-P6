@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 import {Context, sendConfirmationMail} from '../../utils'
 import * as fs from 'fs'
+import {ErrorHandling} from "../../utils/errors";
 
 const privateKey = fs.readFileSync('./private_key.pem');
 
@@ -43,9 +44,9 @@ export const authMutation = {
     },
     login: async(_, args, context: Context) => {
         const user = await context.prisma.user({email: args.email});
-        if (!user) throw new Error('No such user found');
+        if (!user) throw new ErrorHandling("USER001");
         const valid = await bcrypt.compare(args.password, user.password);
-        if (!valid) throw new Error('Invalid password');
+        if (!valid) throw new ErrorHandling("AUTH001");
         const token = jwt.sign({id: user.id, role: user.role}, privateKey, {
             algorithm: process.env.JWT_ALGO,
             expiresIn: process.env.JWT_EXPIRATION

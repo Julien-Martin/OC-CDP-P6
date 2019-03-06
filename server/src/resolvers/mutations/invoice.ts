@@ -60,7 +60,7 @@ export const invoiceMutation = {
             });
             return invoice
         } catch (e) {
-            throw new ErrorHandling("INVOICE001")
+            throw new ErrorHandling("INVOICE001", e.message)
         }
     },
     /**
@@ -103,7 +103,7 @@ export const invoiceMutation = {
             });
             return await context.prisma.invoice({id: id})
         } catch (e) {
-            throw new ErrorHandling("INVOICE002")
+            throw new ErrorHandling("INVOICE002", e.message)
         }
     },
     /**
@@ -128,7 +128,7 @@ export const invoiceMutation = {
             });
             return context.prisma.invoice({id: args.id})
         } catch (e) {
-            throw new ErrorHandling("INVOICE003")
+            throw new ErrorHandling("INVOICE003", e.message)
         }
     },
     /**
@@ -153,7 +153,7 @@ export const invoiceMutation = {
             });
             return true
         } catch (e) {
-            throw new ErrorHandling("INVOICE004")
+            throw new ErrorHandling("INVOICE004", e.message)
         }
     },
 };

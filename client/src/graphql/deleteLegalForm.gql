@@ -1,0 +1,3 @@
+mutation DeleteLegalForm($id: ID!){
+    deleteLegalForm(id: $id)
+}

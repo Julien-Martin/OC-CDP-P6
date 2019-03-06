@@ -5,12 +5,16 @@ import {ErrorHandling} from "../../utils/errors";
 export const userMutation = {
     async updateMe(_, args, context: Context) {
         const userId = await isAuth(context);
-        return await context.prisma.updateUser({
-            where: {id: userId},
-            data: {
-                ...args,
-            }
-        })
+        try {
+            return await context.prisma.updateUser({
+                where: {id: userId},
+                data: {
+                    ...args,
+                }
+            })
+        } catch (e) {
+            throw new ErrorHandling("ME002", e.message)
+        }
     },
 
     async deleteMe(_, args, context: Context) {
@@ -22,7 +26,7 @@ export const userMutation = {
             await context.prisma.deleteUser({id: userId});
             return true
         } catch (e) {
-            throw new ErrorHandling("ME003")
+            throw new ErrorHandling("ME003", e.message)
         }
     },
 };

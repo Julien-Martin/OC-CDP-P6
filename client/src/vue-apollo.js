@@ -7,6 +7,7 @@ Vue.use(VueApollo)
 
 // Name of the localStorage item
 const AUTH_TOKEN = 'user-token'
+const AUTH_ROLE = 'user-role'
 
 // Http endpoint
 const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/graphql'
@@ -80,9 +81,10 @@ export function createProvider (options = {}) {
 }
 
 // Manually call this when user log in
-export async function onLogin (apolloClient, token) {
-  if (typeof localStorage !== 'undefined' && token) {
+export async function onLogin (apolloClient, token, role) {
+  if (typeof localStorage !== 'undefined' && token && role) {
     localStorage.setItem(AUTH_TOKEN, token)
+    localStorage.setItem(AUTH_ROLE, role)
   }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
   try {
@@ -97,6 +99,7 @@ export async function onLogin (apolloClient, token) {
 export async function onLogout (apolloClient) {
   if (typeof localStorage !== 'undefined') {
     localStorage.removeItem(AUTH_TOKEN)
+    localStorage.removeItem(AUTH_ROLE)
   }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
   try {
