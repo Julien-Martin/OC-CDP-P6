@@ -50,9 +50,7 @@ export const UPDATE = gql`
             email: $email,
             address: $address
             company: $company
-        ){
-            id
-        }
+        ){id}
     }
 `
 

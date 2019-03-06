@@ -36,7 +36,7 @@ type Mutation {
     signup(id: ID!, password: String!, name: NameCreateOneInput!, address: AddressCreateOneInput!, phone: String, siret: String!, useVAT: Boolean!, paymentInfo: String!, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): AuthPayload!
     login(email: String!, password: String!): AuthPayload
 
-    updateMe(email: String, password: String, name: NameCreateOneInput, phone: String, siret: String, useVat: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
+    updateMe(name: NameCreateOneInput, phone: String, siret: String, useVAT: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
     deleteMe(password: String): Boolean
 
     createProduct(description: String!, vat: Float!, pricettc: Float!, unit: String): Product
