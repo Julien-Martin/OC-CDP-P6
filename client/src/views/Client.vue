@@ -1,11 +1,22 @@
 <template>
 	<div>
 		<v-container fluid>
-			{{meClients}}
 			<v-card>
+				<v-dialog v-model="modal.active" persistent max-width="290">
+					<v-card>
+						<v-card-title class="headline">{{modal.title}}</v-card-title>
+						<v-card-text>{{modal.message}}</v-card-text>
+						<v-card-actions>
+							<v-spacer></v-spacer>
+							<v-btn dark class="error" flat @click="clearModal">Annuler</v-btn>
+							<v-btn dark class="green" flat @click="deleteClient">Accepter</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
+				<Alert type="error" :message="error"></Alert>
 				<v-toolbar flat color="white">
 					<v-toolbar-title>Mes clients</v-toolbar-title>
-					<v-divider class="mx-2" inset vertical></v-divider>
+					<v-divider class="mx-4" inset vertical></v-divider>
 					<v-spacer></v-spacer>
 					<v-dialog v-model="dialog" max-width="500px">
 						<template v-slot:activator="{ on }">
@@ -86,15 +97,17 @@
 </template>
 
 <script>
-	import GET_LEGALFORMS from '../graphql/getLegalForm.gql'
-	import CREATE_CLIENT from '../graphql/createClient.gql'
-	import GET_CLIENTS from '../graphql/meClients.gql'
-	import DELETE_CLIENT from '../graphql/deleteClient.gql'
-	import UPDATE_CLIENT from '../graphql/updateClient.gql'
+	import {LegalForm, Client} from "../graphql";
 
 	export default {
 		data: () => ({
+			error: '',
 			dialog: false,
+			modal: {
+				active: false,
+				title: '',
+				message: ''
+			},
 			headers: [
 				{
 					text: 'Nom',
@@ -168,10 +181,10 @@
 
 		apollo: {
 			legalForms: {
-				query: GET_LEGALFORMS
+				query: LegalForm.GET
 			},
 			meClients: {
-				query: GET_CLIENTS
+				query: Client.GET
 			}
 		},
 
@@ -189,75 +202,27 @@
 				this.editedItem.address = {create: {...this.editedItem.address}}
 				if (this.editedIndex > -1) {
 					this.$apollo.mutate({
-						mutation: UPDATE_CLIENT,
+						mutation: Client.UPDATE,
 						variables: {
 							...this.editedItem
 						}
 					}).then(() => {
 						this.getClients()
 					}).catch(error => {
-						console.log(error)
+						this.error = error
 					})
 				} else {
 					this.$apollo.mutate({
-						mutation: CREATE_CLIENT,
+						mutation: Client.CREATE,
 						variables: {
 							...this.editedItem
 						}
 					}).then(() => {
 						this.getClients()
 					}).catch((error) => {
-						console.log("Erreur : " + error)
+						this.error = error
 					})
 				}
-			},
-
-			updateClient() {
-				delete this.editedItem.address.__typename
-				delete this.editedItem.name.__typename
-				this.editedItem.legalForm = this.editedItem.legalForm.id ? this.editedItem.legalForm.id : this.editedItem.legalForm
-				this.editedItem.name = {create: {...this.editedItem.name}}
-				this.editedItem.address = {create: {...this.editedItem.address}}
-				this.$apollo.mutate({
-					mutation: UPDATE_CLIENT,
-					variables: {
-						...this.editedItem,
-					}
-				}).then(response => {
-					console.log(this.editedItem)
-					this.getClients()
-					console.log("Response : " + JSON.stringify(response))
-				}).catch(error => {
-					console.log(this.editedItem)
-					this.getClients()
-					console.log("Erreur : " + error)
-				})
-			},
-
-			createClient() {
-				const firstname = this.editedItem.name.firstname
-				const lastname = this.editedItem.name.lastname
-				const legalForm = this.editedItem.legalForm
-				const email = this.editedItem.email
-				const phone = this.editedItem.phone
-				const street = this.editedItem.address.street
-				const street2 = this.editedItem.address.street2
-				const postalcode = this.editedItem.address.postalcode
-				const city = this.editedItem.address.city
-				const country = this.editedItem.address.country
-				const company = this.editedItem.company
-				this.$apollo.mutate({
-					mutation: CREATE_CLIENT,
-					variables: {
-						firstname, lastname, legalForm, email, phone, street, street2, postalcode, city, country, company
-					}
-				}).then((response) => {
-					this.getClients()
-					console.log("Response : " + JSON.stringify(response))
-				}).catch((error) => {
-					this.getClients()
-					console.log("Erreur : " + error)
-				})
 			},
 
 			editItem(item) {
@@ -267,18 +232,30 @@
 				this.dialog = true
 			},
 
+			clearModal(){
+				this.modal.active = false
+				this.modal.title = ''
+				this.modal.message = ''
+			},
+
 			deleteItem(item) {
-				const id = item.id
+				this.clientId = item.id
+				this.modal.active = true
+				this.modal.title = `Supprimer ${item.name.firstname} ${item.name.lastname}`
+				this.modal.message = "Êtes-vous sûr de vouloir supprimer ce client ?"
+			},
+
+			deleteClient(){
 				this.$apollo.mutate({
-					mutation: DELETE_CLIENT,
+					mutation: Client.DELETE,
 					variables: {
-						id
+						id: this.clientId
 					}
-				}).then(res => {
+				}).then(() => {
+					this.clearModal()
 					this.getClients()
-					console.log(res)
 				}).catch(error => {
-					console.log(error)
+					this.error = error
 				})
 			},
 

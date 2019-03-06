@@ -1,5 +1,0 @@
-mutation CreateLegalForm($form: String!, $title: String!){
-    createLegalForm(form: $form, title: $title){
-        id
-    }
-}

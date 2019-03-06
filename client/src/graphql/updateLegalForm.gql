@@ -1,9 +1,0 @@
-mutation UpdateLegalForm($id: ID!, $form: String, $title: String){
-    updateLegalForm(
-        id: $id,
-        form: $form,
-        title: $title
-    ){
-        id
-    }
-}

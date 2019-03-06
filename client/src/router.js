@@ -11,7 +11,7 @@ import Product from './views/Product'
 import Invoice from './views/Invoice'
 import LegalForm from './views/LegalForm'
 
-import {isAuth, isNotAuth} from "./utils";
+import {isAdmin, isAuth, isNotAuth} from "./utils";
 
 Vue.use(Router)
 
@@ -70,7 +70,8 @@ const router = new Router({
 		{
 			path: '/admin/legalForm',
 			name: 'LegalForms',
-			component: LegalForm
+			component: LegalForm,
+			beforeEnter: isAdmin
 		}
 	]
 })

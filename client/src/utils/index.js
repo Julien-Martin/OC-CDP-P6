@@ -52,3 +52,11 @@ export const isAuth = (to, from, next) => {
 	}
 	next('/')
 }
+
+export const isAdmin = (to, from, next) => {
+	if(Store.getters.isAuthentificated && Store.getters.isAdmin){
+		next()
+		return
+	}
+	next('/')
+}

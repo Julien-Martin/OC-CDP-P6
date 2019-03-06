@@ -46,6 +46,7 @@
             </v-list-tile>
           </template>
           <v-list-tile v-for="link in adminLinks" :key="link.path" router :to="link.path">
+            <v-spacer></v-spacer>
             <v-list-tile-action>
               <v-icon>{{link.icon}}</v-icon>
             </v-list-tile-action>

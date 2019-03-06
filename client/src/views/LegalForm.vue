@@ -2,9 +2,10 @@
   <div>
     <v-container fluid>
       <v-card>
+        <Alert type="error" :message="error"></Alert>
         <v-toolbar flat color="white">
           <v-toolbar-title>Formes juridiques</v-toolbar-title>
-          <v-divider class="mx-2" inset vertical></v-divider>
+          <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
@@ -55,13 +56,11 @@
 </template>
 
 <script>
-  import GET_LEGALFORMS from '../graphql/getLegalForm.gql'
-  import CREATE_LEGALFORM from '../graphql/createLegalForm.gql'
-  import UPDATE_LEGALFORM from '../graphql/updateLegalForm.gql'
-  import DELETE_LEGALFORM from '../graphql/deleteLegalForm.gql'
+  import {LegalForm} from "../graphql";
 
   export default {
     data: () => ({
+      error: '',
       dialog: false,
       headers: [
         {text: 'Acronyme', value: 'form'},
@@ -82,7 +81,7 @@
 
     apollo: {
       legalForms: {
-        query: GET_LEGALFORMS
+        query: LegalForm.GET
       }
     },
 
@@ -106,25 +105,25 @@
       updateOrCreateLegalForm(){
         if(this.editedIndex > -1){
           this.$apollo.mutate({
-            mutation: UPDATE_LEGALFORM,
+            mutation: LegalForm.UPDATE,
             variables: {
               ...this.editedItem
             }
           }).then(() => {
             this.getLegalForms()
           }).catch(error => {
-            console.log(error)
+            this.error = error
           })
         } else {
           this.$apollo.mutate({
-            mutation: CREATE_LEGALFORM,
+            mutation: LegalForm.CREATE,
             variables: {
               ...this.editedItem
             }
           }).then(() => {
             this.getLegalForms()
           }).catch(error => {
-            console.log(error)
+            this.error = error
           })
         }
       },
@@ -138,12 +137,12 @@
       deleteItem(item){
         const id = item.id
         this.$apollo.mutate({
-          mutation: DELETE_LEGALFORM,
+          mutation: LegalForm.DELETE,
           variables: {id}
         }).then(() => {
           this.getLegalForms()
         }).catch(error => {
-          console.log(error)
+          this.error = error
         })
       },
 
@@ -162,7 +161,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>

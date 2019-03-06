@@ -1,7 +1,0 @@
-{
-    legalForms {
-        id
-        form
-        title
-    }
-}

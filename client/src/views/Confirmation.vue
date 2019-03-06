@@ -3,9 +3,8 @@
 		<v-container fluid>
 			<v-layout row wrap justify-center>
 				<v-flex xs12>
-					<p class="text-xs-center display-2">ME-Assistant</p>
+					<p class="text-xs-center display-2" router to="/">ME-Assistant</p>
 					<p class="text-xs-center headline">Confirmation de votre compte</p>
-					<p class="text-xs-center headline">{{$route.params.id}}</p>
 				</v-flex>
 				<v-flex xs12 sm4>
 					<Alert type="error" :message="error"></Alert>
@@ -131,7 +130,7 @@
 </template>
 
 <script>
-	import SIGNUP from '../graphql/signup.gql'
+	import {Auth} from "../graphql";
 
 	export default {
 		data() {
@@ -184,7 +183,7 @@
 				const commercialName = this.signup.commercialName
 				const cgv = this.signup.cgv
 				this.$apollo.mutate({
-					mutation: SIGNUP,
+					mutation: Auth.SIGNUP,
 					variables: {
 						id,
 						password,
