@@ -4,15 +4,54 @@ export const GET = gql`
     {
         meEstimates {
             id
-            user
-            client
             state
+            client {
+                name {
+                    firstname
+                    lastname
+                }
+                address {
+                    street
+                    street2
+                    postalcode
+                    city
+                    country
+                }
+                phone
+                email
+                company
+            }
+            user {
+                name {
+                    firstname
+                    lastname
+                }
+                address {
+                    street
+                    street2
+                    postalcode
+                    city
+                    country
+                }
+            }
+            staticUser
+            staticClient
             estimateNumber
             startedDate
             deliveryDate
             validityDate
             message
-            products {product quantity}
+            products {
+                product {
+                    id
+                    description
+                    pricettc
+                    priceht
+                    vat
+                    unit
+                }
+                quantity
+            }
             price
             footNote
             createdAt

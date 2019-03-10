@@ -26,7 +26,7 @@ export const invoiceMutation = {
                 products[i].product = await context.prisma.product({id: products[i].product}).$fragment(fragment.fragmentProduct);
                 price += products[i].product.pricettc * products[i].quantity
             }
-            const invoiceCounter = await context.prisma.invoicesConnection({where: {userId}}).aggregate().count();
+            const invoiceCounter = await context.prisma.invoicesConnection({where: {id: userId}}).aggregate().count();
             const invoiceNumber = moment().format('YYYY-MM-') + (invoiceCounter + 1);
             const deadline = moment(args.billingDate).add(args.paymentCondition, 'days');
             const invoice = await context.prisma.createInvoice({

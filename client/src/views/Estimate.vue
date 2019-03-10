@@ -1,23 +1,19 @@
 <template>
   <div>
-    {{me}}
-    <v-divider></v-divider>
-    {{meClients}}
-    <v-divider></v-divider>
-    {{meEstimates}}
-    <v-divider></v-divider>
-    {{window}} {{length}}
+    {{isDraft}}
     <v-container fluid>
       <v-toolbar dark color="primary" class="mb-2">
         <v-toolbar-items>
-          <v-text-field flat solo-inverted v-model="search" prepend-icon="search" label="Recherche" class="hidden-sm-and-down mt-2"></v-text-field>
+          <v-text-field flat solo-inverted v-model="search" prepend-icon="search" label="Recherche"
+                        class="hidden-sm-and-down mt-2"></v-text-field>
         </v-toolbar-items>
         <v-spacer></v-spacer>
         <v-toolbar-items>
           <v-btn icon>
-            <v-icon @click="">add</v-icon>
+            <v-icon>add</v-icon>
           </v-btn>
           <v-btn icon>
+            <v-icon>save</v-icon>
             <v-icon>edit</v-icon>
           </v-btn>
           <v-btn icon>
@@ -29,90 +25,121 @@
         <v-flex>
           <div id="custom-list" class="elevation-1 mr-4">
             <v-list subheader two-line class="shrink elevation-1">
-              <v-list-tile v-for="n in length" :key="n" @click="window = n-1; active = true" :color="window === n-1 ? 'primary' : ''">
+              <v-list-tile v-for="estimate in filteredSearch" :key="estimate.id" @click="selectItem(estimate)" :class="selectedEstimate === estimate ? 'grey lighten-3' : ''">
                 <v-list-tile-content>
-                  <v-list-tile-title>
-                    Devis 2019-03-00{{n}}
-                  </v-list-tile-title>
-                  <v-list-tile-sub-title>
-                    Elon Musk
-                  </v-list-tile-sub-title>
+                  <v-list-tile-title>Devis {{estimate.estimateNumber}}</v-list-tile-title>
+                  <v-list-tile-sub-title v-if="estimate.client.company">{{ estimate.client.company }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title v-else>{{estimate.client.name.firstname}} {{estimate.client.name.lastname}}</v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
-                  <v-chip disabled>Done</v-chip>
+                  <v-chip dark color="primary">{{estimate.state}}</v-chip>
                 </v-list-tile-action>
               </v-list-tile>
             </v-list>
           </div>
         </v-flex>
         <v-flex>
-          <v-window v-model="window" class="elevation-1" vertical>
-            <v-window-item v-for="n in length" :key="n">
-              {{window}}
-              <v-card flat>
-                <v-card-text>
-                  <v-container>
-                    <v-layout row>
-                      <v-flex grow>
-                        <strong class="title ma-0">{{me.commercialName}}</strong>
-                        <p class="subheading ma-0">{{me.name.firstname}} {{me.name.lastname}}</p>
-                        <p class="subheading ma-0">{{me.address.street}}</p>
-                        <p class="subheading ma-0">{{me.address.street2}}</p>
-                        <p class="subheading ma-0">{{me.address.postalcode}} {{me.address.city}}</p>
-                        <p class="subheading ma-0">{{me.address.country}}</p>
-                      </v-flex>
-                      <v-flex shrink>
-                        <p class="title ma-0">Devis n°2019-03-00{{n}}</p>
-                        <p class="subheading mt-4 mb-0">Michel Blanc</p>
-                        <p class="subheading ma-0">Entreprise</p>
-                        <p class="subheading ma-0">7 rue de n'importe où</p>
-                        <p class="subheading ma-0">14000 Caen</p>
-                      </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                      <v-flex grow>
-                        <p class="subheading ma-0">Date d'émission : 07/03/2019</p>
-                        <p class="subheading ma-0">Date de début : 07/03/2019</p>
-                        <p class="subheading ma-0">Date de livraison : 07/03/2019</p>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
-                  <v-container>
-                    <v-data-table hide-actions :headers="headers" :items="desserts">
-                      <template v-slot:items="props">
-                        <td>{{ props.item.name }}</td>
-                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                        <td class="text-xs-right">{{ props.item.fat }}</td>
-                        <td class="text-xs-right">{{ props.item.carbs }}</td>
-                        <td class="text-xs-right">{{ props.item.protein }}</td>
-                        <td class="text-xs-right">{{ props.item.iron }}</td>
-                        <td class="justify-center layout px-0">
-                          <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-                          <v-icon small @click="deleteItem(props.item)">delete</v-icon>
-                        </td>
+          <v-card>
+            <v-card-text v-if="selectedEstimate.id !== 0">
+              <v-container>
+                <v-layout row>
+                  <v-flex grow>
+                    <strong class="title ma-0">{{me.commercialName}}</strong>
+                    <p class="subheading ma-0">{{me.name.firstname}} {{me.name.lastname}}</p>
+                    <p class="subheading ma-0">{{me.address.street}}</p>
+                    <p class="subheading ma-0">{{me.address.street2}}</p>
+                    <p class="subheading ma-0">{{me.address.postalcode}} {{me.address.city}}</p>
+                    <p class="subheading ma-0">{{me.address.country}}</p>
+                  </v-flex>
+                  <v-flex shrink>
+                    <p class="title ma-0">Devis n°{{selectedEstimate.estimateNumber}}</p>
+                    <div v-if="isDraft">
+                      <v-btn small flat>Changer de client</v-btn>
+                    </div>
+                    <div v-if="!selectedEstimate.client">
+                      <v-select v-model="selectedEstimate.client" return-object :items="meClients" label="Client"
+                                class="mb-0">
+                        <template v-slot:item="{item}">
+                          {{item.name.firstname}} {{item.name.lastname}}
+                        </template>
+                        <template v-slot:selection="{item}">
+                          {{item.name.firstname}} {{item.name.lastname}}
+                        </template>
+                      </v-select>
+                    </div>
+                    <div>
+                      <p class="subheading ma-0">
+                        {{selectedEstimate.client.name.firstname}}
+                        {{selectedEstimate.client.name.lastname}}
+                      </p>
+                      <p class="subheading ma-0">{{selectedEstimate.client.company}}</p>
+                      <p class="subheading ma-0">{{selectedEstimate.client.address.street}}</p>
+                      <p class="subheading ma-0">{{selectedEstimate.client.address.street2}}</p>
+                      <p class="subheading ma-0">{{selectedEstimate.client.address.postalcode}}
+                        {{selectedEstimate.client.address.city}}</p>
+                      <p class="subheading ma-0">{{selectedEstimate.client.address.country}}</p>
+                    </div>
+                  </v-flex>
+                </v-layout>
+                <v-layout row>
+                  <v-flex xs6>
+                    <v-text-field class="ma-0 pa-0" :value="formatDate(selectedEstimate.createdAt)" readonly
+                                  label="Date d'émission"></v-text-field>
+                    <v-menu v-model="startedDateMenu" :close-on-content-click="false" :nudge-right="40" lazy
+                            transition="scale-transition" offset-y full-width min-width="290px">
+                      <template v-slot:activator="{ on }">
+                        <v-text-field class="ma-0 pa-0" v-model="selectedEstimate.startedDate" label="Date de début"
+                                      readonly
+                                      v-on="on"></v-text-field>
                       </template>
-                      <template v-slot:no-data>
-                        Aucune donnée
+                      <v-date-picker v-model="selectedEstimate.startedDate"
+                                     @input="startedDateMenu = false"></v-date-picker>
+                    </v-menu>
+                    <v-menu v-model="deliveryDateMenu" :close-on-content-click="false" :nudge-right="40" lazy
+                            transition="scale-transition" offset-y full-width min-width="290px">
+                      <template v-slot:activator="{ on }">
+                        <v-text-field class="ma-0 pa-0" v-model="selectedEstimate.deliveryDate"
+                                      label="Date de livraison" readonly
+                                      v-on="on"></v-text-field>
                       </template>
-                    </v-data-table>
-                  </v-container>
-                  <v-container>
-                    <v-layout row>
-                      <v-flex grow>
-                        <p class="subheading ma-0">Date de validité : 07/03/2019</p>
-                        <p class="subheading ma-0">Condition de règlement: 30% à la commande ...</p>
-                      </v-flex>
-                      <v-flex shrink>
-                        <p class="subheading ma-0">Sous-total HT xx€</p>
-                        <p class="subheading ma-0">TVA 10% xx€</p>
-                        <p class="subheading ma-0">Montant TTC xx€</p>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
-                </v-card-text>
-              </v-card>
-            </v-window-item>
-          </v-window>
+                      <v-date-picker v-model="selectedEstimate.deliveryDate"
+                                     @input="deliveryDateMenu = false"></v-date-picker>
+                    </v-menu>
+                  </v-flex>
+                  <v-flex xs6></v-flex>
+                </v-layout>
+              </v-container>
+              <v-container>
+                <v-data-table hide-actions :headers="headers" :items="products">
+                  <template v-slot:items="props">
+                    <td>{{ props.item.name }}</td>
+                    <td class="text-xs-right">{{ props.item.calories }}</td>
+                    <td class="justify-center layout px-0">
+                      <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+                      <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+                    </td>
+                  </template>
+                  <template v-slot:no-data>
+                    Aucune donnée
+                  </template>
+                </v-data-table>
+              </v-container>
+              <v-container>
+                <v-layout row>
+                  <v-flex grow>
+                    <p class="subheading ma-0">Date de validité : 07/03/2019</p>
+                    <p class="subheading ma-0">Condition de règlement: 30% à la commande ...</p>
+                  </v-flex>
+                  <v-flex shrink>
+                    <p class="subheading ma-0">Sous-total HT xx€</p>
+                    <p class="subheading ma-0">TVA 10% xx€</p>
+                    <p class="subheading ma-0">Montant TTC xx€</p>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-card-text>
+            <v-card-text v-else>Nothing to show</v-card-text>
+          </v-card>
         </v-flex>
       </v-layout>
     </v-container>
@@ -121,17 +148,22 @@
 
 <script>
   import {Estimate, Client, User} from "../graphql";
+  import * as moment from 'moment'
 
   export default {
     name: "Estimate",
     data() {
       return {
-        length: 20,
-        window: 0,
+        startedDateMenu: false,
+        deliveryDateMenu: false,
         search: '',
+        isDraft: true,
+        selectedEstimate: {
+          id: 0,
+        },
         meEstimates: [],
         meClients: [],
-        desserts: [],
+        products: [],
         me: {
           name: {},
           address: {}
@@ -145,18 +177,6 @@
           {text: 'Montant HT', sortable: false, value: 'priceht'},
           {text: 'Actions', value: 'name', sortable: false}
         ],
-        editedItem: {
-          clientId: '',
-          startedDate: '',
-          deliveryDate: '',
-          validityDate: '',
-        },
-        defaultItem: {
-          clientId: '',
-          startedDate: '',
-          deliveryDate: '',
-          validityDate: '',
-        }
       }
     },
     apollo: {
@@ -164,7 +184,7 @@
         query: Estimate.GET
       },
       meClients: {
-        query: Client.GET
+        query: Client.GET_FOR_DOC
       },
       me: {
         query: User.GET
@@ -172,6 +192,23 @@
     },
 
     methods: {
+
+      formatDate(date) {
+        return new Date(date).toISOString().substr(0, 10)
+      },
+
+      selectItem(item) {
+        if(item.state === 'DRAFT'){
+          this.isDraft = true
+          item.startedDate = this.formatDate(item.startedDate)
+          item.deliveryDate = this.formatDate(item.deliveryDate)
+          this.selectedEstimate = item
+        } else {
+          this.isDraft = false
+          this.selectedEstimate = item
+        }
+      },
+
       getEstimates() {
         this.$apollo.queries.meEstimates.refetch()
       },
@@ -190,18 +227,20 @@
 
       searchMethod(item) {
         let tempSearch = this.search.toLowerCase()
-        if (item.invoiceNumber.toString().toLowerCase().match(tempSearch)) {
+        if (item.estimateNumber.toString().toLowerCase().match(tempSearch)) {
           return true
-        } else if (item.name.firstname.toString().toLowerCase().match(tempSearch)) {
+        } else if (item.client.name.firstname.toString().toLowerCase().match(tempSearch)) {
           return true
-        } else if (item.name.lastname.toString().toLowerCase().match(tempSearch)) {
+        } else if (item.client.name.lastname.toString().toLowerCase().match(tempSearch)) {
+          return true
+        } else if (item.client.company.toString().toLowerCase().match(tempSearch)) {
           return true
         }
       },
 
     },
     computed: {
-      filteredSearch(){
+      filteredSearch() {
         if (this.search) {
           return this.meEstimates.filter((estimate) => {
             return this.searchMethod(estimate)
@@ -209,11 +248,6 @@
         } else {
           return this.meEstimates
         }
-      }
-    },
-    filters: {
-      fullName(value) {
-        return `${value.firstname} ${value.lastname}`
       }
     }
   }

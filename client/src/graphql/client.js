@@ -25,6 +25,27 @@ export const GET = gql`
     }
 `
 
+export const GET_FOR_DOC = gql`
+    query meClientForDoc {
+        meClients {
+            name {
+                firstname
+                lastname
+            }
+            email
+            phone
+            address {
+                street
+                street2
+                postalcode
+                city
+                country
+            }
+            company
+        }
+    }
+`
+
 export const CREATE = gql`
     mutation CreateClient($name: NameCreateOneInput!, $legalForm: ID!, $email: String, $phone: String, $address: AddressCreateOneInput!, $company: String) {
         createClient(

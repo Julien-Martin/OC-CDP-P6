@@ -53,9 +53,11 @@ type Product {
 
 type Invoice {
     id: ID! @id
-    userId: ID
-    user: Json
-    client: Json
+    userId: ID!
+    user: User @relation(name: "UserInvoice")
+    client: Client @relation(name: "ClientInvoice")
+    staticUser: Json
+    staticClient: Json
     state: State!
     invoiceNumber: String!
     billingDate: DateTime!
@@ -63,7 +65,8 @@ type Invoice {
     deadline: DateTime!
     lateFee: Float!
     message: String
-    products: [Item]!
+    staticProducts: [ItemStatic]
+    products: [Item]
     price: Float!
     footNote: String
     createdAt: DateTime @createdAt
@@ -72,16 +75,19 @@ type Invoice {
 
 type Estimate {
     id: ID! @id
-    userId: ID
-    user: Json
-    client: Json
+    userId: ID!
+    user: User @relation(name: "UserEstimate")
+    client: Client @relation(name: "ClientEstimate")
+    staticUser: Json
+    staticClient: Json
     state: State!
     estimateNumber: String!
     startedDate: DateTime!
     deliveryDate: DateTime!
     validityDate: DateTime!
     message: String
-    products: [Item]!
+    staticProducts: [ItemStatic]
+    products: [Item]
     price: Float!
     footNote: String
     createdAt: DateTime @createdAt
@@ -112,6 +118,11 @@ enum State {
 }
 
 type Item @embedded {
+    product: Product!
+    quantity: Float!
+}
+
+type ItemStatic @embedded {
     product: Json!
     quantity: Float!
 }

@@ -2,7 +2,6 @@ scalar DateTime
 scalar JSON
 # import * from "./generated/prisma.graphql"
 type Query {
-    hello: String
     users: [User]
     user(id: ID!): User
     me: User
@@ -56,8 +55,8 @@ type Mutation {
     changeInvoiceState(id: ID!, state: Int!): Invoice
     deleteInvoice(id: ID!): Boolean
 
-    createEstimate(clientId: ID!, startedDate: DateTime!, deliveryDate: DateTime!, validityDate: DateTime!, message: String, products: [ItemCreateInput!]!, footNote: String): Estimate
-    updateEstimate(id: ID!, startedDate: DateTime, deliveryDate: DateTime, validityDate: DateTime, message: String, products: [ItemCreateInput], footNote: String): Estimate
+    createEstimate(clientId: ID!, startedDate: DateTime!, deliveryDate: DateTime!, validityDate: DateTime!, message: String, products: [JSON!]!, footNote: String): Estimate
+    updateEstimate(id: ID!, startedDate: DateTime, deliveryDate: DateTime, validityDate: DateTime, message: String, products: [JSON], footNote: String): Estimate
     changeEstimateState(id: ID!, state: Int!): Estimate
     deleteEstimate(id: ID!): Boolean
 }
