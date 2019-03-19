@@ -55,10 +55,9 @@
                     <div v-if="isDraft">
                       <v-btn @click="changeClient" small flat>Changer de client</v-btn>
                     </div>
-                    {{!!selectedEstimate.client}}
+
                     <div v-if="!selectedEstimate.client">
-                      <v-select v-model="selectedEstimate.client" return-object :items="meClients" label="Client"
-                                class="mb-0">
+                      <v-select v-model="selectedEstimate.client" return-object :items="meClients" label="Client" class="mb-0">
                         <template v-slot:item="{item}">
                           {{item.name.firstname}} {{item.name.lastname}}
                         </template>
@@ -205,7 +204,9 @@
 
     methods: {
       changeClient() {
-        delete this.selectedEstimate.client
+        let estimate = Object.assign({}, this.selectedEstimate)
+        delete estimate.client
+        this.selectedEstimate = Object.assign({}, estimate)
       },
       formatDate(date) {
         return new Date(date).toISOString().substr(0, 10)
