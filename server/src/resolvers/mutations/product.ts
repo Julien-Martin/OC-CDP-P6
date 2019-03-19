@@ -5,7 +5,7 @@ export const productMutation = {
     createProduct: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         try {
-            const priceht = args.pricettc / (1 + args.vat / 100);
+            const priceht = Math.round((args.pricettc / (1 + args.vat / 100)) * 100) / 100;
             return await context.prisma.createProduct({
                 ...args,
                 priceht: priceht,

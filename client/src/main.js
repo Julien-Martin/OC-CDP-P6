@@ -8,10 +8,12 @@ import { createProvider } from './vue-apollo'
 
 import TextField from './components/TextField'
 import Alert from './components/Alert'
+import * as moment from 'moment'
 
 Vue.config.productionTip = false
 Vue.component('TextField', TextField)
 Vue.component('Alert', Alert)
+moment.locale('fr');
 
 new Vue({
   router,

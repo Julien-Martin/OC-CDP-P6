@@ -88,26 +88,24 @@
                     <v-menu v-model="startedDateMenu" :close-on-content-click="false" :nudge-right="40" lazy
                             transition="scale-transition" offset-y full-width min-width="290px">
                       <template v-slot:activator="{ on }">
-                        <v-text-field class="ma-0 pa-0" v-model="selectedEstimate.startedDate" label="Date de début"
-                                      readonly disabled
-                                      v-on="on"></v-text-field>
+                        <v-text-field class="ma-0 pa-0" :value="formatDate(selectedEstimate.startedDate)" label="Date de début"
+                                      readonly v-on="on"></v-text-field>
                       </template>
                       <v-date-picker v-model="selectedEstimate.startedDate"
-                                     @input="startedDateMenu = false"></v-date-picker>
+                                     @input="startedDateMenu = false" locale="fr"></v-date-picker>
                     </v-menu>
                     <v-menu v-model="deliveryDateMenu" :close-on-content-click="false" :nudge-right="40" lazy
                             transition="scale-transition" offset-y full-width min-width="290px">
                       <template v-slot:activator="{ on }">
-                        <v-text-field class="ma-0 pa-0" v-model="selectedEstimate.deliveryDate"
-                                      label="Date de livraison" readonly disabled
+                        <v-text-field class="ma-0 pa-0" :value="formatDate(selectedEstimate.deliveryDate)"
+                                      label="Date de livraison" readonly
                                       v-on="on"></v-text-field>
                       </template>
                       <v-date-picker v-model="selectedEstimate.deliveryDate"
-                                     @input="deliveryDateMenu = false"></v-date-picker>
+                                     @input="deliveryDateMenu = false" locale="fr"></v-date-picker>
                     </v-menu>
-                    <p class="subheading ma-0">{{selectedEstimate.message}}</p>
+                    <v-textarea label="Information générale" no-resize rows="3" :value="selectedEstimate.message"></v-textarea>
                   </v-flex>
-                  <v-flex xs6></v-flex>
                 </v-layout>
               </v-container>
               <v-container>
@@ -127,9 +125,15 @@
               <v-container>
                 <v-layout row>
                   <v-flex grow>
-                    <p class="subheading ma-0">Date de validité : {{selectedEstimate.validityDate}}</p>
+                    <v-menu v-model="validityDateMenu" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
+                      <template v-slot:activator="{ on }">
+                        <v-text-field class="ma-0 pa-0" :value="formatDate(selectedEstimate.validityDate)"
+                                      label="Date de validité" readonly v-on="on"></v-text-field>
+                      </template>
+                      <v-date-picker v-model="selectedEstimate.validityDate" @input="validityDateMenu = false" locale="fr"></v-date-picker>
+                    </v-menu>
                     <p class="subheading ma-0">Condition de règlement: {{me.paymentInfo}}</p>
-                    <p class="subheading ma-0">{{selectedEstimate.footNote}}</p>
+                    <v-textarea label="Information supplémentaire" no-resize rows="3" :value="selectedEstimate.footNote"></v-textarea>
                   </v-flex>
                   <v-flex shrink>
                     <p class="subheading ma-0">TVA non applicable, article 293 B du CGI</p>
@@ -169,6 +173,7 @@
       return {
         startedDateMenu: false,
         deliveryDateMenu: false,
+        validityDateMenu: false,
         search: '',
         isDraft: true,
         selectedEstimate: {
@@ -209,19 +214,22 @@
         this.selectedEstimate = Object.assign({}, estimate)
       },
       formatDate(date) {
+        return moment(date).format('L')
+      },
+
+      formatDateToISO(date){
         return new Date(date).toISOString().substr(0, 10)
       },
 
       selectItem(item) {
+        item.startedDate = this.formatDateToISO(item.startedDate)
+        item.deliveryDate = this.formatDateToISO(item.deliveryDate)
+        item.validityDate = this.formatDateToISO(item.validityDate)
         if(item.state === 'DRAFT'){
           this.isDraft = true
-          item.startedDate = this.formatDate(item.startedDate)
-          item.deliveryDate = this.formatDate(item.deliveryDate)
           this.selectedEstimate = Object.assign({}, item)
         } else {
           this.isDraft = false
-          item.startedDate = this.formatDate(item.startedDate)
-          item.deliveryDate = this.formatDate(item.deliveryDate)
           this.selectedEstimate = Object.assign({}, item)
         }
       },
@@ -266,7 +274,7 @@
           return this.meEstimates
         }
       }
-    }
+    },
   }
 </script>
 
