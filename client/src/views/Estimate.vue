@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{isDraft}}
     <v-container fluid>
       <v-toolbar dark color="primary" class="mb-2">
         <v-toolbar-items>
@@ -54,8 +53,9 @@
                   <v-flex shrink>
                     <p class="title ma-0">Devis n°{{selectedEstimate.estimateNumber}}</p>
                     <div v-if="isDraft">
-                      <v-btn small flat>Changer de client</v-btn>
+                      <v-btn @click="changeClient" small flat>Changer de client</v-btn>
                     </div>
+                    {{!!selectedEstimate.client}}
                     <div v-if="!selectedEstimate.client">
                       <v-select v-model="selectedEstimate.client" return-object :items="meClients" label="Client"
                                 class="mb-0">
@@ -67,7 +67,8 @@
                         </template>
                       </v-select>
                     </div>
-                    <div>
+
+                    <div v-if="!!selectedEstimate.client">
                       <p class="subheading ma-0">
                         {{selectedEstimate.client.name.firstname}}
                         {{selectedEstimate.client.name.lastname}}
@@ -84,12 +85,12 @@
                 <v-layout row>
                   <v-flex xs6>
                     <v-text-field class="ma-0 pa-0" :value="formatDate(selectedEstimate.createdAt)" readonly
-                                  label="Date d'émission"></v-text-field>
+                                  label="Date d'émission" disabled></v-text-field>
                     <v-menu v-model="startedDateMenu" :close-on-content-click="false" :nudge-right="40" lazy
                             transition="scale-transition" offset-y full-width min-width="290px">
                       <template v-slot:activator="{ on }">
                         <v-text-field class="ma-0 pa-0" v-model="selectedEstimate.startedDate" label="Date de début"
-                                      readonly
+                                      readonly disabled
                                       v-on="on"></v-text-field>
                       </template>
                       <v-date-picker v-model="selectedEstimate.startedDate"
@@ -99,25 +100,25 @@
                             transition="scale-transition" offset-y full-width min-width="290px">
                       <template v-slot:activator="{ on }">
                         <v-text-field class="ma-0 pa-0" v-model="selectedEstimate.deliveryDate"
-                                      label="Date de livraison" readonly
+                                      label="Date de livraison" readonly disabled
                                       v-on="on"></v-text-field>
                       </template>
                       <v-date-picker v-model="selectedEstimate.deliveryDate"
                                      @input="deliveryDateMenu = false"></v-date-picker>
                     </v-menu>
+                    <p class="subheading ma-0">{{selectedEstimate.message}}</p>
                   </v-flex>
                   <v-flex xs6></v-flex>
                 </v-layout>
               </v-container>
               <v-container>
-                <v-data-table hide-actions :headers="headers" :items="products">
+                <v-data-table hide-actions :headers="headers" :items="selectedEstimate.products">
                   <template v-slot:items="props">
-                    <td>{{ props.item.name }}</td>
-                    <td class="text-xs-right">{{ props.item.calories }}</td>
-                    <td class="justify-center layout px-0">
-                      <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-                      <v-icon small @click="deleteItem(props.item)">delete</v-icon>
-                    </td>
+                    <td>{{ props.item.product.description }}</td>
+                    <td>{{ props.item.product.priceht }}</td>
+                    <td>{{props.item.quantity}}</td>
+                    <td>{{props.item.product.unit || 'N/A'}}</td>
+                    <td>{{props.item.product.priceht * props.item.quantity}}</td>
                   </template>
                   <template v-slot:no-data>
                     Aucune donnée
@@ -127,13 +128,26 @@
               <v-container>
                 <v-layout row>
                   <v-flex grow>
-                    <p class="subheading ma-0">Date de validité : 07/03/2019</p>
-                    <p class="subheading ma-0">Condition de règlement: 30% à la commande ...</p>
+                    <p class="subheading ma-0">Date de validité : {{selectedEstimate.validityDate}}</p>
+                    <p class="subheading ma-0">Condition de règlement: {{me.paymentInfo}}</p>
+                    <p class="subheading ma-0">{{selectedEstimate.footNote}}</p>
                   </v-flex>
                   <v-flex shrink>
-                    <p class="subheading ma-0">Sous-total HT xx€</p>
-                    <p class="subheading ma-0">TVA 10% xx€</p>
-                    <p class="subheading ma-0">Montant TTC xx€</p>
+                    <p class="subheading ma-0">TVA non applicable, article 293 B du CGI</p>
+                    <v-layout row wrap>
+                      <v-flex md6>
+                        <p class="subheading ma-0 text-xs-right">Total HT</p>
+                      </v-flex>
+                      <v-flex md6>
+                        <p class="subheading ma-0 text-xs-right">{{selectedEstimate.price}}€</p>
+                      </v-flex>
+                      <v-flex md6>
+                        <p class="subheading ma-0 text-xs-right">Net à payer</p>
+                      </v-flex>
+                      <v-flex md6>
+                        <p class="subheading ma-0 text-xs-right">{{selectedEstimate.price}}€</p>
+                      </v-flex>
+                    </v-layout>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -173,9 +187,7 @@
           {text: 'Prix unitaire', sortable: false, value: 'priceht'},
           {text: 'Quantité', sortable: false, value: 'quantity'},
           {text: 'Unité', sortable: false, value: 'unit'},
-          {text: 'TVA', sortable: false, value: 'vat'},
           {text: 'Montant HT', sortable: false, value: 'priceht'},
-          {text: 'Actions', value: 'name', sortable: false}
         ],
       }
     },
@@ -192,7 +204,9 @@
     },
 
     methods: {
-
+      changeClient() {
+        delete this.selectedEstimate.client
+      },
       formatDate(date) {
         return new Date(date).toISOString().substr(0, 10)
       },
@@ -202,10 +216,12 @@
           this.isDraft = true
           item.startedDate = this.formatDate(item.startedDate)
           item.deliveryDate = this.formatDate(item.deliveryDate)
-          this.selectedEstimate = item
+          this.selectedEstimate = Object.assign({}, item)
         } else {
           this.isDraft = false
-          this.selectedEstimate = item
+          item.startedDate = this.formatDate(item.startedDate)
+          item.deliveryDate = this.formatDate(item.deliveryDate)
+          this.selectedEstimate = Object.assign({}, item)
         }
       },
 
