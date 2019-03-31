@@ -57,6 +57,7 @@ type Mutation {
 
     createEstimate(clientId: ID!, startedDate: DateTime!, deliveryDate: DateTime!, validityDate: DateTime!, message: String, products: [JSON!]!, footNote: String): Estimate
     updateEstimate(id: ID!, startedDate: DateTime, deliveryDate: DateTime, validityDate: DateTime, message: String, products: [JSON], footNote: String): Estimate
+    validateEstimate(id: ID!): Estimate
     changeEstimateState(id: ID!, state: Int!): Estimate
     deleteEstimate(id: ID!): Boolean
 }

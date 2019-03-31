@@ -142,7 +142,7 @@
                                     rows="3" v-model="itemArg.footNote"></v-textarea>
                     </v-flex>
                     <v-flex md6>
-                        <p class="subheading ma-0">TVA non applicable, article 293 B du CGI</p>
+                        <p class="subheading ma-0 text-md-right" v-if="!me.useVAT">TVA non applicable, article 293 B du CGI</p>
                         <v-layout row wrap>
                             <v-flex md6>
                                 <p class="subheading ma-0 text-xs-right">Total HT</p>

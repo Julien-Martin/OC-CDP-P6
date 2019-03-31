@@ -17,7 +17,7 @@
                     </v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
-                    <v-chip dark color="primary">{{docState(item.state)}}</v-chip>
+                    <v-chip dark :color="docStateColor(item.state)">{{docState(item.state)}}</v-chip>
                 </v-list-tile-action>
             </v-list-tile>
         </v-list>
@@ -56,6 +56,18 @@
                         return "PAYÉ"
                 }
             },
+            docStateColor(state){
+                switch (state) {
+                    case "DRAFT":
+                        return "grey"
+                    case "PENDING":
+                        return "primary"
+                    case "SEND":
+                        return "info"
+                    case "DONE":
+                        return "success"
+                }
+            }
         },
         watch: {
             items(value) {

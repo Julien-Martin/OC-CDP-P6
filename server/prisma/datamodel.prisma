@@ -59,7 +59,7 @@ type Invoice {
     staticUser: Json
     staticClient: Json
     state: State!
-    invoiceNumber: String!
+    invoiceNumber: String
     billingDate: DateTime!
     paymentCondition: Float!
     deadline: DateTime!
@@ -81,7 +81,7 @@ type Estimate {
     staticUser: Json
     staticClient: Json
     state: State!
-    estimateNumber: String!
+    estimateNumber: String
     startedDate: DateTime!
     deliveryDate: DateTime!
     validityDate: DateTime!

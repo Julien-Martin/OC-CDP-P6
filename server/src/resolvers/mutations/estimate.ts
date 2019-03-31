@@ -28,8 +28,6 @@ export const estimateMutation = {
                 price += productPrice * products[i].quantity
             }
             delete args.products
-            const estimateCounter = await context.prisma.estimatesConnection({where: {userId}}).aggregate().count()
-            const estimateNumber = moment().format('YYYY-MM-') + ("000" + (estimateCounter + 1)).slice(-4)
             return await context.prisma.createEstimate({
                 ...args,
                 state: "DRAFT",
@@ -43,8 +41,7 @@ export const estimateMutation = {
                 products: {
                     create: products
                 },
-                price,
-                estimateNumber
+                price
             })
         } catch (e) {
             throw new ErrorHandling("ESTIMATE001", e.message)
@@ -103,19 +100,18 @@ export const estimateMutation = {
             throw new ErrorHandling("ESTIMATE002", e.message)
         }
     },
-    /**
-     * Change estimate state to PENDING, SEND or DONE
-     * @param _
-     * @param args
-     * @param context
-     * @returns {Promise<void>}
-     */
-    changeEstimateState: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
+
+    validateEstimate: async(_, args, context: Context) => {
+        const userId = await isAuth(context)
         try {
+            const estimateState = await context.prisma.estimate({id: args.id}).$fragment(fragment.fragmentEstimateState);
+            if (estimateState['state'] !== StateEnum["0"]) throw ("Ce devis a déjà été validé, vous ne pouvez donc pas le modifier. ");
             let staticUser = await context.prisma.estimate({id: args.id}).user().$fragment(fragment.fragmentUser)
             let staticClient = await context.prisma.estimate({id: args.id}).client().$fragment(fragment.fragmentClient)
             let products = await context.prisma.estimate({id: args.id}).products().$fragment(fragment.fragmentEnsureProduct)
+
+            const estimateCounter = await context.prisma.estimatesConnection({where: {estimateNumber_gt: ""}}).aggregate().count()
+            const estimateNumber = moment().format('YYYY-MM-') + ("000" + (estimateCounter + 1)).slice(-4)
             return await context.prisma.updateUser({
                 where: {id: userId},
                 data: {
@@ -128,6 +124,35 @@ export const estimateMutation = {
                                 staticProducts: {
                                     create : products
                                 },
+                                estimateNumber,
+                                state: StateEnum[1]
+                            }
+                        }
+                    }
+                }
+            })
+        } catch (e) {
+            throw new ErrorHandling("ESTIMATE003", e.message)
+        }
+    },
+
+    /**
+     * Change estimate state to PENDING, SEND or DONE
+     * @param _
+     * @param args
+     * @param context
+     * @returns {Promise<void>}
+     */
+    changeEstimateState: async (_, args, context: Context) => {
+        const userId = await isAuth(context);
+        try {
+            return await context.prisma.updateUser({
+                where: {id: userId},
+                data: {
+                    estimates: {
+                        update: {
+                            where: {id: args.id},
+                            data: {
                                 state: StateEnum[args.state]
                             }
                         }

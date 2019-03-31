@@ -16,6 +16,9 @@
                 </v-toolbar-items>
                 <v-spacer></v-spacer>
                 <v-toolbar-items>
+                    <v-btn icon>
+                        <v-icon>done</v-icon>
+                    </v-btn>
                     <v-btn icon @click="addEstimate" v-if="selectedEstimate.id !== 1">
                         <v-icon>add</v-icon>
                     </v-btn>
@@ -114,6 +117,7 @@
                         }
                     }).then(() => {
                         this.getEstimates()
+                        this.selectedEstimate = Object.assign({}, this.defaultEstimate)
                         this.editionMode = false
                     }).catch(error => {
                         this.error = error
@@ -126,6 +130,7 @@
                         }
                     }).then(() => {
                         this.getEstimates()
+                        this.selectedEstimate = Object.assign({}, this.defaultEstimate)
                         this.editionMode = false
                     }).catch(error => {
                         this.error = error
