@@ -66,7 +66,7 @@ export const estimateMutation = {
             if (estimateState['state'] !== StateEnum["0"]) throw ("Ce devis a déjà été validé, vous ne pouvez donc pas le modifier. ");
 
             let products = args.products;
-            args.price = 0
+             let price = 0
             if (products) {
                 await context.prisma.updateEstimate({
                     where: {id: id},
@@ -76,7 +76,7 @@ export const estimateMutation = {
                     let productPrice = (await context.prisma.product({id: products[i].productId}).$fragment(fragment.fragmentProductOnlyPrice))["pricettc"]
                     products[i].product = {connect: {id: products[i].productId}}
                     delete products[i].productId
-                    args.price += productPrice * products[i].quantity
+                    price += productPrice * products[i].quantity
                 }
                 delete args.products
             }
@@ -89,7 +89,7 @@ export const estimateMutation = {
                             where: {id},
                             data: {
                                 ...args,
-                                price: args.price,
+                                price,
                                 products: {
                                     create: products
                                 },

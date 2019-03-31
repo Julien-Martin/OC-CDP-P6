@@ -1,5 +1,6 @@
 <template>
 	<div>
+		{{me}}
 		<v-container fluid>
 			<v-card>
 				<v-dialog v-model="modal.active" persistent max-width="290">
@@ -33,7 +34,7 @@
 										<v-flex xs12>
 											<v-text-field v-model="editedItem.description" label="Désignation"></v-text-field>
 										</v-flex>
-										<v-flex xs12>
+										<v-flex xs12 v-if="me.useVAT">
 											<v-select v-model="editedItem.vat" :items="vat" label="TVA"></v-select>
 										</v-flex>
 										<v-flex xs12>
@@ -76,6 +77,7 @@
 
 <script>
 	import {Product} from "../graphql";
+	import * as User from "../graphql/user";
 
 	export default {
 		data: () => ({
@@ -84,6 +86,7 @@
 			meProducts: [],
 			editedIndex: -1,
 			productId: '',
+			me: {},
 			vat: [0, 20, 10, 5.5, 2.1],
 			unit: ["", "cm", "h", "pce", "kg", "km", "m"],
 			headers: [
@@ -140,6 +143,9 @@
 		apollo: {
 			meProducts: {
 				query: Product.GET
+			},
+			me: {
+				query: User.GET_TVA
 			}
 		},
 
@@ -149,6 +155,9 @@
 			},
 
 			updateOrCreateProduct(){
+				if(!this.me.useVAT){
+					this.editedItem.vat = 0
+				}
 				if(this.editedIndex > -1){
 					this.$apollo.mutate({
 						mutation: Product.UPDATE,

@@ -30,6 +30,15 @@ export const GET = gql`
 
 `
 
+export const GET_TVA = gql`
+    {
+        me {
+            useVAT
+            VATnumber
+        }
+    }
+`
+
 export const UPDATE = gql`
     mutation UpdateMe($name: NameCreateOneInput, $phone: String, $siret: String, $useVAT: Boolean, $paymentInfo: String, $VATnumber: String, $RCS: String, $RM: String, $commercialName: String, $ape: String, $cgv: String){
         updateMe(

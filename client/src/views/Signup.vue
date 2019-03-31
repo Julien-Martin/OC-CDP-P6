@@ -1,5 +1,6 @@
 <template>
   <div id="signup">
+    <Loader :visible="loader"></Loader>
     <v-container fluid>
       <v-layout row wrap justify-center>
         <v-flex xs12>
@@ -95,6 +96,7 @@
         error: '',
         stepper: 1,
         noAccount: false,
+        loader: false,
         signin: {
           email: '',
           password: ''
@@ -106,6 +108,7 @@
     },
     methods: {
       login() {
+        this.loader = true
         const email = this.signin.email
         const password = this.signin.password
         this.$apollo.mutate({
@@ -114,6 +117,7 @@
             email, password
           }
         }).then((response) => {
+          this.loader = false
           if (!response.data.login) return
           const apolloClient = this.$apollo.provider.defaultClient
           const token = response.data.login.token
@@ -124,10 +128,12 @@
             })
           })
         }).catch(error => {
+          this.loader = false
           this.error = error.message
         })
       },
       captureEmail() {
+        this.loader = true
         const email = this.signup.email
         this.$apollo.mutate({
           mutation: Auth.CAPTURE,
@@ -135,8 +141,10 @@
             email,
           }
         }).then(() => {
+          this.loader = false
           this.stepper = 2
         }).catch(error => {
+          this.loader = false
           this.error = error.message
         })
       },

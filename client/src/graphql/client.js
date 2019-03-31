@@ -28,6 +28,7 @@ export const GET = gql`
 export const GET_FOR_DOC = gql`
     query meClientForDoc {
         meClients {
+            id
             name {
                 firstname
                 lastname

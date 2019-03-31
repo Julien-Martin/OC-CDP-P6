@@ -195,8 +195,6 @@
 			},
 
 			updateOrCreateClient() {
-				delete this.editedItem.address.__typename
-				delete this.editedItem.name.__typename
 				this.editedItem.legalForm = this.editedItem.legalForm.id ? this.editedItem.legalForm.id : this.editedItem.legalForm
 				this.editedItem.name = {create: {...this.editedItem.name}}
 				this.editedItem.address = {create: {...this.editedItem.address}}

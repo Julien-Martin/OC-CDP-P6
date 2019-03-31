@@ -61,7 +61,7 @@ export const GET = gql`
 `
 
 export const CREATE = gql`
-    mutation CreateEstimate($clientId: ID!, $startedDate: DateTime!, $deliveryDate: DateTime!, $validityDate: DateTime!, $message: String, $footNote: String, $products: [ItemCreateInput!]!){
+    mutation CreateEstimate($clientId: ID!, $startedDate: DateTime!, $deliveryDate: DateTime!, $validityDate: DateTime!, $message: String, $footNote: String, $products: [JSON!]!){
         createEstimate(
             clientId: $clientId,
             startedDate: $startedDate,
@@ -75,7 +75,7 @@ export const CREATE = gql`
 `
 
 export const UPDATE = gql`
-    mutation UpdateEstimate($id: ID!, $startedDate: DateTime, $deliveryDate: DateTime, $validityDate: DateTime, $message: String, $products: [ItemCreateInput], $footNote: String){
+    mutation UpdateEstimate($id: ID!, $startedDate: DateTime, $deliveryDate: DateTime, $validityDate: DateTime, $message: String, $products: [JSON], $footNote: String){
         updateEstimate(
             id: $id,
             startedDate: $startedDate,
