@@ -1,5 +1,5 @@
 <template>
-  <div id="appToolbar">
+  <div id="appToolbar" class="hidden-print-only">
     <v-toolbar color="primary" dark fixed app clipped-right>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>ME Assistant</v-toolbar-title>

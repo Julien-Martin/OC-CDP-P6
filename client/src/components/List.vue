@@ -12,9 +12,15 @@
                 <v-list-tile-content>
                     <v-list-tile-title v-if="typeArg === 'Estimate'">Devis {{item.estimateNumber}}</v-list-tile-title>
                     <v-list-tile-title v-else>Devis {{item.invoiceNumber}}</v-list-tile-title>
-                    <v-list-tile-sub-title v-if="item.client.company">{{ item.client.company }}</v-list-tile-sub-title>
-                    <v-list-tile-sub-title v-else>{{item.client.name.firstname}} {{item.client.name.lastname}}
-                    </v-list-tile-sub-title>
+
+                    <div v-if="item.staticClient">
+                        <v-list-tile-sub-title v-if="item.staticClient.company">{{item.staticClient.company}}</v-list-tile-sub-title>
+                        <v-list-tile-sub-title v-else>{{item.staticClient.name.firstname}} {{item.staticClient.name.lastname}}</v-list-tile-sub-title>
+                    </div>
+                    <div v-else>
+                        <v-list-tile-sub-title v-if="item.client.company">{{ item.client.company }}</v-list-tile-sub-title>
+                        <v-list-tile-sub-title v-else>{{item.client.name.firstname}} {{item.client.name.lastname}}</v-list-tile-sub-title>
+                    </div>
                 </v-list-tile-content>
                 <v-list-tile-action>
                     <v-chip dark :color="docStateColor(item.state)">{{docState(item.state)}}</v-chip>
@@ -53,7 +59,7 @@
                     case "SEND":
                         return "ENVOYÉ"
                     case "DONE":
-                        return "PAYÉ"
+                        return "VALIDÉ"
                 }
             },
             docStateColor(state){
@@ -61,13 +67,13 @@
                     case "DRAFT":
                         return "grey"
                     case "PENDING":
-                        return "primary"
-                    case "SEND":
                         return "info"
+                    case "SEND":
+                        return "warning"
                     case "DONE":
                         return "success"
                 }
-            }
+            },
         },
         watch: {
             items(value) {
@@ -83,6 +89,6 @@
 <style scoped>
     #custom-list {
         overflow-y: auto;
-        max-height: calc(100vh - 88px)
+        max-height: calc(100vh - 168px)
     }
 </style>

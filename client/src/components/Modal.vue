@@ -1,6 +1,7 @@
 <template>
     <v-dialog v-model="visibilityArg" persistent max-width="290">
         <v-card>
+            <v-card-title class="headline" v-if="titleArg">{{titleArg}}</v-card-title>
             <v-card-text class="subheading">{{messageArg}}</v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
@@ -16,11 +17,13 @@
         name: "Modal",
         props: {
             visibility: Boolean,
-            message: String
+            message: String,
+            title: String
         },
         data() {
             return {
                 visibilityArg: this.visibility,
+                titleArg: this.title,
                 messageArg: this.message
             }
         },
@@ -37,6 +40,9 @@
         watch: {
             visibility(value) {
                 this.visibilityArg = value
+            },
+            title(value) {
+                this.titleArg = value
             },
             message(value) {
                 this.messageArg = value

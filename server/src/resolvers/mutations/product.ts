@@ -61,6 +61,10 @@ export const productMutation = {
     deleteProduct: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         try {
+            let estimateCounter = (await context.prisma.estimates({where: {products_some: {product: {id: args.id}}}})).length
+            let invoiceCounter = (await context.prisma.invoices({where: {products_some: {product: {id: args.id}}}})).length
+            if(estimateCounter) throw("Ce produit est associé a des devis.")
+            if(invoiceCounter) throw("Ce produit est associé a une facture.")
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {
@@ -73,7 +77,7 @@ export const productMutation = {
             });
             return true
         } catch (e) {
-            throw new ErrorHandling("PRODUCT003", e.message)
+            throw new ErrorHandling("PRODUCT003", e)
         }
     },
 };

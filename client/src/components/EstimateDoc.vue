@@ -1,9 +1,19 @@
 <template>
-    <v-card>
+    <v-card max-width="827">
         <v-card-text v-if="itemArg.id !== 0">
             <v-container>
                 <v-layout row>
-                    <v-flex grow>
+                    <v-flex grow v-if="itemArg.staticUser">
+                        <strong class="title ma-0">{{itemArg.staticUser.commercialName}}</strong>
+                        <p class="subheading ma-0">{{itemArg.staticUser.name.firstname}}
+                            {{itemArg.staticUser.name.lastname}}</p>
+                        <p class="subheading ma-0">{{itemArg.staticUser.address.street}}</p>
+                        <p class="subheading ma-0">{{itemArg.staticUser.address.street2}}</p>
+                        <p class="subheading ma-0">{{itemArg.staticUser.address.postalcode}}
+                            {{itemArg.staticUser.address.city}}</p>
+                        <p class="subheading ma-0">{{itemArg.staticUser.address.country}}</p>
+                    </v-flex>
+                    <v-flex grow v-else>
                         <strong class="title ma-0">{{me.commercialName}}</strong>
                         <p class="subheading ma-0">{{me.name.firstname}} {{me.name.lastname}}</p>
                         <p class="subheading ma-0">{{me.address.street}}</p>
@@ -12,12 +22,15 @@
                         <p class="subheading ma-0">{{me.address.country}}</p>
                     </v-flex>
                     <v-flex shrink>
-                        <p v-if="itemArg.id !== 1" class="title ma-0">Devis n°{{itemArg.estimateNumber}}</p>
-                        <div v-if="item.state === 'DRAFT'">
+                        <p v-if="itemArg.id !== 1 && itemArg.estimateNumber" class="title ma-0">Devis
+                            n°{{itemArg.estimateNumber}}</p>
+                        <p v-else class="title ma-0">BROUILLON</p>
+
+                        <div v-if="item.state === 'DRAFT' && !!itemArg.client">
                             <v-btn @click="changeClient" small flat>Changer de client</v-btn>
                         </div>
 
-                        <div v-if="!itemArg.client">
+                        <div v-if="!itemArg.client && !itemArg.staticClient">
                             <v-select v-model="itemArg.client" return-object :items="meClients" label="Client"
                                       class="mb-0">
                                 <template v-slot:item="{item}">
@@ -29,7 +42,7 @@
                             </v-select>
                         </div>
 
-                        <div v-if="!!itemArg.client">
+                        <div v-if="!!itemArg.client && !itemArg.staticClient">
                             <p class="subheading ma-0">
                                 {{itemArg.client.name.firstname}}
                                 {{itemArg.client.name.lastname}}
@@ -40,6 +53,18 @@
                             <p class="subheading ma-0">{{itemArg.client.address.postalcode}}
                                 {{itemArg.client.address.city}}</p>
                             <p class="subheading ma-0">{{itemArg.client.address.country}}</p>
+                        </div>
+                        <div v-else-if="itemArg.staticClient">
+                            <p class="subheading ma-0">
+                                {{itemArg.staticClient.name.firstname}}
+                                {{itemArg.staticClient.name.lastname}}
+                            </p>
+                            <p class="subheading ma-0">{{itemArg.staticClient.company}}</p>
+                            <p class="subheading ma-0">{{itemArg.staticClient.address.street}}</p>
+                            <p class="subheading ma-0">{{itemArg.staticClient.address.street2}}</p>
+                            <p class="subheading ma-0">{{itemArg.staticClient.address.postalcode}}
+                                {{itemArg.staticClient.address.city}}</p>
+                            <p class="subheading ma-0">{{itemArg.staticClient.address.country}}</p>
                         </div>
                     </v-flex>
                 </v-layout>
@@ -74,14 +99,14 @@
                                            @input="deliveryDateMenu = false"
                                            locale="fr"></v-date-picker>
                         </v-menu>
-                        <v-textarea v-if="itemArg.footNote || itemArg.state === 'DRAFT'"
+                        <v-textarea v-if="itemArg.message || itemArg.state === 'DRAFT'"
                                     :disabled="itemArg.state !== 'DRAFT'" label="Informations générales" no-resize
                                     rows="3" v-model="itemArg.message"></v-textarea>
                     </v-flex>
                 </v-layout>
             </v-container>
             <v-container>
-                <v-data-table hide-actions :headers="tableHeader" :items="itemArg.products">
+                <v-data-table hide-actions :headers="tableHeader" :items="staticProducts">
                     <template v-slot:items="props">
                         <td v-if="props.item.product.description">{{ props.item.product.description }}</td>
                         <td>{{ props.item.product.priceht }}</td>
@@ -142,7 +167,8 @@
                                     rows="3" v-model="itemArg.footNote"></v-textarea>
                     </v-flex>
                     <v-flex md6>
-                        <p class="subheading ma-0 text-md-right" v-if="!me.useVAT">TVA non applicable, article 293 B du CGI</p>
+                        <p class="subheading ma-0 text-md-right" v-if="!me.useVAT">TVA non applicable, article 293 B du
+                            CGI</p>
                         <v-layout row wrap>
                             <v-flex md6>
                                 <p class="subheading ma-0 text-xs-right">Total HT</p>
@@ -202,11 +228,7 @@
                 query: User.GET
             }
         },
-
         methods: {
-            editionMode(){
-              console.log('test')
-            },
             changeClient() {
                 let estimate = Object.assign({}, this.itemArg)
                 delete estimate.client
@@ -246,6 +268,13 @@
             },
         },
         computed: {
+            staticProducts() {
+                if (this.itemArg.state !== "DRAFT") {
+                    return this.itemArg.staticProducts
+                } else {
+                    return this.itemArg.products
+                }
+            },
             tableHeader() {
                 let headers = []
                 if (this.itemArg.state !== "DRAFT") {

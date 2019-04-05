@@ -22,3 +22,16 @@
 		}
 	}
 </script>
+
+<style>
+	@media print {
+		.v-card {
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+		}
+		.v-content {
+			padding: 0 !important;
+		}
+	}
+</style>

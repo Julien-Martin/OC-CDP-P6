@@ -4,8 +4,7 @@ import './plugins/veevalidate'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { createProvider } from './vue-apollo'
-
+import {createProvider} from './vue-apollo'
 import TextField from './components/TextField'
 import Alert from './components/Alert'
 import Loader from './components/Loader'
@@ -20,8 +19,8 @@ Vue.component('Modal', Modal)
 moment.locale('fr');
 
 new Vue({
-  router,
-  store,
-  apolloProvider: createProvider(),
-  render: h => h(App)
+    router,
+    store,
+    apolloProvider: createProvider(),
+    render: h => h(App)
 }).$mount('#app')

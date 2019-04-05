@@ -88,6 +88,6 @@ export const userQuery = {
      */
     meEstimate: async (_, args, context: Context) => {
         const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).estimates({where: {id: args.id}})
+        return await context.prisma.estimate({id: args.id})
     },
 };

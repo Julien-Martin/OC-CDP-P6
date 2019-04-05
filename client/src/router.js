@@ -5,6 +5,7 @@ import Signup from './views/Signup'
 import Confirmation from './views/Confirmation'
 import Settings from './views/Settings'
 import Dashboard from './views/Dashboard'
+import Estimates from './views/Estimates'
 import Estimate from './views/Estimate'
 import Client from './views/Client'
 import Product from './views/Product'
@@ -58,6 +59,12 @@ const router = new Router({
 		{
 			path: '/estimates',
 			name: 'Devis',
+			component: Estimates,
+			beforeEnter: isAuth
+		},
+		{
+			path: '/estimates/:id',
+			name: 'Devis solo',
 			component: Estimate,
 			beforeEnter: isAuth
 		},

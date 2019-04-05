@@ -36,6 +36,10 @@ export const GET = gql`
             }
             staticUser
             staticClient
+            staticProducts {
+                product
+                quantity
+            }
             estimateNumber
             startedDate
             deliveryDate
@@ -59,7 +63,28 @@ export const GET = gql`
     }
 
 `
+export const GET_ONE = gql`
+    query estimate($id: ID!) {
+        meEstimate(id: $id) {
+            state
+            staticUser
+            staticClient
+            staticProducts {
+                product
+                quantity
+            }
+            estimateNumber
+            startedDate
+            deliveryDate
+            validityDate
+            message
+            price
+            footNote
+            createdAt
+        }
+    }
 
+`
 export const CREATE = gql`
     mutation CreateEstimate($clientId: ID!, $startedDate: DateTime!, $deliveryDate: DateTime!, $validityDate: DateTime!, $message: String, $footNote: String, $products: [JSON!]!){
         createEstimate(
@@ -85,6 +110,14 @@ export const UPDATE = gql`
             products: $products,
             footNote: $footNote
         ){id}
+    }
+`
+
+export const VALIDATE_ESTIMATE = gql`
+    mutation ValidateEstimate($id: ID!){
+        validateEstimate(id: $id){
+            id
+        }
     }
 `
 
