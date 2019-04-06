@@ -4,7 +4,8 @@ export const fragment = {
 			name {
 				firstname 
 				lastname
-			} 
+			}
+			email
 			address {
 				street 
 				street2 

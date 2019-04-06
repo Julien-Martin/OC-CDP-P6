@@ -22,8 +22,8 @@
                         <p class="subheading ma-0">{{me.address.country}}</p>
                     </v-flex>
                     <v-flex shrink>
-                        <p v-if="itemArg.id !== 1 && itemArg.estimateNumber" class="title ma-0">Devis
-                            n°{{itemArg.estimateNumber}}</p>
+                        <p v-if="itemArg.id !== 1 && itemArg.invoiceNumber" class="title ma-0">Facture
+                            n°{{itemArg.invoiceNumber}}</p>
                         <p v-else class="title ma-0">BROUILLON</p>
 
                         <div v-if="item.state === 'DRAFT' && !!itemArg.client">
@@ -72,33 +72,25 @@
                     <v-flex xs6>
                         <v-text-field v-if="itemArg.id !== 1" class="ma-0 pa-0" :value="cleanDate(itemArg.createdAt)"
                                       readonly label="Date d'émission" disabled></v-text-field>
-                        <v-menu v-model="startedDateMenu" :close-on-content-click="false"
+                        <v-menu v-model="billingDateMenu" :close-on-content-click="false"
                                 :nudge-right="40" lazy
                                 transition="scale-transition" offset-y full-width min-width="290px">
                             <template v-slot:activator="{ on }">
                                 <v-text-field class="ma-0 pa-0"
-                                              :value="cleanDate(itemArg.startedDate)"
-                                              label="Date de début"
+                                              :value="cleanDate(itemArg.billingDate)"
+                                              label="Date de facturation"
                                               readonly v-on="on"
                                               :disabled="itemArg.state !== 'DRAFT'"></v-text-field>
                             </template>
-                            <v-date-picker v-model="startedDate" @input="startedDateMenu = false"
+                            <v-date-picker v-model="billingDate" @input="billingDateMenu = false"
                                            locale="fr"></v-date-picker>
                         </v-menu>
-                        <v-menu v-model="deliveryDateMenu" :close-on-content-click="false"
-                                :nudge-right="40" lazy transition="scale-transition" offset-y full-width
-                                min-width="290px">
-                            <template v-slot:activator="{ on }">
-                                <v-text-field class="ma-0 pa-0"
-                                              :value="cleanDate(itemArg.deliveryDate)"
-                                              label="Date de livraison" readonly
-                                              v-on="on"
-                                              :disabled="itemArg.state !== 'DRAFT'"></v-text-field>
-                            </template>
-                            <v-date-picker v-model="deliveryDate"
-                                           @input="deliveryDateMenu = false"
-                                           locale="fr"></v-date-picker>
-                        </v-menu>
+                        <v-select v-if="itemArg.paymentCondition || itemArg.state === 'DRAFT'"
+                                  :disabled="itemArg.state !== 'DRAFT'"
+                                  v-model="itemArg.paymentCondition" return-object :items="paymentCondition" label="Condition de paiement" class="mb-0">
+                            <template v-slot:item="{item}">{{item}} jours</template>
+                            <template v-slot:selection="{item}">{{item}} jours</template>
+                        </v-select>
                         <v-textarea v-if="itemArg.message || itemArg.state === 'DRAFT'"
                                     :disabled="itemArg.state !== 'DRAFT'" label="Informations générales" no-resize
                                     rows="3" v-model="itemArg.message"></v-textarea>
@@ -143,81 +135,52 @@
                         </v-flex>
                     </v-layout>
                 </v-container>
+                <v-container>
+                    <v-layout row>
+                        <v-flex md6>
+                            <p class="subheading ma-0" v-if="me.paymentInfo">Condition de règlement: {{me.paymentInfo}}</p>
+                            <v-textarea v-if="itemArg.footNote || itemArg.state === 'DRAFT'"
+                                        :disabled="itemArg.state !== 'DRAFT'" label="Informations supplémentaires" no-resize
+                                        rows="3" v-model="itemArg.footNote"></v-textarea>
+                            <v-text-field v-if="itemArg.id !== 1" class="ma-0 pa-0" :value="cleanDate(itemArg.deadline)"
+                                          readonly label="Date limite de paiement" disabled></v-text-field>
+                        </v-flex>
+                        <v-flex md6>
+                            <p class="subheading ma-0 text-xs-right" v-if="!me.useVAT">TVA non applicable, article 293 B du
+                                CGI</p>
+                            <v-layout row>
+                                <v-flex md6>
+                                    <p class="subheading ma-0 text-xs-right">Total HT</p>
+                                </v-flex>
+                                <v-flex md6>
+                                    <p class="subheading ma-0 text-xs-right">{{itemArg.price}}€</p>
+                                </v-flex>
+                            </v-layout>
+                            <v-layout row>
+                                <v-flex md6>
+                                    <p class="subheading ma-0 text-xs-right">Net à payer</p>
+                                </v-flex>
+                                <v-flex md6>
+                                    <p class="subheading ma-0 text-xs-right">{{itemArg.price}}€</p>
+                                </v-flex>
+                            </v-layout>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
             </v-container>
-            <v-container>
-                <v-layout row>
-                    <v-flex md6>
-                        <v-menu v-model="validityDateMenu" :close-on-content-click="false"
-                                :nudge-right="40" lazy
-                                transition="scale-transition" offset-y full-width min-width="290px">
-                            <template v-slot:activator="{ on }">
-                                <v-text-field class="ma-0 pa-0"
-                                              :value="cleanDate(itemArg.validityDate)"
-                                              label="Date de validité" readonly
-                                              v-on="on"
-                                              :disabled="itemArg.state !== 'DRAFT'"></v-text-field>
-                            </template>
-                            <v-date-picker v-model="validityDate"
-                                           @input="validityDateMenu = false"
-                                           locale="fr"></v-date-picker>
-                        </v-menu>
-                        <p class="subheading ma-0" v-if="me.paymentInfo">Condition de règlement: {{me.paymentInfo}}</p>
-                        <v-textarea v-if="itemArg.footNote || itemArg.state === 'DRAFT'"
-                                    :disabled="itemArg.state !== 'DRAFT'" label="Informations supplémentaires" no-resize
-                                    rows="3" v-model="itemArg.footNote"></v-textarea>
-                    </v-flex>
-                    <v-flex md6>
-                        <p class="subheading ma-0 text-xs-right" v-if="!me.useVAT">TVA non applicable, article 293 B du
-                            CGI</p>
-                        <v-layout row>
-                            <v-flex md6>
-                                <p class="subheading ma-0 text-xs-right">Total HT</p>
-                            </v-flex>
-                            <v-flex md6>
-                                <p class="subheading ma-0 text-xs-right">{{itemArg.price}}€</p>
-                            </v-flex>
-                        </v-layout>
-                        <v-layout row>
-                            <v-flex md6>
-                                <p class="subheading ma-0 text-xs-right">Net à payer</p>
-                            </v-flex>
-                            <v-flex md6>
-                                <p class="subheading ma-0 text-xs-right">{{itemArg.price}}€</p>
-                            </v-flex>
-                        </v-layout>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <div v-if="itemArg.staticUser">
-                <p class="body-1 text-xs-center mb-0">{{itemArg.staticUser.name.firstname}}
-                    {{itemArg.staticUser.name.lastname}} - {{itemArg.staticUser.address.street}}
-                    {{itemArg.staticUser.address.street2}} {{itemArg.staticUser.address.postalcode}}
-                    {{itemArg.staticUser.address.city}} - {{itemArg.staticUser.email}}</p>
-                <p class="body-1 text-xs-center">Siret: {{itemArg.staticUser.siret}} <span
-                        v-if="itemArg.staticUser.rcs">- RCS: {{itemArg.staticUser.rcs}}</span><span
-                        v-if="itemArg.staticUser.ape">- APE: {{itemArg.staticUser.ape}}</span><span
-                        v-if="itemArg.staticUser.RM">- RM: {{itemArg.staticUser.RM}}</span></p>
-            </div>
-            <div v-else>
-                <p class="body-1 text-xs-center mb-0">{{me.name.firstname}} {{me.name.lastname}} - {{me.address.street}}
-                    {{me.address.street2}} {{me.address.postalcode}} {{me.address.city}} - {{me.email}}</p>
-                <p class="body-1 text-xs-center">Siret: {{me.siret}} <span v-if="me.rcs">- RCS: {{me.rcs}}</span><span
-                        v-if="me.ape">- APE: {{me.ape}}</span><span v-if="me.RM">- RM: {{me.RM}}</span></p>
-            </div>
-
         </v-card-text>
         <v-card-text v-else>Veuillez sélectionner un devis.</v-card-text>
     </v-card>
 </template>
 
 <script>
-  import * as moment from 'moment'
   import {Client, User, Product} from "../graphql";
+  import * as moment from 'moment'
 
   export default {
-    name: "EstimateDoc",
+    name: "InvoiceDoc",
     props: {
-      item: Object,
+      item: Object
     },
     data() {
       return {
@@ -225,17 +188,13 @@
         me: {},
         meClients: [],
         meProducts: [],
-        startedDateMenu: false,
-        deliveryDateMenu: false,
-        validityDateMenu: false,
-        startedDate: new Date().toISOString().substr(0, 10),
-        deliveryDate: new Date().toISOString().substr(0, 10),
-        validityDate: new Date().toISOString().substr(0, 10),
         tempProduct: {},
         tempQuantity: 1,
+        billingDate: new Date().toISOString().substr(0, 10),
+        billingDateMenu: false,
+        paymentCondition: [0, 7, 14, 30, 60, 90]
       }
     },
-
     apollo: {
       meClients: {
         query: Client.GET_FOR_DOC
@@ -249,9 +208,9 @@
     },
     methods: {
       changeClient() {
-        let estimate = Object.assign({}, this.itemArg)
-        delete estimate.client
-        this.itemArg = Object.assign({}, estimate)
+        let invoice = Object.assign({}, this.itemArg)
+        delete invoice.client
+        this.itemArg = Object.assign({}, invoice)
       },
 
       cleanDate(date) {
@@ -259,13 +218,13 @@
       },
 
       deleteProduct(item) {
-        const index = this.itemArg.products.indexOf(item)
+        let index = this.itemArg.products.indexOf(item)
         this.itemArg.products.splice(index, 1)
         this.updatePrice()
       },
 
       updatePrice() {
-        let tempPrice = 0;
+        let tempPrice = 0
         for (let i = 0; i < this.itemArg.products.length; i++) {
           tempPrice += this.itemArg.products[i].product.pricettc * this.itemArg.products[i].quantity
         }
@@ -284,7 +243,7 @@
           this.itemArg.products.push(product)
           this.updatePrice()
         }
-      },
+      }
     },
     computed: {
       staticProducts() {
@@ -294,6 +253,7 @@
           return this.itemArg.products
         }
       },
+
       tableHeader() {
         let headers = []
         if (this.itemArg.state !== "DRAFT") {
@@ -321,15 +281,13 @@
       item(value) {
         this.itemArg = value
       },
-      startedDate(value) {
-        this.itemArg.startedDate = value
-      },
-      deliveryDate(value) {
-        this.itemArg.deliveryDate = value
-      },
-      validityDate(value) {
-        this.itemArg.validityDate = value
+      billingDate(value){
+        this.itemArg.billingDate = value
       },
     }
   }
 </script>
+
+<style scoped>
+
+</style>

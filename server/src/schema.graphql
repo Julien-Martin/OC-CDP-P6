@@ -50,8 +50,9 @@ type Mutation {
     updateClient(id: ID!, name: NameCreateOneInput, legalForm: ID, email: String, phone: String, address: AddressCreateOneInput, company: String): Client
     deleteClient(id: ID!): Boolean
 
-    createInvoice(clientId: ID!, billingDate: DateTime!, paymentCondition: Float!, lateFee: Float!, message: String, products: [ItemCreateInput!]!, footNote: String): Invoice
-    updateInvoice(id: ID!, billingDate: DateTime, paymentCondition: Float, lateFee: Float, message: String, products: [ItemCreateInput], footNote: String, state: String): Invoice
+    createInvoice(clientId: ID!, billingDate: DateTime!, paymentCondition: Float!, lateFee: Float!, message: String, products: [JSON!]!, footNote: String): Invoice
+    updateInvoice(id: ID!, billingDate: DateTime, paymentCondition: Float, lateFee: Float, message: String, products: [JSON], footNote: String, state: String): Invoice
+    validateInvoice(id: ID!): Invoice
     changeInvoiceState(id: ID!, state: Int!): Invoice
     deleteInvoice(id: ID!): Boolean
 

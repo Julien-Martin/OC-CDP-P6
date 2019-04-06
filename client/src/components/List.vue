@@ -11,9 +11,9 @@
                          :class="selectedItem === item ? 'grey lighten-3' : ''">
                 <v-list-tile-content>
                     <v-list-tile-title v-if="typeArg === 'Estimate'">Devis {{item.estimateNumber}}</v-list-tile-title>
-                    <v-list-tile-title v-else>Devis {{item.invoiceNumber}}</v-list-tile-title>
+                    <v-list-tile-title v-else>Facture {{item.invoiceNumber}}</v-list-tile-title>
 
-                    <div v-if="item.staticClient">
+                    <div v-if="!!item.staticClient">
                         <v-list-tile-sub-title v-if="item.staticClient.company">{{item.staticClient.company}}</v-list-tile-sub-title>
                         <v-list-tile-sub-title v-else>{{item.staticClient.name.firstname}} {{item.staticClient.name.lastname}}</v-list-tile-sub-title>
                     </div>

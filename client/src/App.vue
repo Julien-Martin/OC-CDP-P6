@@ -25,6 +25,11 @@
 
 <style>
 	@media print {
+		@page
+		{
+			size:  auto;
+			margin: 0;
+		}
 		.v-card {
 			-webkit-box-shadow: none;
 			-moz-box-shadow: none;

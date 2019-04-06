@@ -6,10 +6,9 @@ import Confirmation from './views/Confirmation'
 import Settings from './views/Settings'
 import Dashboard from './views/Dashboard'
 import Estimates from './views/Estimates'
-import Estimate from './views/Estimate'
 import Client from './views/Client'
 import Product from './views/Product'
-import Invoice from './views/Invoice'
+import Invoices from './views/Invoices'
 import LegalForm from './views/LegalForm'
 
 import {isAdmin, isAuth, isNotAuth} from "./utils";
@@ -63,15 +62,9 @@ const router = new Router({
 			beforeEnter: isAuth
 		},
 		{
-			path: '/estimates/:id',
-			name: 'Devis solo',
-			component: Estimate,
-			beforeEnter: isAuth
-		},
-		{
 			path: '/invoices',
 			name: 'Factures',
-			component: Invoice,
+			component: Invoices,
 			beforeEnter: isAuth
 		},
 		{

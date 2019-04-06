@@ -13,6 +13,7 @@ import {User} from './User'
 import {Product} from './Product'
 import {Client} from './Client'
 import {Estimate} from "./Estimate";
+import {Invoice} from "./Invoice";
 
 export default {
     Query: {
@@ -32,4 +33,5 @@ export default {
     Product,
     Client,
     Estimate,
+    Invoice
 };
