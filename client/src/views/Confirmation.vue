@@ -93,7 +93,7 @@
 										<TextField v-if="signup.useVAT" class="xs12" v-model="signup.VATnumber"
 															 label="Numéro de TVA"></TextField>
 										<v-flex xs12>
-											<v-textarea rows="3" no-resize label="Information de paiement"
+											<v-textarea v-model="signup.paymentInfo" rows="3" no-resize label="Information de paiement"
 																	placeholder="Virement sur l'IBAN, Carte bancaire, Chèque à l'ordre de ..."></v-textarea>
 										</v-flex>
 										<TextField class="xs12" v-model="signup.RCS" hint="Pour les activités de commerces"
@@ -103,7 +103,7 @@
 										<TextField class="xs12" v-model="signup.commercialName" hint="Facultatif"
 															 label="Nom commercial"></TextField>
 										<v-flex xs12>
-											<v-textarea rows="4" no-resize
+											<v-textarea rows="4" no-resize v-model="signup.cgv"
 																	placeholder="Les conditions générales de vente décrites ci-après détaillent les droits et obligations de la société...."
 																	label="Conditions générales de vente"></v-textarea>
 										</v-flex>

@@ -40,9 +40,10 @@ export const GET_TVA = gql`
 `
 
 export const UPDATE = gql`
-    mutation UpdateMe($name: NameCreateOneInput, $phone: String, $siret: String, $useVAT: Boolean, $paymentInfo: String, $VATnumber: String, $RCS: String, $RM: String, $commercialName: String, $ape: String, $cgv: String){
+    mutation UpdateMe($name: JSON, $address: JSON, $phone: String, $siret: String, $useVAT: Boolean, $paymentInfo: String, $VATnumber: String, $RCS: String, $RM: String, $commercialName: String, $ape: String, $cgv: String){
         updateMe(
             name: $name,
+            address: $address,
             phone: $phone,
             siret: $siret,
             useVAT: $useVAT,
@@ -54,6 +55,15 @@ export const UPDATE = gql`
             ape: $ape,
             cgv: $cgv
         ){id}
+    }
+`
+
+export const UPDATE_PASSWORD = gql`
+    mutation UpdatePassword($oldpassword: String!, $password: String!){
+        updatePassword(
+            oldpassword: $oldpassword,
+            password: $password
+        )
     }
 `
 
