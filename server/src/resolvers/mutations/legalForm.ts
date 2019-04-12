@@ -16,7 +16,7 @@ export const legalFormMutation = {
                 ...args
             })
         } catch (e) {
-            throw new ErrorHandling("LEGALFORM001")
+            throw new ErrorHandling("LEGALFORM001", e.message)
         }
     },
     /**
@@ -28,13 +28,15 @@ export const legalFormMutation = {
      */
     updateLegalForm: async (_, args, context: Context) => {
         const userId = await isAdmin(context);
+        const id = args.id;
+        delete args.id;
         try {
             return await context.prisma.updateLegalForm({
-                where: {id: args.id},
+                where: {id: id},
                 data: args
             })
         } catch (e) {
-            throw new ErrorHandling("LEGALFORM002")
+            throw new ErrorHandling("LEGALFORM002", e.message)
         }
     },
     /**
@@ -49,7 +51,7 @@ export const legalFormMutation = {
         try {
             await context.prisma.deleteLegalForm({id: args.id})
         } catch (e) {
-            throw new ErrorHandling("LEGALFORM003")
+            throw new ErrorHandling("LEGALFORM003", e.message)
         }
     },
 };

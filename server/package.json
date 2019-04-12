@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon -x ts-node src/app.ts",
+    "start": "nodemon -x ts-node-dev src/app.ts",
+    "dev": "ts-node-dev --respawn --transpileOnly src/app.ts",
     "build": "rimraf dist && tsc"
   },
   "author": "Julien Martin",
@@ -13,21 +13,22 @@
   "dependencies": {
     "bcrypt": "3.0.3",
     "graphql-import": "^0.7.1",
-    "graphql-yoga": "1.17.2",
-    "jsonwebtoken": "^8.3.0",
+    "graphql-yoga": "^1.17.4",
+    "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "nodemailer": "^5.1.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
-    "@types/node": "^10.12.21",
-    "@types/nodemailer": "^4.6.5",
+    "@types/node": "^10.14.4",
+    "@types/nodemailer": "^4.6.7",
     "dotenv": "^6.0.0",
-    "nodemon": "^1.18.9",
-    "prisma": "^1.25.7",
+    "nodemon": "^1.18.10",
+    "prisma": "^1.29.2",
     "rimraf": "^2.6.3",
-    "ts-node": "^8.0.2",
-    "typescript": "^3.3.1"
+    "ts-node": "^8.0.3",
+    "ts-node-dev": "^1.0.0-pre.32",
+    "typescript": "^3.4.1"
   },
   "nodemonConfig": {
     "ext": "ts,json,graphql"

@@ -45,17 +45,7 @@ export const adminQuery = {
         const userId = await isAdmin(context);
         return await context.prisma.product({id: args.id})
     },
-    /**
-     * Get all product by user
-     * @param _
-     * @param args
-     * @param context
-     * @returns {Promise<*>}
-     */
-    productsByUser: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
-        return await context.prisma.products({where: {user: {id: args.id}}})
-    },
+
     /**
      * Get all clients
      * @param _
@@ -79,17 +69,6 @@ export const adminQuery = {
         return await context.prisma.product({id: args.id})
     },
     /**
-     * Get all client by user
-     * @param _
-     * @param args
-     * @param context
-     * @returns {Promise<*|Promise<*>>}
-     */
-    clientsByUser: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
-        return await context.prisma.products({where: {user: {id: args.id}}})
-    },
-    /**
      * Get all Legal Form
      * @param _
      * @param args
@@ -97,7 +76,7 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     legalForms: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
+        const userId = await isAuth(context);
         return await context.prisma.legalForms()
     },
     /**
@@ -108,7 +87,7 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     legalForm: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
+        const userId = await isAuth(context);
         return await context.prisma.legalForm({id: args.id})
     },
     /**
