@@ -2,10 +2,16 @@ import {Context, isAuth} from '../../utils'
 import {ErrorHandling} from "../../utils/errors";
 
 export const productMutation = {
+    /**
+     * Create product for current user
+     * @param _
+     * @param args
+     * @param context
+     */
     createProduct: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         try {
-            const priceht = args.pricettc / (1 + args.vat / 100);
+            const priceht = Math.round((args.pricettc / (1 + args.vat / 100)) * 100) / 100;
             return await context.prisma.createProduct({
                 ...args,
                 priceht: priceht,
@@ -16,7 +22,7 @@ export const productMutation = {
                 },
             })
         } catch (e) {
-            throw new ErrorHandling("PRODUCT001")
+            throw new ErrorHandling("PRODUCT001", e.message)
         }
     },
     /**
@@ -48,7 +54,7 @@ export const productMutation = {
             });
             return await context.prisma.product({id: id})
         } catch (e) {
-            throw new ErrorHandling("PRODUCT002")
+            throw new ErrorHandling("PRODUCT002", e.message)
         }
     },
     /**
@@ -61,6 +67,10 @@ export const productMutation = {
     deleteProduct: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         try {
+            let estimateCounter = (await context.prisma.estimates({where: {products_some: {product: {id: args.id}}}})).length;
+            let invoiceCounter = (await context.prisma.invoices({where: {products_some: {product: {id: args.id}}}})).length;
+            if(estimateCounter) throw("Ce produit est associé a des devis.");
+            if(invoiceCounter) throw("Ce produit est associé a une facture.");
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {
@@ -73,7 +83,7 @@ export const productMutation = {
             });
             return true
         } catch (e) {
-            throw new ErrorHandling("PRODUCT003")
+            throw new ErrorHandling("PRODUCT003", e)
         }
     },
 };

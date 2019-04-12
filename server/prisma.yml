@@ -6,7 +6,7 @@ generate:
   - generator: typescript-client
     output: src/generated
   - generator: graphql-schema
-    output: src/generated
+    output: src/generated/prisma.graphql
 hooks:
   post-deploy:
     - echo "Deployment finished"

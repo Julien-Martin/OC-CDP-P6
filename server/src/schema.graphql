@@ -32,10 +32,11 @@ type Query {
 
 type Mutation {
     captureEmail(email: String!): User
-    signup(email: String!, password: String!, name: NameCreateOneInput!, address: AddressCreateOneInput!, phone: String, siret: String!, useVAT: Boolean!, paymentInfo: String!, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): AuthPayload!
+    signup(id: ID!, password: String!, name: NameCreateOneInput!, address: AddressCreateOneInput!, phone: String, siret: String!, useVAT: Boolean!, paymentInfo: String!, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): AuthPayload!
     login(email: String!, password: String!): AuthPayload
 
-    updateMe(email: String, password: String, name: NameCreateOneInput, phone: String, siret: String, useVat: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
+    updateMe(name: JSON, address: JSON, phone: String, siret: String, useVAT: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
+    updatePassword(oldpassword: String!, password: String!): Boolean
     deleteMe(password: String): Boolean
 
     createProduct(description: String!, vat: Float!, pricettc: Float!, unit: String): Product
@@ -50,13 +51,15 @@ type Mutation {
     updateClient(id: ID!, name: NameCreateOneInput, legalForm: ID, email: String, phone: String, address: AddressCreateOneInput, company: String): Client
     deleteClient(id: ID!): Boolean
 
-    createInvoice(clientId: ID!, billingDate: DateTime!, paymentCondition: Float!, lateFee: Float!, message: String, products: [ItemCreateInput!]!, footNote: String): Invoice
-    updateInvoice(id: ID!, billingDate: DateTime, paymentCondition: Float, lateFee: Float, message: String, products: [ItemCreateInput], footNote: String, state: String): Invoice
+    createInvoice(clientId: ID!, billingDate: DateTime!, paymentCondition: Float!, lateFee: Float!, message: String, products: [JSON!]!, footNote: String): Invoice
+    updateInvoice(id: ID!, billingDate: DateTime, paymentCondition: Float, lateFee: Float, message: String, products: [JSON], footNote: String, state: String): Invoice
+    validateInvoice(id: ID!): Invoice
     changeInvoiceState(id: ID!, state: Int!): Invoice
     deleteInvoice(id: ID!): Boolean
 
-    createEstimate(clientId: ID!, startedDate: DateTime!, deliveryDate: DateTime!, validityDate: DateTime!, message: String, products: [ItemCreateInput!]!, footNote: String): Estimate
-    updateEstimate(id: ID!, startedDate: DateTime, deliveryDate: DateTime, validityDate: DateTime, message: String, products: [ItemCreateInput], footNote: String): Estimate
+    createEstimate(clientId: ID!, startedDate: DateTime!, deliveryDate: DateTime!, validityDate: DateTime!, message: String, products: [JSON!]!, footNote: String): Estimate
+    updateEstimate(id: ID!, startedDate: DateTime, deliveryDate: DateTime, validityDate: DateTime, message: String, products: [JSON], footNote: String): Estimate
+    validateEstimate(id: ID!): Estimate
     changeEstimateState(id: ID!, state: Int!): Estimate
     deleteEstimate(id: ID!): Boolean
 }

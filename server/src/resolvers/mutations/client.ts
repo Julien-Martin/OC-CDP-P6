@@ -28,7 +28,7 @@ export const clientMutation = {
                 }
             })
         } catch (e) {
-            throw new ErrorHandling("CLIENT001")
+            throw new ErrorHandling("CLIENT001", e.message)
         }
     },
     /**
@@ -41,22 +41,24 @@ export const clientMutation = {
     updateClient: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         const id = args.id;
+        const legalFormId = args.legalForm;
+        delete args.legalForm;
         delete args.id;
         try {
-            await context.prisma.updateUser({
-                where: {id: userId},
+            await context.prisma.updateClient({
+                where: {id: id},
                 data: {
-                    clients: {
-                        update: {
-                            where: {id: id},
-                            data: args
+                    ...args,
+                    legalForm: {
+                        connect: {
+                            id: legalFormId
                         }
-                    }
+                    },
                 }
             });
             return await context.prisma.client({id: id})
         } catch (e) {
-            throw new ErrorHandling("CLIENT002")
+            throw new ErrorHandling("CLIENT002", e.message)
         }
     },
     /**
@@ -69,6 +71,10 @@ export const clientMutation = {
     deleteClient: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         try {
+            let estimateCounter = (await context.prisma.client({id: args.id}).estimates()).length;
+            let invoiceCounter = (await context.prisma.client({id: args.id}).invoices()).length;
+            if(estimateCounter) throw ("Ce client a des devis associés.");
+            if(invoiceCounter) throw ("Ce client a des factures associés.");
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {
@@ -79,7 +85,7 @@ export const clientMutation = {
             });
             return true
         } catch (e) {
-            throw new ErrorHandling("CLIENT003")
+            throw new ErrorHandling("CLIENT003", e)
         }
     },
 };

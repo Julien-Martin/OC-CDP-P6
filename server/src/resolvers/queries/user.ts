@@ -1,5 +1,4 @@
 import {Context, isAuth} from "../../utils";
-import {fragment} from "../../utils/fragments";
 
 export const userQuery = {
     /**

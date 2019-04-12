@@ -4,7 +4,8 @@ export const fragment = {
 			name {
 				firstname 
 				lastname
-			} 
+			}
+			email
 			address {
 				street 
 				street2 
@@ -27,6 +28,11 @@ export const fragment = {
 			unit 
 		}
 	`,
+	fragmentProductOnlyPrice: `
+		fragment ProductPrice on Product { 
+			pricettc 
+		}
+	`,
 	fragmentClient: `
 		fragment CleanClient on Client {
 			name {
@@ -44,6 +50,7 @@ export const fragment = {
 				form
 				title
 			}
+			email
 			company
 			phone
 		}
@@ -57,5 +64,17 @@ export const fragment = {
 		fragment InvoiceState on Invoice {
 			state
 		}
-	`
+	`,
+	fragmentEnsureProduct: `
+		fragment EnsureProduct on Estimate {
+			product {
+				description 
+				priceht 
+				pricettc 
+				vat 
+				unit
+			}
+			quantity
+		}
+	`,
 };
