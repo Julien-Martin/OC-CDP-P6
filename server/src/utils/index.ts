@@ -10,7 +10,6 @@ dotenv.config();
 
 const publicKey = fs.readFileSync('./public_key.pem');
 
-
 /**
  * Define Context type (typeScript)
  */

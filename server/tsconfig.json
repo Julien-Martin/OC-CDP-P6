@@ -8,6 +8,9 @@
     "outDir": "dist",
     "lib": [
       "esnext", "dom"
+    ],
+    "types": [
+      "@types/node"
     ]
   }
 }

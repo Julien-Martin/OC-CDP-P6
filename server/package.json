@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon -x ts-node-dev src/app.ts",
     "dev": "ts-node-dev --respawn --transpileOnly src/app.ts",
-    "build": "rimraf dist && tsc"
+    "build": "gulp build"
   },
   "author": "Julien Martin",
   "license": "ISC",
@@ -22,7 +22,11 @@
     "@types/bcrypt": "^3.0.0",
     "@types/node": "^10.14.4",
     "@types/nodemailer": "^4.6.7",
+    "copyfiles": "^2.1.0",
+    "del": "^4.1.0",
     "dotenv": "^6.0.0",
+    "gulp": "^4.0.0",
+    "gulp-typescript": "^5.0.1",
     "nodemon": "^1.18.10",
     "prisma": "^1.29.2",
     "rimraf": "^2.6.3",
