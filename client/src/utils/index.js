@@ -2,11 +2,6 @@ import Store from "../store";
 
 export const links = [
 	{
-		path: '/dashboard',
-		name: 'Tableau de bord',
-		icon: 'home',
-	},
-	{
 		path: '/clients',
 		name: 'Clients',
 		icon: 'contacts',
@@ -26,7 +21,7 @@ export const links = [
 		name: 'Factures',
 		icon: 'receipt',
 	},
-]
+];
 
 export const adminLinks = [
 	{
@@ -34,29 +29,29 @@ export const adminLinks = [
 		name: 'Forme juridique',
 		icon: 'account_balance'
 	}
-]
+];
 
 
 export const isNotAuth = (to, from, next) => {
 	if (!Store.getters.isAuthentificated) {
-		next()
+		next();
 		return
 	}
 	next('/')
-}
+};
 
 export const isAuth = (to, from, next) => {
 	if(Store.getters.isAuthentificated){
-		next()
+		next();
 		return
 	}
 	next('/')
-}
+};
 
 export const isAdmin = (to, from, next) => {
 	if(Store.getters.isAuthentificated && Store.getters.isAdmin){
-		next()
+		next();
 		return
 	}
 	next('/')
-}
+};

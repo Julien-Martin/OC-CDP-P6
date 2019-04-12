@@ -3,12 +3,18 @@ import {Context, isAuth} from '../../utils'
 import {ErrorHandling} from "../../utils/errors";
 
 export const userMutation = {
+    /**
+     * Update personnal info
+     * @param _
+     * @param args
+     * @param context
+     */
     async updateMe(_, args, context: Context) {
         const userId = await isAuth(context);
-        let name = args.name
-        let address = args.address
-        delete args.name
-        delete args.address
+        let name = args.name;
+        let address = args.address;
+        delete args.name;
+        delete args.address;
         try {
             return await context.prisma.updateUser({
                 where: {id: userId},
@@ -31,25 +37,37 @@ export const userMutation = {
         }
     },
 
+    /**
+     * Change password, required old password
+     * @param _
+     * @param args
+     * @param context
+     */
     async updatePassword(_, args, context: Context) {
-        const userId = await isAuth(context)
+        const userId = await isAuth(context);
         try {
-            const user = await context.prisma.user({id: userId})
-            const validPassword = await bcrypt.compare(args.oldpassword, user.password)
+            const user = await context.prisma.user({id: userId});
+            const validPassword = await bcrypt.compare(args.oldpassword, user.password);
             let password = await bcrypt.hash(args.password, 10);
-            if (!validPassword) throw ("Mot de passe invalide")
+            if (!validPassword) throw ("Mot de passe invalide");
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {
                     password: password
                 }
-            })
+            });
             return true
         } catch (e) {
             throw new ErrorHandling("ME002", e.message)
         }
     },
 
+    /**
+     * Delete account, required password
+     * @param _
+     * @param args
+     * @param context
+     */
     async deleteMe(_, args, context: Context) {
         const userId = await isAuth(context);
         const user = await context.prisma.user({id: userId});

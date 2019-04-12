@@ -129,13 +129,13 @@
       },
 
       editItem(item){
-        this.editedIndex = this.legalForms.indexOf(item)
-        this.editedItem = Object.assign({}, item)
+        this.editedIndex = this.legalForms.indexOf(item);
+        this.editedItem = Object.assign({}, item);
         this.dialog = true
       },
 
       deleteItem(item){
-        const id = item.id
+        const id = item.id;
         this.$apollo.mutate({
           mutation: LegalForm.DELETE,
           variables: {id}
@@ -147,15 +147,15 @@
       },
 
       close(){
-        this.dialog = false
+        this.dialog = false;
         setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedItem = Object.assign({}, this.defaultItem);
           this.editedIndex = -1
         }, 300)
       },
 
       save(){
-        this.updateOrCreateLegalForm()
+        this.updateOrCreateLegalForm();
         this.close()
       }
     }

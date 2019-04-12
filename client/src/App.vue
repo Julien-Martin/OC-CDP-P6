@@ -19,7 +19,7 @@
 			isAuth() {
 				return this.$store.getters.isAuthentificated
 			}
-		}
+		},
 	}
 </script>
 

@@ -4,16 +4,16 @@ import Router from 'vue-router'
 import Signup from './views/Signup'
 import Confirmation from './views/Confirmation'
 import Settings from './views/Settings'
-import Dashboard from './views/Dashboard'
 import Estimates from './views/Estimates'
 import Client from './views/Client'
 import Product from './views/Product'
 import Invoices from './views/Invoices'
 import LegalForm from './views/LegalForm'
+import PageNotFound from "./views/PageNotFound";
 
 import {isAdmin, isAuth, isNotAuth} from "./utils";
 
-Vue.use(Router)
+Vue.use(Router);
 
 const router = new Router({
 	mode: 'history',
@@ -35,12 +35,6 @@ const router = new Router({
 			path: '/settings',
 			name: 'settings',
 			component: Settings,
-			beforeEnter: isAuth
-		},
-		{
-			path: '/dashboard',
-			name: 'Tableau de bord',
-			component: Dashboard,
 			beforeEnter: isAuth
 		},
 		{
@@ -72,8 +66,12 @@ const router = new Router({
 			name: 'LegalForms',
 			component: LegalForm,
 			beforeEnter: isAdmin
+		},
+		{
+			path: '*',
+			component: PageNotFound
 		}
 	]
-})
+});
 
 export default router

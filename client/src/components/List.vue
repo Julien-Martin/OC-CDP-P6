@@ -53,11 +53,11 @@
             docState(state) {
                 switch (state) {
                     case "DRAFT":
-                        return "BROUILLON"
+                        return "BROUILLON";
                     case "PENDING":
-                        return "EN ATTENTE"
+                        return "EN ATTENTE";
                     case "SEND":
-                        return "ENVOYÉ"
+                        return "ENVOYÉ";
                     case "DONE":
                         return "VALIDÉ"
                 }
@@ -65,11 +65,11 @@
             docStateColor(state){
                 switch (state) {
                     case "DRAFT":
-                        return "grey"
+                        return "grey";
                     case "PENDING":
-                        return "info"
+                        return "info";
                     case "SEND":
-                        return "warning"
+                        return "warning";
                     case "DONE":
                         return "success"
                 }

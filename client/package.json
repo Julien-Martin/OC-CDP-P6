@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.5.1",
+    "apollo-link-error": "^1.1.10",
     "axios": "^0.18.0",
     "html2canvas": "^1.0.0-alpha.12",
     "jspdf": "^1.5.3",

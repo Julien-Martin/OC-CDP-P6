@@ -6,7 +6,7 @@ export const GET = gql`{
         form
         title
     }
-}`
+}`;
 
 export const CREATE = gql`
     mutation CreateLegalForm($form: String!, $title: String!){
@@ -14,7 +14,7 @@ export const CREATE = gql`
             id
         }
     }
-`
+`;
 
 export const UPDATE = gql`
     mutation UpdateLegalForm($id: ID!, $form: String, $title: String){
@@ -22,10 +22,10 @@ export const UPDATE = gql`
             id
         }
     }
-`
+`;
 
 export const DELETE = gql`
     mutation DeleteLegalForm($id: ID!){
         deleteLegalForm(id: $id)
     }
-`
+`;

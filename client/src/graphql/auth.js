@@ -6,7 +6,7 @@ export const CAPTURE = gql`
             id
         }
     }
-`
+`;
 
 export const LOGIN = gql`
     mutation login($email: String!, $password: String!) {
@@ -17,7 +17,7 @@ export const LOGIN = gql`
             }
         }
     }
-`
+`;
 
 export const SIGNUP = gql`
     mutation Signup($id: ID!, $password: String!, $firstname: String!, $lastname: String!, $street: String!, $street2: String, $postalcode: String!, $city: String!, $country: String!, $siret: String!, $useVAT: Boolean!, $paymentInfo: String!, $VATnumber: String, $RCS: String, $RM: String, $commercialName: String, $ape: String, $cgv: String) {
@@ -25,4 +25,4 @@ export const SIGNUP = gql`
             token
         }
     }
-`
+`;

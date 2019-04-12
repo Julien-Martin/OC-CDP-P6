@@ -21,23 +21,23 @@ export const estimateMutation = {
             let products = args.products;
 
             args.products.forEach(item => {
-                item.productId = item.product.id
-                item.quantity = parseInt(item.quantity)
+                item.productId = item.product.id;
+                item.quantity = parseInt(item.quantity);
                 delete item.product
-            })
+            });
 
             let price = 0;
             for (let i = 0; i < products.length; i++) {
-                let productPrice = (await context.prisma.product({id: products[i].productId}).$fragment(fragment.fragmentProductOnlyPrice))["pricettc"]
-                products[i].product = {connect: {id: products[i].productId}}
-                delete products[i].productId
+                let productPrice = (await context.prisma.product({id: products[i].productId}).$fragment(fragment.fragmentProductOnlyPrice))["pricettc"];
+                products[i].product = {connect: {id: products[i].productId}};
+                delete products[i].productId;
                 price += productPrice * products[i].quantity
             }
-            delete args.products
+            delete args.products;
 
-            args.startedDate = new Date(args.startedDate).toISOString()
-            args.deliveryDate = new Date(args.deliveryDate).toISOString()
-            args.validityDate = new Date(args.deliveryDate).toISOString()
+            args.startedDate = new Date(args.startedDate).toISOString();
+            args.deliveryDate = new Date(args.deliveryDate).toISOString();
+            args.validityDate = new Date(args.deliveryDate).toISOString();
 
             return await context.prisma.createEstimate({
                 ...args,
@@ -74,31 +74,31 @@ export const estimateMutation = {
             if (estimateState['state'] !== StateEnum["0"]) throw ("Ce devis a déjà été validé, vous ne pouvez donc pas le modifier. ");
 
             let products = args.products;
-             let price = 0
+             let price = 0;
             if (args.products) {
 
                 products.forEach(item => {
-                    item.productId = item.product.id
-                    item.quantity = parseInt(item.quantity)
+                    item.productId = item.product.id;
+                    item.quantity = parseInt(item.quantity);
                     delete item.product
-                })
+                });
 
                 await context.prisma.updateEstimate({
                     where: {id: id},
                     data: {products: {deleteMany: {quantity_not: 0}}}
-                })
+                });
                 for (let i = 0; i < products.length; i++) {
-                    let productPrice = (await context.prisma.product({id: products[i].productId}).$fragment(fragment.fragmentProductOnlyPrice))["pricettc"]
-                    products[i].product = {connect: {id: products[i].productId}}
-                    delete products[i].productId
+                    let productPrice = (await context.prisma.product({id: products[i].productId}).$fragment(fragment.fragmentProductOnlyPrice))["pricettc"];
+                    products[i].product = {connect: {id: products[i].productId}};
+                    delete products[i].productId;
                     price += productPrice * products[i].quantity
                 }
                 delete args.products
             }
 
-            args.startedDate = new Date(args.startedDate).toISOString()
-            args.deliveryDate = new Date(args.deliveryDate).toISOString()
-            args.validityDate = new Date(args.deliveryDate).toISOString()
+            args.startedDate = new Date(args.startedDate).toISOString();
+            args.deliveryDate = new Date(args.deliveryDate).toISOString();
+            args.validityDate = new Date(args.deliveryDate).toISOString();
 
             await context.prisma.updateUser({
                 where: {id: userId},
@@ -123,17 +123,24 @@ export const estimateMutation = {
         }
     },
 
+    /**
+     * Change estimate state to "PENDING" and copy User, Client and Product info to StaticUser, StaticClient and StaticProducts
+     * An estimate with state different of "DRAFT" cannot be change
+     * @param _
+     * @param args
+     * @param context
+     */
     validateEstimate: async(_, args, context: Context) => {
-        const userId = await isAuth(context)
+        const userId = await isAuth(context);
         try {
             const estimateState = await context.prisma.estimate({id: args.id}).$fragment(fragment.fragmentEstimateState);
             if (estimateState['state'] !== StateEnum["0"]) throw ("Ce devis a déjà été validé, vous ne pouvez donc pas le modifier. ");
-            let client = await context.prisma.estimate({id: args.id}).client()
-            let staticUser = await context.prisma.estimate({id: args.id}).user().$fragment(fragment.fragmentUser)
-            let staticClient = await context.prisma.estimate({id: args.id}).client().$fragment(fragment.fragmentClient)
-            let staticProducts = await context.prisma.estimate({id: args.id}).products().$fragment(fragment.fragmentEnsureProduct)
-            const estimateCounter = await context.prisma.estimatesConnection({where: {estimateNumber_gt: ""}}).aggregate().count()
-            const estimateNumber = moment().format('YYYY-MM-') + ("000" + (estimateCounter + 1)).slice(-4)
+            let client = await context.prisma.estimate({id: args.id}).client();
+            let staticUser = await context.prisma.estimate({id: args.id}).user().$fragment(fragment.fragmentUser);
+            let staticClient = await context.prisma.estimate({id: args.id}).client().$fragment(fragment.fragmentClient);
+            let staticProducts = await context.prisma.estimate({id: args.id}).products().$fragment(fragment.fragmentEnsureProduct);
+            const estimateCounter = await context.prisma.estimatesConnection({where: {estimateNumber_gt: ""}}).aggregate().count();
+            const estimateNumber = moment().format('YYYY-MM-') + ("000" + (estimateCounter + 1)).slice(-4);
             await context.prisma.updateClient({
                 where: {id: client.id},
                 data: {
@@ -141,7 +148,7 @@ export const estimateMutation = {
                         disconnect: [{id: args.id}]
                     }
                 }
-            })
+            });
             return await context.prisma.updateUser({
                 where: {id: userId},
                 data: {

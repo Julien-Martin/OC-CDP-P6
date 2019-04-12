@@ -29,11 +29,11 @@
         },
         methods: {
             cancel() {
-                this.visibilityArg = false
+                this.visibilityArg = false;
                 this.$emit('cancel', this.visibilityArg)
             },
             submit() {
-                this.visibilityArg = false
+                this.visibilityArg = false;
                 this.$emit('submit')
             }
         },

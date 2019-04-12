@@ -23,7 +23,7 @@ export const GET = gql`
             company
         }
     }
-`
+`;
 
 export const GET_FOR_DOC = gql`
     query meClientForDoc {
@@ -45,7 +45,7 @@ export const GET_FOR_DOC = gql`
             company
         }
     }
-`
+`;
 
 export const CREATE = gql`
     mutation CreateClient($name: NameCreateOneInput!, $legalForm: ID!, $email: String, $phone: String, $address: AddressCreateOneInput!, $company: String) {
@@ -60,7 +60,7 @@ export const CREATE = gql`
             id
         }
     }
-`
+`;
 
 export const UPDATE = gql`
     mutation UpdateClient($id: ID!, $name: NameCreateOneInput!, $legalForm: ID, $phone: String, $email: String, $address: AddressCreateOneInput!, $company: String){
@@ -74,10 +74,10 @@ export const UPDATE = gql`
             company: $company
         ){id}
     }
-`
+`;
 
 export const DELETE = gql`
     mutation deleteClient($id: ID!) {
         deleteClient(id: $id)
     }
-`
+`;

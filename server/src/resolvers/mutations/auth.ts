@@ -24,10 +24,17 @@ export const authMutation = {
         });
         await sendConfirmationMail(args.email, user.id)
     },
+
+    /**
+     * Update user with the new information and hash the password
+     * @param _
+     * @param args
+     * @param context
+     */
     signup: async (_, args, context: Context) => {
         const password = await bcrypt.hash(args.password, 10);
-        const id = args.id
-        delete args.id
+        const id = args.id;
+        delete args.id;
         const user = await context.prisma.updateUser({
             data: {
                 ...args,
@@ -42,6 +49,12 @@ export const authMutation = {
         });
         return {token, user}
     },
+    /**
+     * Login Function return token, and user info
+     * @param _
+     * @param args
+     * @param context
+     */
     login: async(_, args, context: Context) => {
         const user = await context.prisma.user({email: args.email});
         if (!user) throw new ErrorHandling("USER001");

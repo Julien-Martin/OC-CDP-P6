@@ -28,8 +28,8 @@ export const legalFormMutation = {
      */
     updateLegalForm: async (_, args, context: Context) => {
         const userId = await isAdmin(context);
-        const id = args.id
-        delete args.id
+        const id = args.id;
+        delete args.id;
         try {
             return await context.prisma.updateLegalForm({
                 where: {id: id},

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
@@ -9,11 +9,11 @@ export default new Vuex.Store({
   },
   mutations: {
     auth_success(state){
-      state.token = localStorage.getItem('user-token')
+      state.token = localStorage.getItem('user-token');
       state.role = localStorage.getItem('user-role')
     },
     logout(state){
-      state.token = ''
+      state.token = '';
       state.role = ''
     }
   },

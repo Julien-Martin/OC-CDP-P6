@@ -11,7 +11,7 @@ export const GET = gql`
             pricettc
         }
     }
-`
+`;
 
 export const CREATE = gql`
   mutation CreateProduct($description: String!, $vat: Float!, $pricettc: Float!, $unit: String){
@@ -24,7 +24,7 @@ export const CREATE = gql`
           id
       }
   }
-`
+`;
 
 export const UPDATE = gql`
   mutation UpdateProduct($id: ID!, $description: String!, $vat: Float!, $pricettc: Float!, $unit: String){
@@ -38,10 +38,10 @@ export const UPDATE = gql`
           id
       }
   }
-`
+`;
 
 export const DELETE = gql`
   mutation DeleteProduct($id: ID!){
       deleteProduct(id: $id)
   }
-`
+`;

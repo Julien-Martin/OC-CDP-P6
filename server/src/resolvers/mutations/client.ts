@@ -1,6 +1,5 @@
 import {Context, isAuth} from "../../utils";
 import {ErrorHandling} from "../../utils/errors";
-import {estimateMutation} from "./estimate";
 
 export const clientMutation = {
     /**
@@ -43,7 +42,6 @@ export const clientMutation = {
         const userId = await isAuth(context);
         const id = args.id;
         const legalFormId = args.legalForm;
-        console.log("Clients args : "+ args)
         delete args.legalForm;
         delete args.id;
         try {
@@ -73,10 +71,10 @@ export const clientMutation = {
     deleteClient: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         try {
-            let estimateCounter = (await context.prisma.client({id: args.id}).estimates()).length
-            let invoiceCounter = (await context.prisma.client({id: args.id}).invoices()).length
-            if(estimateCounter) throw ("Ce client a des devis associés.")
-            if(invoiceCounter) throw ("Ce client a des factures associés.")
+            let estimateCounter = (await context.prisma.client({id: args.id}).estimates()).length;
+            let invoiceCounter = (await context.prisma.client({id: args.id}).invoices()).length;
+            if(estimateCounter) throw ("Ce client a des devis associés.");
+            if(invoiceCounter) throw ("Ce client a des factures associés.");
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {

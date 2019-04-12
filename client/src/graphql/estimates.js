@@ -62,7 +62,7 @@ export const GET = gql`
         }
     }
 
-`
+`;
 export const GET_ONE = gql`
     query estimate($id: ID!) {
         meEstimate(id: $id) {
@@ -84,7 +84,7 @@ export const GET_ONE = gql`
         }
     }
 
-`
+`;
 export const CREATE = gql`
     mutation CreateEstimate($clientId: ID!, $startedDate: DateTime!, $deliveryDate: DateTime!, $validityDate: DateTime!, $message: String, $footNote: String, $products: [JSON!]!){
         createEstimate(
@@ -97,7 +97,7 @@ export const CREATE = gql`
             footNote: $footNote
         ){id}
     }
-`
+`;
 
 export const UPDATE = gql`
     mutation UpdateEstimate($id: ID!, $startedDate: DateTime, $deliveryDate: DateTime, $validityDate: DateTime, $message: String, $products: [JSON], $footNote: String){
@@ -111,7 +111,7 @@ export const UPDATE = gql`
             footNote: $footNote
         ){id}
     }
-`
+`;
 
 export const VALIDATE_ESTIMATE = gql`
     mutation ValidateEstimate($id: ID!){
@@ -119,7 +119,7 @@ export const VALIDATE_ESTIMATE = gql`
             id
         }
     }
-`
+`;
 
 export const CHANGE_STATE = gql`
     mutation ChangeEstimateState($id: ID!, $state: Int!){
@@ -127,10 +127,10 @@ export const CHANGE_STATE = gql`
             id
         }
     }
-`
+`;
 
 export const DELETE = gql`
     mutation DeleteEstimate($id: ID!){
         deleteEstimate(id: $id)
     }
-`
+`;

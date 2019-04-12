@@ -63,7 +63,7 @@ export const GET = gql`
         }
     }
 
-`
+`;
 export const GET_ONE = gql`
     query invoice($id: ID!) {
         meInvoice(id: $id) {
@@ -86,7 +86,7 @@ export const GET_ONE = gql`
         }
     }
 
-`
+`;
 export const CREATE = gql`
     mutation CreateInvoice($clientId: ID!, $billingDate: DateTime!, $paymentCondition: Float!, $lateFee: Float!, $message: String, $footNote: String, $products: [JSON!]!){
         createInvoice(
@@ -99,7 +99,7 @@ export const CREATE = gql`
             footNote: $footNote
         ){id}
     }
-`
+`;
 
 export const UPDATE = gql`
     mutation UpdateInvoice($id: ID!, $billingDate: DateTime, $paymentCondition: Float, $lateFee: Float, $message: String, $products: [JSON], $footNote: String){
@@ -113,7 +113,7 @@ export const UPDATE = gql`
             footNote: $footNote
         ){id}
     }
-`
+`;
 
 export const VALIDATE_INVOICE = gql`
     mutation ValidateInvoice($id: ID!){
@@ -121,7 +121,7 @@ export const VALIDATE_INVOICE = gql`
             id
         }
     }
-`
+`;
 
 export const CHANGE_STATE = gql`
     mutation ChangeInvoiceState($id: ID!, $state: Int!){
@@ -129,10 +129,10 @@ export const CHANGE_STATE = gql`
             id
         }
     }
-`
+`;
 
 export const DELETE = gql`
     mutation DeleteInvoice($id: ID!){
         deleteInvoice(id: $id)
     }
-`
+`;

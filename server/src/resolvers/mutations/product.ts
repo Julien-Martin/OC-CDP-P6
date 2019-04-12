@@ -2,6 +2,12 @@ import {Context, isAuth} from '../../utils'
 import {ErrorHandling} from "../../utils/errors";
 
 export const productMutation = {
+    /**
+     * Create product for current user
+     * @param _
+     * @param args
+     * @param context
+     */
     createProduct: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         try {
@@ -61,10 +67,10 @@ export const productMutation = {
     deleteProduct: async (_, args, context: Context) => {
         const userId = await isAuth(context);
         try {
-            let estimateCounter = (await context.prisma.estimates({where: {products_some: {product: {id: args.id}}}})).length
-            let invoiceCounter = (await context.prisma.invoices({where: {products_some: {product: {id: args.id}}}})).length
-            if(estimateCounter) throw("Ce produit est associé a des devis.")
-            if(invoiceCounter) throw("Ce produit est associé a une facture.")
+            let estimateCounter = (await context.prisma.estimates({where: {products_some: {product: {id: args.id}}}})).length;
+            let invoiceCounter = (await context.prisma.invoices({where: {products_some: {product: {id: args.id}}}})).length;
+            if(estimateCounter) throw("Ce produit est associé a des devis.");
+            if(invoiceCounter) throw("Ce produit est associé a une facture.");
             await context.prisma.updateUser({
                 where: {id: userId},
                 data: {

@@ -1,16 +1,18 @@
 import {errors} from "./errors";
-import {type} from "os";
 
+/**
+ * Custom Error Class which extends from Error to send correct error
+ */
 export class ErrorHandling extends Error {
 
     constructor(element: string | object, message?: string) {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
         if (typeof element === "object") {
-            this.name = element["name"]
+            this.name = element["name"];
             this.message = element["message"]
         } else {
-            this.name = element
+            this.name = element;
             this.message = message
         }
         this.errorMessage(element, message)

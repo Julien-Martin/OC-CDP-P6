@@ -28,7 +28,7 @@ export const GET = gql`
         }
     }
 
-`
+`;
 
 export const GET_TVA = gql`
     {
@@ -37,7 +37,7 @@ export const GET_TVA = gql`
             VATnumber
         }
     }
-`
+`;
 
 export const UPDATE = gql`
     mutation UpdateMe($name: JSON, $address: JSON, $phone: String, $siret: String, $useVAT: Boolean, $paymentInfo: String, $VATnumber: String, $RCS: String, $RM: String, $commercialName: String, $ape: String, $cgv: String){
@@ -56,7 +56,7 @@ export const UPDATE = gql`
             cgv: $cgv
         ){id}
     }
-`
+`;
 
 export const UPDATE_PASSWORD = gql`
     mutation UpdatePassword($oldpassword: String!, $password: String!){
@@ -65,10 +65,10 @@ export const UPDATE_PASSWORD = gql`
             password: $password
         )
     }
-`
+`;
 
 export const DELETE = gql`
     mutation DeleteMe($password: String){
         deleteMe(password: $password)
     }
-`
+`;

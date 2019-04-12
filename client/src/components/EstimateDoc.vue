@@ -1,5 +1,6 @@
 <template>
     <v-card>
+        <Alert type="error" :message="error"></Alert>
         <v-card-text v-if="itemArg.id !== 0">
             <v-container>
                 <v-layout row>
@@ -70,6 +71,8 @@
                 </v-layout>
                 <v-layout row>
                     <v-flex xs6>
+                        <br/>
+                        <br/>
                         <v-text-field v-if="itemArg.id !== 1" class="ma-0 pa-0" :value="cleanDate(itemArg.createdAt)"
                                       readonly label="Date d'émission" disabled></v-text-field>
                         <v-menu v-model="startedDateMenu" :close-on-content-click="false"
@@ -211,125 +214,126 @@
 </template>
 
 <script>
-  import * as moment from 'moment'
-  import {Client, User, Product} from "../graphql";
+    import * as moment from 'moment'
+    import {Client, User, Product} from "../graphql";
 
-  export default {
-    name: "EstimateDoc",
-    props: {
-      item: Object,
-    },
-    data() {
-      return {
-        itemArg: this.item,
-        me: {},
-        meClients: [],
-        meProducts: [],
-        startedDateMenu: false,
-        deliveryDateMenu: false,
-        validityDateMenu: false,
-        startedDate: new Date().toISOString().substr(0, 10),
-        deliveryDate: new Date().toISOString().substr(0, 10),
-        validityDate: new Date().toISOString().substr(0, 10),
-        tempProduct: {},
-        tempQuantity: 1,
-      }
-    },
+    export default {
+        name: "EstimateDoc",
+        props: {
+            item: Object,
+        },
+        data() {
+            return {
+                itemArg: this.item,
+                me: {},
+                meClients: [],
+                meProducts: [],
+                startedDateMenu: false,
+                deliveryDateMenu: false,
+                validityDateMenu: false,
+                startedDate: new Date().toISOString().substr(0, 10),
+                deliveryDate: new Date().toISOString().substr(0, 10),
+                validityDate: new Date().toISOString().substr(0, 10),
+                tempProduct: {},
+                tempQuantity: 1,
+                error: ''
+            }
+        },
 
-    apollo: {
-      meClients: {
-        query: Client.GET_FOR_DOC
-      },
-      meProducts: {
-        query: Product.GET
-      },
-      me: {
-        query: User.GET
-      }
-    },
-    methods: {
-      changeClient() {
-        let estimate = Object.assign({}, this.itemArg)
-        delete estimate.client
-        this.itemArg = Object.assign({}, estimate)
-      },
+        apollo: {
+            meClients: {
+                query: Client.GET_FOR_DOC
+            },
+            meProducts: {
+                query: Product.GET
+            },
+            me: {
+                query: User.GET
+            }
+        },
+        methods: {
+            changeClient() {
+                let estimate = Object.assign({}, this.itemArg);
+                delete estimate.client;
+                this.itemArg = Object.assign({}, estimate)
+            },
 
-      cleanDate(date) {
-        return moment(date).format('L')
-      },
+            cleanDate(date) {
+                return moment(date).format('L')
+            },
 
-      deleteProduct(item) {
-        const index = this.itemArg.products.indexOf(item)
-        this.itemArg.products.splice(index, 1)
-        this.updatePrice()
-      },
+            deleteProduct(item) {
+                const index = this.itemArg.products.indexOf(item);
+                this.itemArg.products.splice(index, 1);
+                this.updatePrice()
+            },
 
-      updatePrice() {
-        let tempPrice = 0;
-        for (let i = 0; i < this.itemArg.products.length; i++) {
-          tempPrice += this.itemArg.products[i].product.pricettc * this.itemArg.products[i].quantity
+            updatePrice() {
+                let tempPrice = 0;
+                for (let i = 0; i < this.itemArg.products.length; i++) {
+                    tempPrice += this.itemArg.products[i].product.pricettc * this.itemArg.products[i].quantity
+                }
+                this.itemArg.price = tempPrice
+            },
+
+            addProduct() {
+                if (this.tempQuantity <= 0) {
+                    this.error = "Impossible d'ajouter un produit sans quantité."
+                } else if (!Object.keys(this.tempProduct).length) {
+                    this.error = "Vous n'avez pas sélectionner de produit."
+                } else {
+                    let tempProduct = this.tempProduct;
+                    let quantity = this.tempQuantity;
+                    let product = {product: tempProduct, quantity: quantity};
+                    this.itemArg.products.push(product);
+                    this.updatePrice()
+                }
+            },
+        },
+        computed: {
+            staticProducts() {
+                if (this.itemArg.state !== "DRAFT") {
+                    return this.itemArg.staticProducts
+                } else {
+                    return this.itemArg.products
+                }
+            },
+            tableHeader() {
+                let headers = [];
+                if (this.itemArg.state !== "DRAFT") {
+                    headers = [
+                        {text: 'Désignation', sortable: false, value: 'description'},
+                        {text: 'Prix unitaire', sortable: false, value: 'priceht'},
+                        {text: 'Quantité', sortable: false, value: 'quantity'},
+                        {text: 'Unité', sortable: false, value: 'unit'},
+                        {text: 'Montant HT', sortable: false, value: 'priceht'},
+                    ]
+                } else {
+                    headers = [
+                        {text: 'Désignation', sortable: false, value: 'description'},
+                        {text: 'Prix unitaire', sortable: false, value: 'priceht'},
+                        {text: 'Quantité', sortable: false, value: 'quantity'},
+                        {text: 'Unité', sortable: false, value: 'unit'},
+                        {text: 'Montant HT', sortable: false, value: 'priceht'},
+                        {text: 'Actions', sortable: false, align: 'center'}
+                    ]
+                }
+                return headers
+            }
+        },
+        watch: {
+            item(value) {
+                this.itemArg = value
+            },
+            startedDate(value) {
+                this.itemArg.startedDate = value
+            },
+            deliveryDate(value) {
+                this.itemArg.deliveryDate = value
+            },
+            validityDate(value) {
+                this.itemArg.validityDate = value
+            },
         }
-        this.itemArg.price = tempPrice
-      },
-
-      addProduct() {
-        if (this.tempQuantity <= 0) {
-          this.error = "Impossible d'ajouter un produit sans quantité."
-        } else if (!Object.keys(this.tempProduct).length) {
-          this.error = "Vous n'avez pas sélectionner de produit."
-        } else {
-          let tempProduct = this.tempProduct
-          let quantity = this.tempQuantity
-          let product = {product: tempProduct, quantity: quantity}
-          this.itemArg.products.push(product)
-          this.updatePrice()
-        }
-      },
-    },
-    computed: {
-      staticProducts() {
-        if (this.itemArg.state !== "DRAFT") {
-          return this.itemArg.staticProducts
-        } else {
-          return this.itemArg.products
-        }
-      },
-      tableHeader() {
-        let headers = []
-        if (this.itemArg.state !== "DRAFT") {
-          headers = [
-            {text: 'Désignation', sortable: false, value: 'description'},
-            {text: 'Prix unitaire', sortable: false, value: 'priceht'},
-            {text: 'Quantité', sortable: false, value: 'quantity'},
-            {text: 'Unité', sortable: false, value: 'unit'},
-            {text: 'Montant HT', sortable: false, value: 'priceht'},
-          ]
-        } else {
-          headers = [
-            {text: 'Désignation', sortable: false, value: 'description'},
-            {text: 'Prix unitaire', sortable: false, value: 'priceht'},
-            {text: 'Quantité', sortable: false, value: 'quantity'},
-            {text: 'Unité', sortable: false, value: 'unit'},
-            {text: 'Montant HT', sortable: false, value: 'priceht'},
-            {text: 'Actions', sortable: false, align: 'center'}
-          ]
-        }
-        return headers
-      }
-    },
-    watch: {
-      item(value) {
-        this.itemArg = value
-      },
-      startedDate(value) {
-        this.itemArg.startedDate = value
-      },
-      deliveryDate(value) {
-        this.itemArg.deliveryDate = value
-      },
-      validityDate(value) {
-        this.itemArg.validityDate = value
-      },
     }
-  }
 </script>

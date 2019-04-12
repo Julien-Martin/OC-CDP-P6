@@ -23,6 +23,8 @@
                                     <v-layout wrap>
                                         <v-flex xs12>
                                             <v-text-field v-model="editedItem.description"
+                                                          v-validate="'required'" name="désignation"
+                                                          :error-messages="errors.collect('désignation')"
                                                           label="Désignation"></v-text-field>
                                         </v-flex>
                                         <v-flex xs12 v-if="me.useVAT">
@@ -30,6 +32,8 @@
                                         </v-flex>
                                         <v-flex xs12>
                                             <v-text-field type="number" v-model.number="editedItem.pricettc"
+                                                          v-validate="'required'" name="prix TTC"
+                                                          :error-messages="errors.collect('prix TTC')"
                                                           label="Prix TTC"></v-text-field>
                                         </v-flex>
                                         <v-flex xs12>
@@ -55,8 +59,18 @@
                         <td>{{ props.item.pricettc }}</td>
                         <td>{{ props.item.unit || 'N/A' }}</td>
                         <td class="justify-center layout px-0">
-                            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-                            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small class="mr-2" @click="editItem(props.item)" v-on="on">edit</v-icon>
+                                </template>
+                                <span>Modifier</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small @click="deleteItem(props.item)" v-on="on">delete</v-icon>
+                                </template>
+                                <span>Supprimer</span>
+                            </v-tooltip>
                         </td>
                     </template>
                     <template v-slot:no-data>
@@ -156,12 +170,13 @@
             },
 
             getProducts() {
-                this.loaderController()
+                this.loaderController();
                 this.$apollo.queries.meProducts.refetch()
                     .then(() => {
                         this.loaderController()
                     }).catch(error => {
                         this.loaderController()
+                    this.error = error
                 })
             },
 
@@ -195,53 +210,57 @@
             },
 
             editItem(item) {
-                this.editedIndex = this.meProducts.indexOf(item)
-                this.productId = item.id
-                this.editedItem = Object.assign({}, item)
+                this.editedIndex = this.meProducts.indexOf(item);
+                this.productId = item.id;
+                this.editedItem = Object.assign({}, item);
                 this.dialog = true
             },
 
             clearModal() {
-                this.modal.active = false
-                this.modal.title = ''
+                this.modal.active = false;
+                this.modal.title = '';
                 this.modal.message = ''
             },
 
             deleteItem(item) {
-                this.productId = item.id
-                this.modal.active = true
-                this.modal.title = 'Supprimer un produit'
+                this.productId = item.id;
+                this.modal.active = true;
+                this.modal.title = 'Supprimer un produit';
                 this.modal.message = "Êtes-vous sûr de vouloir supprimer ce produit ?"
             },
 
             deleteProduct() {
-                this.clearModal()
+                this.clearModal();
                 this.$apollo.mutate({
                     mutation: Product.DELETE,
                     variables: {
                         id: this.productId
                     }
                 }).then(() => {
-                    this.clearModal()
+                    this.clearModal();
                     this.getProducts()
                 }).catch(error => {
-                    this.clearModal()
-                    this.getProducts()
+                    this.clearModal();
+                    this.getProducts();
                     this.error = error.message
                 })
             },
 
             close() {
-                this.dialog = false
+                this.dialog = false;
                 setTimeout(() => {
-                    this.editedItem = Object.assign({}, this.defaultItem)
+                    this.editedItem = Object.assign({}, this.defaultItem);
                     this.editedIndex = -1
                 }, 300)
             },
 
             save() {
-                this.updateOrCreateProduct()
-                this.close()
+                this.$validator.validateAll().then(valid => {
+                    if(valid){
+                        this.updateOrCreateProduct();
+                        this.close()
+                    }
+                })
             }
         }
     }

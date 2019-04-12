@@ -108,43 +108,43 @@
     },
     methods: {
       login() {
-        this.loader = true
-        const email = this.signin.email
-        const password = this.signin.password
+        this.loader = true;
+        const email = this.signin.email;
+        const password = this.signin.password;
         this.$apollo.mutate({
           mutation: Auth.LOGIN,
           variables: {
             email, password
           }
         }).then((response) => {
-          this.loader = false
-          if (!response.data.login) return
-          const apolloClient = this.$apollo.provider.defaultClient
-          const token = response.data.login.token
-          const role = response.data.login.user.role
+          this.loader = false;
+          if (!response.data.login) return;
+          const apolloClient = this.$apollo.provider.defaultClient;
+          const token = response.data.login.token;
+          const role = response.data.login.user.role;
           onLogin(apolloClient, token, role).then(() => {
             this.$store.dispatch('login').then(() => {
-              this.$router.push('dashboard')
+              this.$router.push('estimates')
             })
           })
         }).catch(error => {
-          this.loader = false
+          this.loader = false;
           this.error = error.message
         })
       },
       captureEmail() {
-        this.loader = true
-        const email = this.signup.email
+        this.loader = true;
+        const email = this.signup.email;
         this.$apollo.mutate({
           mutation: Auth.CAPTURE,
           variables: {
             email,
           }
         }).then(() => {
-          this.loader = false
+          this.loader = false;
           this.stepper = 2
         }).catch(error => {
-          this.loader = false
+          this.loader = false;
           this.error = error.message
         })
       },
