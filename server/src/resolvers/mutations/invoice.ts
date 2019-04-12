@@ -146,10 +146,12 @@ export const invoiceMutation = {
                     }
                 }
             });
+            // @ts-ignore
             return await context.prisma.updateUser({
                 where: {id: userId},
                 data: {
                     invoices: {
+                        // @ts-ignore
                         update: {
                             where: {id: args.id},
                             data: {

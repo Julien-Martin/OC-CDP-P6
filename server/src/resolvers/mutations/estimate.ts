@@ -149,10 +149,13 @@ export const estimateMutation = {
                     }
                 }
             });
+            console.log(typeof staticProducts)
+            // @ts-ignore
             return await context.prisma.updateUser({
                 where: {id: userId},
                 data: {
                     estimates: {
+                        // @ts-ignore
                         update: {
                             where: {id: args.id},
                             data: {
@@ -173,7 +176,6 @@ export const estimateMutation = {
                     }
                 }
             })
-
         } catch (e) {
             throw new ErrorHandling("ESTIMATE003", e.message)
         }
