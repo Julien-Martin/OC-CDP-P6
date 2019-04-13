@@ -38,7 +38,6 @@ type Mutation {
     updateMe(name: JSON, address: JSON, phone: String, siret: String, useVAT: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
     updatePassword(oldpassword: String!, password: String!): Boolean
     deleteMe(password: String): Boolean
-    changeToAdmin(id: ID!): User
 
     createProduct(description: String!, vat: Float!, pricettc: Float!, unit: String): Product
     updateProduct(id: ID!, description: String, vat: Float, pricettc: Float, unit: String): Product
