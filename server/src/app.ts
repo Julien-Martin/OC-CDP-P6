@@ -19,6 +19,7 @@ const options = {
     subscriptions: '/subscriptions',
     playground: '/playground',
     cors: {
+        credentials: true,
         origin: [process.env.CLIENT_URL] // your frontend url.
     }
 };
