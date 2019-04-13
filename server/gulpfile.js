@@ -15,6 +15,16 @@ gulp.task('graphql', () => {
       .pipe(gulp.dest(destination))
 });
 
+gulp.task('modules', () => {
+  return gulp.src('./package.json')
+      .pipe(gulp.dest(destination))
+})
+
+gulp.task('env', () => {
+  return gulp.src('./.env')
+      .pipe(gulp.dest(destination))
+})
+
 gulp.task('permission', () => {
   return gulp.src('./**/*.pem')
       .pipe(gulp.dest(destination))

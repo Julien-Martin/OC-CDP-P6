@@ -2,6 +2,7 @@ import {GraphQLServer} from "graphql-yoga";
 import {prisma} from "./generated";
 import resolvers from "./resolvers"
 import * as dotenv from "dotenv"
+
 dotenv.config();
 
 const server = new GraphQLServer({
@@ -17,11 +18,7 @@ const options = {
     port: process.env.PORT || 5500,
     endpoint: '/graphql',
     subscriptions: '/subscriptions',
-    playground: '/playground',
-    cors: {
-        credentials: true,
-        origin: [process.env.CLIENT_URL] // your frontend url.
-    }
+    playground: '/playground'
 };
 
 
