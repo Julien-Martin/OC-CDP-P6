@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client'
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import router from './router'
 // Install the vue plugin
 Vue.use(VueApollo);
 

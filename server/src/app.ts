@@ -18,6 +18,9 @@ const options = {
     endpoint: '/graphql',
     subscriptions: '/subscriptions',
     playground: '/playground',
+    cors: {
+        origin: [process.env.CLIENT_URL] // your frontend url.
+    }
 };
 
 
