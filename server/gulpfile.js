@@ -36,4 +36,4 @@ gulp.task('compile', () => {
   return tsResult.js.pipe(gulp.dest(destination))
 })
 
-gulp.task('build', gulp.series('clean', 'permission', 'graphql', 'compile'))
+gulp.task('build', gulp.series('clean', 'modules', 'env', 'permission', 'graphql', 'compile'))
