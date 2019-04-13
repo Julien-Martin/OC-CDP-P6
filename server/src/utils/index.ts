@@ -32,7 +32,7 @@ export const StateEnum = {
  * Transporter to send mail
  */
 export const transporter: nodemailer.Transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: 'SSL0.OVH.NET',
     port: 465,
     secure: true,
     auth: {
