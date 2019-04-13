@@ -52,6 +52,7 @@ export const productMutation = {
                     }
                 }
             });
+
             return await context.prisma.product({id: id})
         } catch (e) {
             throw new ErrorHandling("PRODUCT002", e.message)

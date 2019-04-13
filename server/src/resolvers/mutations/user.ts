@@ -80,4 +80,18 @@ export const userMutation = {
             throw new ErrorHandling("ME003", e.message)
         }
     },
+
+    async changeToAdmin(_, args, context: Context){
+        const userId = await isAuth(context)
+        try {
+            return await context.prisma.updateUser({
+                where: {id: userId},
+                data: {
+                    role: "ADMIN"
+                }
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
 };

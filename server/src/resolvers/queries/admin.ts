@@ -8,6 +8,7 @@ export const adminQuery = {
      * @param context
      * @returns {Promise<*>}
      */
+
     users: async (_, args, context: Context) => {
         const userId = await isAdmin(context);
         return await context.prisma.users()
