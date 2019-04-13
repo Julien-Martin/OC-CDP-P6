@@ -22,7 +22,9 @@ export const authMutation = {
             role: "USER",
             status: "NOTACTIVE"
         });
-        await sendConfirmationMail(args.email, user.id)
+        if(user){
+            await sendConfirmationMail(args.email, user.id)
+        }
     },
 
     /**
