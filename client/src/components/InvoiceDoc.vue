@@ -70,7 +70,7 @@
                     </v-flex>
                 </v-layout>
                 <v-layout row>
-                    <v-flex xs6>
+                    <v-flex xs12 md6>
                         <v-text-field v-if="itemArg.id !== 1" class="ma-0 pa-0" :value="cleanDate(itemArg.createdAt)"
                                       readonly label="Date d'émission" disabled></v-text-field>
                         <v-menu v-model="billingDateMenu" :close-on-content-click="false"
