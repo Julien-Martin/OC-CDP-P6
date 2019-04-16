@@ -26,6 +26,7 @@
     "@types/nodemailer": "^4.6.7",
     "copyfiles": "^2.1.0",
     "del": "^4.1.0",
+    "graphql-request": "^1.8.2",
     "gulp": "^4.0.0",
     "gulp-typescript": "^5.0.1",
     "nodemon": "^1.18.10",

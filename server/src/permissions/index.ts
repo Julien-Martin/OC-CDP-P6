@@ -55,5 +55,4 @@ export const permissions = shield({
     Estimate: rules.isAuthenticated,
     Invoice: rules.isAuthenticated,
     Product: rules.isAuthenticated,
-    User: rules.isAuthenticated
 })

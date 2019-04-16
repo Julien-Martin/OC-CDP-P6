@@ -1,4 +1,4 @@
-import {Context, isAdmin} from "../../utils";
+import {Context} from "../../utils";
 import {ErrorHandling} from "../../utils/errors";
 
 export const legalFormMutation = {

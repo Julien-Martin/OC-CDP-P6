@@ -10,7 +10,8 @@
       "esnext", "dom"
     ],
     "types": [
-      "@types/node"
+      "@types/node",
+      "@types/bcrypt"
     ]
   }
 }
