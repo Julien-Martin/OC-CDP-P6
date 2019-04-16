@@ -13,7 +13,7 @@
                 <section>
                     <v-layout column align-center justify-center class="white--text">
                         <h1 class="white--text mb-2 display-3 text-xs-center">ME-ASSISTANT</h1>
-                        <div class="white--text title mb-3 text-xs-center">Libérez-vous de la facturation</div>
+                        <div class="white--text title mb-3 text-xs-center">Libérez-vous de la facturation gratuitement</div>
                         <v-text-field prepend-inner-icon="mail_outline" label="Adresse e-mail" class="mt-5" solo
                                       v-model="email" v-validate="'required|email'" name="email"
                                       :error-messages="errors.collect('email')"></v-text-field>
