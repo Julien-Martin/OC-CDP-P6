@@ -1,5 +1,9 @@
 <template>
 	<v-app>
+		<v-snackbar v-model="cookieSnack" :timeout="timeout" auto-height multi-line color="#0063ff">
+			Ce site utilise des cookies. En poursuivant votre navigation sur ce site, vous acceptez notre politique de protection des données personnelles et notre politique cookies.
+			<v-btn dark flat @click="acceptCookie">Accepter</v-btn>
+		</v-snackbar>
 		<AppToolbar v-if="isAuth"/>
 		<v-content>
 			<router-view/>
@@ -14,7 +18,23 @@
 	export default {
 		name: 'App',
 		components: {AppToolbar},
-
+		data(){
+			return {
+				cookieSnack: false,
+				timeout: 0
+			}
+		},
+		created(){
+			if(!localStorage.getItem("accept-cookie")){
+				this.cookieSnack = true
+			}
+		},
+		methods: {
+			acceptCookie(){
+				this.cookieSnack = false
+				localStorage.setItem("accept-cookie", true)
+			},
+		},
 		computed: {
 			isAuth() {
 				return this.$store.getters.isAuthentificated
