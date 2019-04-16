@@ -14,55 +14,55 @@
                             <v-form ref="personnalInfo">
                                 <v-container>
                                     <v-layout row wrap>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.name.lastname" label="Nom"
                                                           v-validate="'required'" name="nom"
                                                           data-vv-scope="form-1"
                                                           :error-messages="errors.collect('form-1.nom')"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.name.firstname" label="Prénom"
                                                           v-validate="'required'"
                                                           data-vv-scope="form-1"
                                                           :error-messages="errors.collect('form-1.prénom')"
                                                           name="prénom"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.address.street" label="Adresse ligne 1"
                                                           v-validate="'required'"
                                                           data-vv-scope="form-1"
                                                           :error-messages="errors.collect('form-1.adresse')"
                                                           name="adresse"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.address.street2" label="Adresse ligne 2"
                                                           name="adresse ligne 2"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.address.city" label="Ville"
                                                           v-validate="'required'"
                                                           data-vv-scope="form-1"
                                                           :error-messages="errors.collect('form-1.ville')"
                                                           name="ville"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.address.postalcode" label="Code postal"
                                                           v-validate="'required'"
                                                           data-vv-scope="form-1"
                                                           :error-messages="errors.collect('form-1.code postal')"
                                                           name="code postal"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.address.country" label="Pays"
                                                           v-validate="'required'"
                                                           data-vv-scope="form-1"
                                                           :error-messages="errors.collect('form-1.pays')"
                                                           name="pays"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.phone" label="Téléphone"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-btn color="primary" @click="changeInfo('form-1')">Modifier</v-btn>
                                         </v-flex>
                                     </v-layout>
@@ -74,43 +74,43 @@
                             <v-form ref="workInfo" data-vv-scope="form-2">
                                 <v-container>
                                     <v-layout row wrap>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.siret" label="Numéro de siret"
                                                           v-validate="'required'" name="numéro de siret"
                                                           data-vv-scope="form-2"
                                                           :error-messages="errors.collect('form-2.numéro de siret')"
                                             ></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.RCS"
                                                           label="Immatriculation au Registre du commerce et des sociétés"
                                                           hint="Pour les activités de commerces"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.RM"
                                                           label="Immatriculation au Répertoire des métiers"
                                                           hint="Pour les activités artisanales"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.commercialName" label="Nom commercial"
                                                           hint="Facultatif"></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                     <v-layout row wrap>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-switch v-model="me.useVAT" label="Assujetti à la TVA"></v-switch>
                                         </v-flex>
-                                        <v-flex xs3 v-if="me.useVAT">
+                                        <v-flex xs12 md3 v-if="me.useVAT">
                                             <v-text-field v-model="me.VATnumber" label="Numéro de TVA"></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                     <v-layout row wrap>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-textarea v-model="me.paymentInfo" rows="4" no-resize
                                                         label="Information de paiement"
                                                         placeholder="Virement sur l'IBAN, Carte bancaire, Chèque à l'ordre de ..."></v-textarea>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-textarea v-model="me.cgv" rows="4" no-resize
                                                         placeholder="Les conditions générales de vente décrites ci-après détaillent les droits et obligations de la société...."
                                                         label="Conditions générales de vente"></v-textarea>
@@ -129,10 +129,10 @@
                             <v-form ref="passwordInfo">
                                 <v-container>
                                     <v-layout row wrap>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="me.email" disabled label="Email"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="auth.oldpassword"
                                                           data-vv-scope="form-3"
                                                           type="password"
@@ -142,7 +142,7 @@
                                         </v-flex>
                                     </v-layout>
                                     <v-layout row wrap>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="auth.password"
                                                           type="password"
                                                           v-validate="'required'" name="nouveau mot de passe"
@@ -151,7 +151,7 @@
                                                           :error-messages="errors.collect('form-3.nouveau mot de passe')"
                                                           label="Nouveau mot de passe"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field label="Confirmer le nouveau mot de passe"
                                                           data-vv-scope="form-3"
                                                           type="password"
@@ -171,7 +171,7 @@
                             <v-form>
                                 <v-container>
                                     <v-layout row wrap>
-                                        <v-flex xs3>
+                                        <v-flex xs12 md3>
                                             <v-text-field v-model="accountToDelete.password"
                                                           v-validate="'required'" name="mot de passe"
                                                           data-vv-scope="form-4"

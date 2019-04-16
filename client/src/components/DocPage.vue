@@ -20,7 +20,7 @@
                 <v-toolbar-items>
                     <v-select v-if="selectedItem.state !== 'DRAFT' && selectedItem.id !== 0" flat solo-inverted
                               v-model="selectedItem.state" :items="states" label="État du devis"
-                              class="hidden-sm-and-down mt-2" @input="changeItemState">
+                              class="mt-2" @input="changeItemState">
                         <template v-slot:item="{item}">
                             <v-chip :color="docStateColor(item)" text-color="white">{{item | docStateTranslation}}
                             </v-chip>
@@ -79,12 +79,12 @@
                     </v-btn>
                 </v-toolbar-items>
             </v-toolbar>
-            <v-layout>
-                <v-flex class="hidden-print-only">
+            <v-layout row wrap>
+                <v-flex xs12 md6 class="hidden-print-only" order-xs2 order-md1>
                     <List :items="filteredSearch" :type="typeArg" v-on:itemSelection="itemSelection($event)"
                           :selected-item="selectedItem"></List>
                 </v-flex>
-                <v-flex>
+                <v-flex xs12 md6 order-xs1 order-md2>
                     <Alert type="error" :message="error"></Alert>
                     <EstimateDoc v-if="typeArg === 'Estimate'" :item="selectedItem"></EstimateDoc>
                     <InvoiceDoc v-else :item="selectedItem"></InvoiceDoc>
@@ -455,7 +455,7 @@
                         this.updateEstimate(item)
                     }
                 } else {
-                    if(!this.selectedItem.paymentCondition){
+                    if(!this.selectedItem.paymentCondition && this.selectedItem.paymentCondition !== 0){
                         this.error = "Vous n'avez pas choisi de condition de paiement."
                         return;
                     }
