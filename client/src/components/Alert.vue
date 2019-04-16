@@ -31,6 +31,14 @@
 					return false
 				}
 			}
+		},
+		watch: {
+			type(value){
+				this.typeArg = value
+			},
+			message(value){
+				this.messageArg = value
+			}
 		}
 	}
 </script>

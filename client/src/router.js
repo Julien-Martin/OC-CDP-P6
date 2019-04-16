@@ -10,6 +10,8 @@ import Product from './views/Product'
 import Invoices from './views/Invoices'
 import LegalForm from './views/LegalForm'
 import PageNotFound from "./views/PageNotFound";
+import Landing from "./views/Landing";
+import Legal from "./views/Legal";
 
 import {isAdmin, isAuth, isNotAuth} from "./utils";
 
@@ -21,6 +23,17 @@ const router = new Router({
 	routes: [
 		{
 			path: '/',
+			name: 'landing',
+			component: Landing,
+			beforeEnter: isNotAuth
+		},
+		{
+			path: '/mentions-legales',
+			name: 'legal',
+			component: Legal,
+		},
+		{
+			path: '/signup',
 			name: 'signup',
 			component: Signup,
 			beforeEnter: isNotAuth
