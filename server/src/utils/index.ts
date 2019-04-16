@@ -6,6 +6,7 @@ import {welcomeEmail} from "./emails";
 import {ErrorHandling} from "./errors";
 
 import * as dotenv from "dotenv"
+
 dotenv.config();
 
 const publicKey = fs.readFileSync('./public_key.pem');
@@ -67,7 +68,7 @@ export const isAuth = async (context: Context) => {
 export const isAdmin = async (context: Context) => {
     try {
         const {id, role} = await checkAuth(context);
-        if(role !== "ADMIN") throw "AUTH003";
+        if (role !== "ADMIN") throw "AUTH003";
         return id
     } catch (e) {
         throw new ErrorHandling(e)
@@ -80,15 +81,32 @@ export const isAdmin = async (context: Context) => {
  */
 const checkAuth = async (context: Context) => {
     const Authorization = context.request.get('Authorization');
-    if(Authorization){
+    if (Authorization) {
         try {
             const token = Authorization.replace('Bearer ', '');
             const {id, role} = jwt.verify(token, publicKey);
             const user = await context.prisma.$exists.user({id});
-            if(!user) throw "USER001";
+            if (!user) throw "USER001";
             return {id, role}
         } catch (e) {
             throw new ErrorHandling(e)
         }
     } else throw new ErrorHandling("AUTH002")
 };
+
+export const getAuth = async (context: Context) => {
+    const Authorization = await context.request.get('Authorization')
+    if(Authorization){
+        try {
+            const token = Authorization.replace('Bearer ', '')
+            const {id, role} = await jwt.verify(token, publicKey)
+            const user = await context.prisma.$exists.user({id})
+            if(!user) return null
+            return {id, role}
+        }catch (e) {
+            throw new ErrorHandling('AUTH001', e.message)
+        }
+    } else {
+        return null
+    }
+}

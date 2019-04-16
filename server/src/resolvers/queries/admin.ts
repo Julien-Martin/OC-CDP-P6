@@ -10,7 +10,6 @@ export const adminQuery = {
      */
 
     users: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.users()
     },
     /**
@@ -32,7 +31,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     products: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.products()
     },
     /**

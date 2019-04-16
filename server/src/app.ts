@@ -2,12 +2,14 @@ import {GraphQLServer} from "graphql-yoga";
 import {prisma} from "./generated";
 import resolvers from "./resolvers"
 import * as dotenv from "dotenv"
+import { permissions } from './permissions'
 
 dotenv.config();
 
 const server = new GraphQLServer({
     typeDefs: __dirname + '/schema.graphql',
     resolvers,
+    middlewares: [permissions],
     context: request => ({
         ...request,
         prisma,
