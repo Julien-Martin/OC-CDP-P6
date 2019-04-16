@@ -2,7 +2,8 @@
     <div id="appToolbar" class="hidden-print-only">
         <v-toolbar color="primary" dark fixed app clipped-right>
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title>ME Assistant</v-toolbar-title>
+            <v-toolbar-title>ME ASSISTANT</v-toolbar-title>
+            <p>v1.0</p>
             <v-spacer></v-spacer>
             <v-menu offset-y>
                 <v-btn icon slot="activator">

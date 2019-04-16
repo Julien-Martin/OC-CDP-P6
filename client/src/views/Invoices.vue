@@ -5,13 +5,11 @@
 </template>
 
 <script>
-  import List from "../components/List";
-  import InvoiceDoc from "../components/InvoiceDoc";
   import DocPage from "../components/DocPage";
 
   export default {
     name: "Invoices",
-    components: {DocPage, InvoiceDoc, List},
+    components: {DocPage},
   }
 </script>
 

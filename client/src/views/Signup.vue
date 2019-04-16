@@ -44,6 +44,12 @@
                 </v-container>
               </form>
             </v-card-text>
+            <v-card-actions>
+              <v-btn flat router to="/">
+                <v-icon>home</v-icon>
+                Accueil
+              </v-btn>
+            </v-card-actions>
           </v-card>
           <v-stepper v-if="noAccount" v-model="stepper" vertical>
 
