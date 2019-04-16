@@ -1,4 +1,4 @@
-import {Context, isAuth} from "../../utils";
+import {Context} from "../../utils";
 import {ErrorHandling} from "../../utils/errors";
 
 export const clientMutation = {
@@ -10,7 +10,6 @@ export const clientMutation = {
      * @returns {Promise<*|*>}
      */
     createClient: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         const legalFormId = args.legalForm;
         delete args.legalForm;
         try {
@@ -23,7 +22,7 @@ export const clientMutation = {
                 },
                 user: {
                     connect: {
-                        id: userId
+                        id: context.user.id
                     }
                 }
             })
@@ -39,7 +38,6 @@ export const clientMutation = {
      * @returns {Promise<void>}
      */
     updateClient: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         const id = args.id;
         const legalFormId = args.legalForm;
         delete args.legalForm;
@@ -69,14 +67,13 @@ export const clientMutation = {
      * @returns {Promise<boolean>}
      */
     deleteClient: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             let estimateCounter = (await context.prisma.client({id: args.id}).estimates()).length;
             let invoiceCounter = (await context.prisma.client({id: args.id}).invoices()).length;
             if(estimateCounter) throw ("Ce client a des devis associés.");
             if(invoiceCounter) throw ("Ce client a des factures associés.");
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     clients: {
                         delete: {id: args.id}

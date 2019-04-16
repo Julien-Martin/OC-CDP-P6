@@ -1,4 +1,4 @@
-import {Context, isAuth} from "../../utils";
+import {Context} from "../../utils";
 
 export const userQuery = {
     /**
@@ -9,8 +9,7 @@ export const userQuery = {
      * @returns {Promise<*>}
      */
     me: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
-        return await context.prisma.user({id: userId})
+        return await context.prisma.user({id: context.user.id})
     },
     /**
      * Get current user products
@@ -20,8 +19,11 @@ export const userQuery = {
      * @returns {Promise<*>}
      */
     meProducts: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).products()
+        return await context.prisma.user({id: context.user.id}).products()
+    },
+
+    meProduct: async(_, args, context: Context) => {
+        return await context.prisma.user({id: context.user.id}).products({where: {id: args.id}})
     },
     /**
      * Get current user clients
@@ -31,8 +33,7 @@ export const userQuery = {
      * @returns {Promise<*>}
      */
     meClients: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).clients()
+        return await context.prisma.user({id: context.user.id}).clients()
     },
     /**
      * Get one product by ID and only from current user
@@ -42,8 +43,7 @@ export const userQuery = {
      * @returns {Promise<*>}
      */
     meClient: async (_, args, context: Context) => {
-        const userID = await isAuth(context);
-        return await context.prisma.user({id: userID}).products({where: {id: args.id}})
+        return await context.prisma.user({id: context.user.id}).clients({where: {id: args.id}})
     },
     /**
      * Get current user invoices
@@ -53,8 +53,7 @@ export const userQuery = {
      * @returns {Promise<*>}
      */
     meInvoices: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).invoices()
+        return await context.prisma.user({id: context.user.id}).invoices()
     },
     /**
      * Get one invoice by ID and only from current user
@@ -64,8 +63,7 @@ export const userQuery = {
      * @returns {Promise<*>}
      */
     meInvoice: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).invoices({where: {id: args.id}})
+        return await context.prisma.user({id: context.user.id}).invoices({where: {id: args.id}})
     },
     /**
      * Get current user's estimates
@@ -75,8 +73,7 @@ export const userQuery = {
      * @returns {Promise<*>}
      */
     meEstimates: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).estimates()
+        return await context.prisma.user({id: context.user.id}).estimates()
     },
     /**
      * Get one estimate by ID and only from current user
@@ -86,7 +83,6 @@ export const userQuery = {
      * @returns {Promise<*|boolean|StorageEstimate|StorageEstimate>}
      */
     meEstimate: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
-        return await context.prisma.user({id: userId}).estimates({where: {id: args.id}})
+        return await context.prisma.user({id: context.user.id}).estimates({where: {id: args.id}})
     },
 };

@@ -10,7 +10,6 @@ export const legalFormMutation = {
      * @returns {Promise<*>}
      */
     createLegalForm: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         try {
             return await context.prisma.createLegalForm({
                 ...args
@@ -27,7 +26,6 @@ export const legalFormMutation = {
      * @returns {Promise<void>}
      */
     updateLegalForm: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         const id = args.id;
         delete args.id;
         try {
@@ -47,7 +45,6 @@ export const legalFormMutation = {
      * @returns {Promise<void>}
      */
     deleteLegalForm: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         try {
             await context.prisma.deleteLegalForm({id: args.id})
         } catch (e) {

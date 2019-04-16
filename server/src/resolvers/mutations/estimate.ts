@@ -1,4 +1,4 @@
-import {Context, isAuth, StateEnum} from "../../utils";
+import {Context, StateEnum} from "../../utils";
 import {fragment} from '../../utils/fragments'
 import * as moment from 'moment'
 import {ErrorHandling} from "../../utils/errors";
@@ -13,7 +13,6 @@ export const estimateMutation = {
      */
     createEstimate: async (_, args, context: Context) => {
         try {
-            const userId = await isAuth(context);
             const clientId = args.clientId;
             delete args.clientId;
             const client = await context.prisma.client({id: clientId}).$fragment(fragment.fragmentClient);
@@ -42,9 +41,9 @@ export const estimateMutation = {
             return await context.prisma.createEstimate({
                 ...args,
                 state: "DRAFT",
-                userId,
+                userId: context.user.id,
                 user: {
-                    connect: {id: userId}
+                    connect: {id: context.user.id}
                 },
                 client: {
                     connect: {id: clientId}
@@ -67,7 +66,6 @@ export const estimateMutation = {
      */
     updateEstimate: async (_, args, context: Context) => {
         try {
-            const userId = await isAuth(context);
             const id = args.id;
             delete args.id;
             const estimateState = await context.prisma.estimate({id: id}).$fragment(fragment.fragmentEstimateState);
@@ -101,7 +99,7 @@ export const estimateMutation = {
             args.validityDate = new Date(args.deliveryDate).toISOString();
 
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     estimates: {
                         update: {
@@ -131,7 +129,6 @@ export const estimateMutation = {
      * @param context
      */
     validateEstimate: async(_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             const estimateState = await context.prisma.estimate({id: args.id}).$fragment(fragment.fragmentEstimateState);
             if (estimateState['state'] !== StateEnum["0"]) throw ("Ce devis a déjà été validé, vous ne pouvez donc pas le modifier. ");
@@ -152,7 +149,7 @@ export const estimateMutation = {
             console.log(typeof staticProducts)
             // @ts-ignore
             return await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     estimates: {
                         // @ts-ignore
@@ -189,10 +186,9 @@ export const estimateMutation = {
      * @returns {Promise<void>}
      */
     changeEstimateState: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             return await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     estimates: {
                         update: {
@@ -216,12 +212,11 @@ export const estimateMutation = {
      * @returns {Promise<boolean>}
      */
     deleteEstimate: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             const estimateState = await context.prisma.estimate({id: args.id}).$fragment(fragment.fragmentEstimateState);
             if (estimateState['state'] !== StateEnum["0"]) throw ("Vous ne pouvez pas supprimer un devis déjà validé. ");
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     estimates: {
                         delete: {id: args.id}

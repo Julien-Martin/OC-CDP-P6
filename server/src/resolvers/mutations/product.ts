@@ -1,4 +1,4 @@
-import {Context, isAuth} from '../../utils'
+import {Context} from '../../utils'
 import {ErrorHandling} from "../../utils/errors";
 
 export const productMutation = {
@@ -9,7 +9,6 @@ export const productMutation = {
      * @param context
      */
     createProduct: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             const priceht = Math.round((args.pricettc / (1 + args.vat / 100)) * 100) / 100;
             return await context.prisma.createProduct({
@@ -17,7 +16,7 @@ export const productMutation = {
                 priceht: priceht,
                 user: {
                     connect: {
-                        id: userId
+                        id: context.user.id
                     }
                 },
             })
@@ -33,13 +32,12 @@ export const productMutation = {
      * @returns {Promise<*>}
      */
     updateProduct: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         const id = args.id;
         delete args.id;
         try {
             const priceht = args.pricettc / (1 + args.vat / 100);
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     products: {
                         update: {
@@ -66,14 +64,13 @@ export const productMutation = {
      * @returns {Promise<boolean>}
      */
     deleteProduct: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             let estimateCounter = (await context.prisma.estimates({where: {products_some: {product: {id: args.id}}}})).length;
             let invoiceCounter = (await context.prisma.invoices({where: {products_some: {product: {id: args.id}}}})).length;
             if(estimateCounter) throw("Ce produit est associé a des devis.");
             if(invoiceCounter) throw("Ce produit est associé a une facture.");
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     products: {
                         delete: {

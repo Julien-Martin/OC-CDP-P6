@@ -1,4 +1,4 @@
-import {Context, isAuth} from "../utils";
+import {Context} from "../utils";
 
 export const User = {
 	/**
@@ -9,7 +9,6 @@ export const User = {
 	 * @returns {Promise<*|Promise<*>>}
 	 */
 	products: async (_, args, context: Context) => {
-		const userId = await isAuth(context);
 		return context.prisma.user({id: _.id}).products()
 	},
 	/**
@@ -20,7 +19,6 @@ export const User = {
 	 * @returns {Promise<*>}
 	 */
 	clients: async (_, args, context: Context) => {
-		const userId = await isAuth(context);
 		return context.prisma.user({id: _.id}).clients()
 	},
 	/**
@@ -31,7 +29,6 @@ export const User = {
 	 * @returns {Promise<*>}
 	 */
 	invoices: async (_, args, context: Context) => {
-		const userId = await isAuth(context);
 		return context.prisma.user({id: _.id}).invoices()
 	},
 	/**
@@ -42,7 +39,6 @@ export const User = {
 	 * @returns {Promise<*>}
 	 */
 	estimates: async(_, args, context: Context) => {
-		const userId = await isAuth(context);
 		return context.prisma.user({id: _.id}).estimates()
 	}
 };

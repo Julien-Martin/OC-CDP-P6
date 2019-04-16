@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt'
-import {Context, isAuth} from '../../utils'
+import {Context} from '../../utils'
 import {ErrorHandling} from "../../utils/errors";
 
 export const userMutation = {
@@ -10,14 +10,13 @@ export const userMutation = {
      * @param context
      */
     async updateMe(_, args, context: Context) {
-        const userId = await isAuth(context);
         let name = args.name;
         let address = args.address;
         delete args.name;
         delete args.address;
         try {
             return await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     ...args,
                     name: {create: {firstname: name.firstname, lastname: name.lastname}},
@@ -44,14 +43,13 @@ export const userMutation = {
      * @param context
      */
     async updatePassword(_, args, context: Context) {
-        const userId = await isAuth(context);
         try {
-            const user = await context.prisma.user({id: userId});
+            const user = await context.prisma.user({id: context.user.id});
             const validPassword = await bcrypt.compare(args.oldpassword, user.password);
             let password = await bcrypt.hash(args.password, 10);
             if (!validPassword) throw ("Mot de passe invalide");
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     password: password
                 }
@@ -69,12 +67,11 @@ export const userMutation = {
      * @param context
      */
     async deleteMe(_, args, context: Context) {
-        const userId = await isAuth(context);
-        const user = await context.prisma.user({id: userId});
+        const user = await context.prisma.user({id: context.user.id});
         const validPassword = await bcrypt.compare(args.password, user.password);
         if (!validPassword) throw new Error('Mot de passe invalide.');
         try {
-            await context.prisma.deleteUser({id: userId});
+            await context.prisma.deleteUser({id: context.user.id});
             return true
         } catch (e) {
             throw new ErrorHandling("ME003", e.message)

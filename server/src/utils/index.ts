@@ -15,6 +15,7 @@ const publicKey = fs.readFileSync('./public_key.pem');
  * Define Context type (typeScript)
  */
 export interface Context {
+    user: { role; id };
     prisma: Prisma
     request: any
 }
@@ -51,49 +52,6 @@ export const sendConfirmationMail = async (email, id) => {
     await transporter.sendMail(welcomeEmail(email, id));
 };
 
-
-/**
- * Return id of authenticated's user
- * @param context
- */
-export const isAuth = async (context: Context) => {
-    const {id} = await checkAuth(context);
-    return id
-};
-
-/**
- * Check if user is Admin
- * @param context
- */
-export const isAdmin = async (context: Context) => {
-    try {
-        const {id, role} = await checkAuth(context);
-        if (role !== "ADMIN") throw "AUTH003";
-        return id
-    } catch (e) {
-        throw new ErrorHandling(e)
-    }
-};
-
-/**
- * Check if user is Authenticated
- * @param context
- */
-const checkAuth = async (context: Context) => {
-    const Authorization = context.request.get('Authorization');
-    if (Authorization) {
-        try {
-            const token = Authorization.replace('Bearer ', '');
-            const {id, role} = jwt.verify(token, publicKey);
-            const user = await context.prisma.$exists.user({id});
-            if (!user) throw "USER001";
-            return {id, role}
-        } catch (e) {
-            throw new ErrorHandling(e)
-        }
-    } else throw new ErrorHandling("AUTH002")
-};
-
 export const getAuth = async (context: Context) => {
     const Authorization = await context.request.get('Authorization')
     if(Authorization){
@@ -102,6 +60,7 @@ export const getAuth = async (context: Context) => {
             const {id, role} = await jwt.verify(token, publicKey)
             const user = await context.prisma.$exists.user({id})
             if(!user) return null
+            context.user = {id, role}
             return {id, role}
         }catch (e) {
             throw new ErrorHandling('AUTH001', e.message)

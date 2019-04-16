@@ -1,4 +1,4 @@
-endpoint: http://localhost:4466
+endpoint: http://localhost:6002
 datamodel: prisma/datamodel.prisma
 databaseType: document
 

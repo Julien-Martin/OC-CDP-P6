@@ -1,4 +1,4 @@
-import {Context, isAuth} from "../utils";
+import {Context} from "../utils";
 
 export const Product = {
 	/**
@@ -9,7 +9,6 @@ export const Product = {
 	 * @returns {Promise<*>}
 	 */
 	user: async (_, args, context: Context) => {
-		const userId = await isAuth(context);
 		return context.prisma.product({id: _.id}).user()
 	}
 };

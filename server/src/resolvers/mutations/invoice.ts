@@ -1,4 +1,4 @@
-import {Context, isAuth, StateEnum} from "../../utils";
+import {Context, StateEnum} from "../../utils";
 import * as moment from 'moment'
 import {fragment} from '../../utils/fragments'
 import {ErrorHandling} from "../../utils/errors";
@@ -13,7 +13,6 @@ export const invoiceMutation = {
      */
     createInvoice: async (_, args, context: Context) => {
         try {
-            const userId = await isAuth(context);
             const clientId = args.clientId;
             delete args.clientId;
             const client = await context.prisma.client({id: clientId}).$fragment(fragment.fragmentClient);
@@ -41,9 +40,9 @@ export const invoiceMutation = {
             return await context.prisma.createInvoice({
                 ...args,
                 state: "DRAFT",
-                userId,
+                userId: context.user.id,
                 user: {
-                    connect: {id: userId}
+                    connect: {id: context.user.id}
                 },
                 client: {
                     connect: {id: clientId}
@@ -65,7 +64,6 @@ export const invoiceMutation = {
      * @returns {Promise<*|boolean>}
      */
     updateInvoice: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             let id = args.id;
             delete args.id;
@@ -98,7 +96,7 @@ export const invoiceMutation = {
             args.deadline = new Date(deadline.toString()).toISOString();
 
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     invoices: {
                         update: {
@@ -128,7 +126,6 @@ export const invoiceMutation = {
      * @param context
      */
     validateInvoice: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             const invoiceState = await context.prisma.invoice({id: args.id}).$fragment(fragment.fragmentInvoiceState);
             if (invoiceState['state'] !== StateEnum["0"]) throw ("Cette facture a déjà été validé, vous ne pouvez donc pas le modifier. ");
@@ -148,7 +145,7 @@ export const invoiceMutation = {
             });
             // @ts-ignore
             return await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     invoices: {
                         // @ts-ignore
@@ -185,10 +182,9 @@ export const invoiceMutation = {
      * @param context
      */
     changeInvoiceState: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     invoices: {
                         update: {
@@ -211,12 +207,11 @@ export const invoiceMutation = {
      * @returns {Promise<boolean>}
      */
     deleteInvoice: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         try {
             const invoiceState = await context.prisma.invoice({id: args.id}).$fragment(fragment.fragmentInvoiceState);
             if (invoiceState['state'] !== StateEnum["0"]) throw new Error("Vous ne pouvez pas supprimer une facture déjà validé. ");
             await context.prisma.updateUser({
-                where: {id: userId},
+                where: {id: context.user.id},
                 data: {
                     invoices: {
                         delete: {id: args.id}

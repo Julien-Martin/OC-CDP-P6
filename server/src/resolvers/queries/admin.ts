@@ -1,4 +1,4 @@
-import {Context, isAuth, isAdmin} from "../../utils";
+import {Context} from "../../utils";
 
 export const adminQuery = {
     /**
@@ -20,7 +20,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     user: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.user({id: args.id})
     },
     /**
@@ -41,7 +40,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     product: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.product({id: args.id})
     },
 
@@ -53,7 +51,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     clients: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.clients()
     },
     /**
@@ -64,7 +61,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     client: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.product({id: args.id})
     },
     /**
@@ -75,7 +71,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     legalForms: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         return await context.prisma.legalForms()
     },
     /**
@@ -86,7 +81,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     legalForm: async (_, args, context: Context) => {
-        const userId = await isAuth(context);
         return await context.prisma.legalForm({id: args.id})
     },
     /**
@@ -97,7 +91,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     invoices: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.invoices()
     },
     /**
@@ -108,7 +101,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     invoice: async (_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.invoice({id: args.id})
     },
     /**
@@ -119,7 +111,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     invoicesByUser: async(_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.user({id: args.id}).invoices()
     },
     /**
@@ -129,7 +120,6 @@ export const adminQuery = {
      * @param context
      */
     estimates: async(_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.estimates()
     },
     /**
@@ -140,7 +130,6 @@ export const adminQuery = {
      * @returns {Promise<*|boolean|StorageEstimate>}
      */
     estimate: async(_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.estimate({id: args.id})
     },
     /**
@@ -151,7 +140,6 @@ export const adminQuery = {
      * @returns {Promise<*>}
      */
     estimatesByUser: async(_, args, context: Context) => {
-        const userId = await isAdmin(context);
         return await context.prisma.user({id: args.id}).estimates()
     },
 };

@@ -1,4 +1,4 @@
-import {Context, isAuth} from "../utils";
+import {Context} from "../utils";
 
 export const Invoice = {
     /**
@@ -8,7 +8,6 @@ export const Invoice = {
      * @param context
      */
     user: async(_, args, context: Context) => {
-        const userId = await isAuth(context);
         return context.prisma.invoice({id: _.id}).user()
     },
     /**
@@ -18,7 +17,6 @@ export const Invoice = {
      * @param context
      */
     client: async(_, args, context: Context) => {
-        const userId = await isAuth(context);
         return context.prisma.invoice({id: _.id}).client()
     },
     /**
@@ -29,7 +27,6 @@ export const Invoice = {
      * @param info
      */
     products: async(_, args, context: Context, info) => {
-        const userId = await isAuth(context);
         return await context.prisma.invoice({id: _.id}).products().$fragment(`
             fragment EnsureProduct on Invoice {
                 product {
