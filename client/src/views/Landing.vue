@@ -1,8 +1,7 @@
 <template>
     <div id="landing">
-        <v-snackbar v-model="cookieSnack" :timeout="timeout" multi-line color="#0063ff">
-            Ce site utilise des cookies.
-            En poursuivant votre navigation sur ce site, vous acceptez notre politique de protection des données personnelles et notre politique cookies.
+        <v-snackbar v-model="cookieSnack" :timeout="timeout" auto-height multi-line color="#0063ff">
+                Ce site utilise des cookies. En poursuivant votre navigation sur ce site, vous acceptez notre politique de protection des données personnelles et notre politique cookies.
             <v-btn dark flat @click="acceptCookie">Accepter</v-btn>
         </v-snackbar>
         <v-toolbar flat dark color="#0063ff">
