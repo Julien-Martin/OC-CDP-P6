@@ -89,6 +89,6 @@
 <style scoped>
     #custom-list {
         overflow-y: auto;
-        max-height: calc(100vh - 168px)
+        max-height: calc(100vh - 168px);
     }
 </style>

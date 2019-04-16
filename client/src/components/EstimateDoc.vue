@@ -3,7 +3,7 @@
         <Alert type="error" :message="error"></Alert>
         <v-card-text v-if="itemArg.id !== 0">
             <v-container>
-                <v-layout row>
+                <v-layout row wrap>
                     <v-flex grow v-if="itemArg.staticUser">
                         <strong class="title ma-0">{{itemArg.staticUser.commercialName}}</strong>
                         <p class="subheading ma-0">{{itemArg.staticUser.name.firstname}}
@@ -126,7 +126,7 @@
                 </v-data-table>
                 <v-container fluid grid-list-sm v-if="item.state === 'DRAFT'">
                     <v-layout row wrap>
-                        <v-flex xs5>
+                        <v-flex xs12 md4>
                             <v-select v-model="tempProduct" return-object :items="meProducts" label="Produit"
                                       class="mb-0">
                                 <template v-slot:item="{item}">
@@ -137,19 +137,19 @@
                                 </template>
                             </v-select>
                         </v-flex>
-                        <v-flex xs5>
+                        <v-flex xs12 md4>
                             <v-text-field type="number" min="1" step="1" v-model="tempQuantity"
                                           label="Quantité"></v-text-field>
                         </v-flex>
-                        <v-flex xs2>
+                        <v-flex xs12 md4>
                             <v-btn flat @click="addProduct">Ajouter un produit</v-btn>
                         </v-flex>
                     </v-layout>
                 </v-container>
             </v-container>
             <v-container>
-                <v-layout row>
-                    <v-flex md6>
+                <v-layout row wrap>
+                    <v-flex xs12 md6>
                         <v-menu v-model="validityDateMenu" :close-on-content-click="false"
                                 :nudge-right="40" lazy
                                 transition="scale-transition" offset-y full-width min-width="290px">
@@ -169,7 +169,7 @@
                                     :disabled="itemArg.state !== 'DRAFT'" label="Informations supplémentaires" no-resize
                                     rows="3" v-model="itemArg.footNote"></v-textarea>
                     </v-flex>
-                    <v-flex md6>
+                    <v-flex xs12 md6>
                         <p class="subheading ma-0 text-xs-right" v-if="!me.useVAT">TVA non applicable, article 293 B du
                             CGI</p>
                         <v-layout row>

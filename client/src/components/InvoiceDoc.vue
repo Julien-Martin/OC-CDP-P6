@@ -3,7 +3,7 @@
         <Alert type="error" :message="error"></Alert>
         <v-card-text v-if="itemArg.id !== 0">
             <v-container>
-                <v-layout row>
+                <v-layout row wrap>
                     <v-flex grow v-if="itemArg.staticUser">
                         <strong class="title ma-0">{{itemArg.staticUser.commercialName}}</strong>
                         <p class="subheading ma-0">{{itemArg.staticUser.name.firstname}}
@@ -117,7 +117,7 @@
                 </v-data-table>
                 <v-container fluid grid-list-sm v-if="item.state === 'DRAFT'">
                     <v-layout row wrap>
-                        <v-flex xs5>
+                        <v-flex xs12 md4>
                             <v-select v-model="tempProduct" return-object :items="meProducts" label="Produit"
                                       class="mb-0">
                                 <template v-slot:item="{item}">
@@ -128,18 +128,18 @@
                                 </template>
                             </v-select>
                         </v-flex>
-                        <v-flex xs5>
+                        <v-flex xs12 md4>
                             <v-text-field type="number" min="1" step="1" v-model="tempQuantity"
                                           label="Quantité"></v-text-field>
                         </v-flex>
-                        <v-flex xs2>
+                        <v-flex xs12 md4>
                             <v-btn flat @click="addProduct">Ajouter un produit</v-btn>
                         </v-flex>
                     </v-layout>
                 </v-container>
                 <v-container>
-                    <v-layout row>
-                        <v-flex md6>
+                    <v-layout row wrap>
+                        <v-flex xs12 md6>
                             <p class="subheading ma-0" v-if="me.paymentInfo">Condition de règlement:
                                 {{me.paymentInfo}}</p>
                             <v-textarea v-if="itemArg.footNote || itemArg.state === 'DRAFT'"
@@ -149,10 +149,8 @@
                             <v-text-field v-if="itemArg.id !== 1" class="ma-0 pa-0" :value="cleanDate(itemArg.deadline)"
                                           readonly label="Date limite de paiement" disabled></v-text-field>
                         </v-flex>
-                        <v-flex md6>
-                            <p class="subheading ma-0 text-xs-right" v-if="!me.useVAT">TVA non applicable, article 293 B
-                                du
-                                CGI</p>
+                        <v-flex xs12 md6>
+                            <p class="subheading ma-0 text-xs-right" v-if="!me.useVAT">TVA non applicable, article 293 B du CGI</p>
                             <v-layout row>
                                 <v-flex md6>
                                     <p class="subheading ma-0 text-xs-right">Total HT</p>
