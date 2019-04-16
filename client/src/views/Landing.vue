@@ -1,5 +1,10 @@
 <template>
     <div id="landing">
+        <v-snackbar v-model="cookieSnack" :timeout="timeout" multi-line color="#0063ff">
+            Ce site utilise des cookies.
+            En poursuivant votre navigation sur ce site, vous acceptez notre politique de protection des données personnelles et notre politique cookies.
+            <v-btn dark flat @click="acceptCookie">Accepter</v-btn>
+        </v-snackbar>
         <v-toolbar flat dark color="#0063ff">
             <v-toolbar-title class="mx-0">ME-ASSISTANT</v-toolbar-title>
             <p>v1.0</p>
@@ -119,10 +124,21 @@
                 macImageURL2: macImage2,
                 email: '',
                 alertMessage: '',
-                alertType: 'success'
+                alertType: 'success',
+                cookieSnack: false,
+                timeout: 0
             }
         },
+        created(){
+          if(!localStorage.getItem("accept-cookie")){
+              this.cookieSnack = true
+          }
+        },
         methods: {
+            acceptCookie(){
+                this.cookieSnack = false
+                localStorage.setItem("accept-cookie", true)
+            },
             captureEmail() {
                 this.$apollo.mutate({
                     mutation: CAPTURE,
