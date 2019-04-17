@@ -71,6 +71,8 @@
                 </v-layout>
                 <v-layout row>
                     <v-flex xs12 md6>
+                        <br/>
+                        <br/>
                         <v-text-field v-if="itemArg.id !== 1" class="ma-0 pa-0" :value="cleanDate(itemArg.createdAt)"
                                       readonly label="Date d'émission" disabled></v-text-field>
                         <v-menu v-model="billingDateMenu" :close-on-content-click="false"
@@ -172,7 +174,7 @@
                 </v-container>
             </v-container>
         </v-card-text>
-        <v-card-text v-else>Veuillez sélectionner un devis.</v-card-text>
+        <v-card-text v-else>Veuillez sélectionner une facture.</v-card-text>
     </v-card>
 </template>
 
