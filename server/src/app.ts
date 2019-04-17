@@ -33,8 +33,8 @@ export const startServer = async () => {
 
 startServer()
     .then(() => {
-
+        console.log('Server is ready')
     })
     .catch(error => {
-
+        console.log(error)
     })

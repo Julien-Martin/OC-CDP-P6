@@ -3,6 +3,7 @@ import VueApollo from 'vue-apollo'
 import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import router from './router'
+import store from './store'
 
 // Install the vue plugin
 Vue.use(VueApollo);
@@ -77,11 +78,13 @@ export function createProvider (options = {}) {
     },
     errorHandler (error) {
       // eslint-disable-next-line no-console
-      let errorToken = "GraphQL error: Not Authorised!"
+      let errorToken = "GraphQL error: Le token est expiré."
       if(error.message === errorToken){
-        window.location.href = "/"
-        localStorage.removeItem(AUTH_TOKEN);
+        localStorage.removeItem(AUTH_TOKEN)
         localStorage.removeItem(AUTH_ROLE)
+        store.dispatch('logout').then(() => {
+          router.push('/signup')
+        })
       }
       console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
     },
@@ -110,6 +113,10 @@ export async function onLogout (apolloClient) {
   if (typeof localStorage !== 'undefined') {
     localStorage.removeItem(AUTH_TOKEN);
     localStorage.removeItem(AUTH_ROLE)
+    store.dispatch('logout').then(() => {
+      router.push('/signup')
+    })
+
   }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
   try {

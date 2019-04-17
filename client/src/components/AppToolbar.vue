@@ -73,9 +73,7 @@
             logout() {
                 const apolloClient = this.$apollo.provider.defaultClient;
                 onLogout(apolloClient).then(() => {
-                    this.$store.dispatch('logout').then(() => {
-                        this.$router.push('/')
-                    })
+
                 })
             }
         },

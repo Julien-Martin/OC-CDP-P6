@@ -21,7 +21,6 @@ moment.locale('fr');
 
 const apolloProvider = createProvider()
 
-
 new Vue({
     router,
     store,

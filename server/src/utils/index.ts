@@ -59,11 +59,11 @@ export const getAuth = async (context: Context) => {
             const token = Authorization.replace('Bearer ', '')
             const {id, role} = await jwt.verify(token, publicKey)
             const user = await context.prisma.$exists.user({id})
-            if(!user) return null
+            if(!user) throw "USER001"
             context.user = {id, role}
             return {id, role}
         }catch (e) {
-            throw new ErrorHandling('AUTH001', e.message)
+            throw new ErrorHandling(e)
         }
     } else {
         return null

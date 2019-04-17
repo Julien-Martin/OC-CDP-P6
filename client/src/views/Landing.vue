@@ -1,6 +1,6 @@
 <template>
     <div id="landing">
-        <v-toolbar flat dark color="#0063ff">
+        <v-toolbar flat dark color="#0063ff" dense scroll-off-screen>
             <v-toolbar-title class="mx-0">ME-ASSISTANT</v-toolbar-title>
             <p>v1.0</p>
             <v-spacer></v-spacer>
@@ -8,7 +8,15 @@
                 <v-btn flat round router to="/signup">Connexion</v-btn>
             </v-toolbar-items>
         </v-toolbar>
-        <v-content>
+        <v-toolbar app color="#ffffff" dense inverted-scroll>
+            <v-toolbar-title class="mx-0">ME-ASSISTANT</v-toolbar-title>
+            <p>v1.0</p>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+                <v-btn flat round router to="/signup">Connexion</v-btn>
+            </v-toolbar-items>
+        </v-toolbar>
+        <v-content class="pt-0">
             <v-parallax :src="images[0]">
                 <section>
                     <v-layout column align-center justify-center class="white--text">

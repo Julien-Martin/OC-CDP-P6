@@ -156,7 +156,8 @@
                                                           data-vv-scope="form-3"
                                                           type="password"
                                                           v-model="auth.confirmedPassword"
-                                                          v-validate="'required|confirmed:nouveau mot de passe'" name="confirmation"
+                                                          v-validate="'required|confirmed:nouveau mot de passe'"
+                                                          name="confirmation"
                                                           :error-messages="errors.collect('form-3.confirmation')"></v-text-field>
                                         </v-flex>
                                         <v-flex xs12>
@@ -269,13 +270,13 @@
                 })
             },
 
-            scrollTop(){
+            scrollTop() {
                 this.$vuetify.goTo(0)
             },
 
             showDeleteModal() {
                 this.$validator.validateAll('form-4').then(valid => {
-                    if(valid){
+                    if (valid) {
                         this.modal.visibility = true
                         this.modal.title = "Supprimer le compte ?"
                         this.modal.message = "Êtes-vous sûr de vouloir supprimer votre compte ?"
@@ -327,23 +328,23 @@
 
             changePassword() {
                 this.$validator.validateAll('form-3').then(valid => {
-                  if(valid) {
-                      delete this.auth.confirmedPassword
-                      this.loaderController();
-                      this.$apollo.mutate({
-                          mutation: User.UPDATE_PASSWORD,
-                          variables: {
-                              ...this.auth
-                          }
-                      }).then(() => {
-                          this.loaderController();
-                          this.getMe()
-                      }).catch(error => {
-                          this.loaderController();
-                          this.error = error.message
-                          this.scrollTop()
-                      })
-                  }
+                    if (valid) {
+                        delete this.auth.confirmedPassword
+                        this.loaderController();
+                        this.$apollo.mutate({
+                            mutation: User.UPDATE_PASSWORD,
+                            variables: {
+                                ...this.auth
+                            }
+                        }).then(() => {
+                            this.loaderController();
+                            this.getMe()
+                        }).catch(error => {
+                            this.loaderController();
+                            this.error = error.message
+                            this.scrollTop()
+                        })
+                    }
                 })
             },
         }
