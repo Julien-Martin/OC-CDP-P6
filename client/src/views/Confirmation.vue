@@ -1,7 +1,7 @@
 <template>
-    <div id="signup">
+    <div id="signup" class="backgroundCover" :style="{ backgroundImage: `url('${images[0]}')` }">
         <v-container fluid>
-            <v-layout row wrap justify-center>
+            <v-layout row wrap justify-center class="white--text">
                 <v-flex xs12>
                     <p class="text-xs-center display-2" router to="/">ME-Assistant</p>
                     <p class="text-xs-center headline">Confirmation de votre compte</p>
@@ -147,10 +147,11 @@
 
 <script>
     import {Auth} from "../graphql";
-
+    import section1 from '@/assets/section1.png'
     export default {
         data() {
             return {
+                images: [section1],
                 error: '',
                 stepper: 1,
                 signup: {
@@ -241,5 +242,8 @@
 </script>
 
 <style scoped>
-
+    .backgroundCover {
+        height: 100%;
+        background-size: cover;
+    }
 </style>
