@@ -337,3 +337,16 @@
         }
     }
 </script>
+
+<style scoped>
+    @media print {
+        .flex.xs12 {
+            -ms-flex-preferred-size: 50%;
+            flex-basis: 50%;
+            -webkit-box-flex: 0;
+            -ms-flex-positive: 0;
+            flex-grow: 0;
+            max-width: 50%;
+        }
+    }
+</style>

@@ -173,6 +173,22 @@
                     </v-layout>
                 </v-container>
             </v-container>
+            <div v-if="itemArg.staticUser">
+                <p class="body-1 text-xs-center mb-0">{{itemArg.staticUser.name.firstname}}
+                    {{itemArg.staticUser.name.lastname}} - {{itemArg.staticUser.address.street}}
+                    {{itemArg.staticUser.address.street2}} {{itemArg.staticUser.address.postalcode}}
+                    {{itemArg.staticUser.address.city}} - {{itemArg.staticUser.email}}</p>
+                <p class="body-1 text-xs-center">Siret: {{itemArg.staticUser.siret}} <span
+                        v-if="itemArg.staticUser.rcs">- RCS: {{itemArg.staticUser.rcs}}</span><span
+                        v-if="itemArg.staticUser.ape">- APE: {{itemArg.staticUser.ape}}</span><span
+                        v-if="itemArg.staticUser.RM">- RM: {{itemArg.staticUser.RM}}</span></p>
+            </div>
+            <div v-else>
+                <p class="body-1 text-xs-center mb-0">{{me.name.firstname}} {{me.name.lastname}} - {{me.address.street}}
+                    {{me.address.street2}} {{me.address.postalcode}} {{me.address.city}} - {{me.email}}</p>
+                <p class="body-1 text-xs-center">Siret: {{me.siret}} <span v-if="me.rcs">- RCS: {{me.rcs}}</span><span
+                        v-if="me.ape">- APE: {{me.ape}}</span><span v-if="me.RM">- RM: {{me.RM}}</span></p>
+            </div>
         </v-card-text>
         <v-card-text v-else>Veuillez sélectionner une facture.</v-card-text>
     </v-card>
@@ -295,5 +311,14 @@
 </script>
 
 <style scoped>
-
+    @media print {
+        .flex.xs12 {
+            -ms-flex-preferred-size: 50%;
+            flex-basis: 50%;
+            -webkit-box-flex: 0;
+            -ms-flex-positive: 0;
+            flex-grow: 0;
+            max-width: 50%;
+        }
+    }
 </style>
