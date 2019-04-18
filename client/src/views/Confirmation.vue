@@ -9,7 +9,6 @@
                 <v-flex xs12 sm4>
                     <Alert type="error" :message="error"></Alert>
                     <v-stepper v-model="stepper" vertical>
-
                         <v-stepper-step :complete="stepper > 1" step="1">Information de connexion</v-stepper-step>
                         <v-stepper-content step="1">
                             <v-card v-if="stepper === 1" flat>
@@ -94,16 +93,22 @@
                             <v-card v-if="stepper === 3" flat>
                                 <v-container grid-list-xs12 fluid>
                                     <v-layout row wrap>
-                                        <TextField class="xs12" v-model="signup.siret" v-validate="'required'"
-                                                   name="numéro de siret"
-                                                   :error-messages="errors.collect('numéro de siret')"
-                                                   label="Numéro de siret"></TextField>
+                                        <v-flex xs12>
+                                            <v-text-field v-model="signup.siret" v-validate="'required'"
+                                                          name="numéro de siret"
+                                                          :error-messages="errors.collect('numéro de siret')"
+                                                          label="Numéro de siret"></v-text-field>
+                                        </v-flex>
                                         <v-flex xs12>
                                             <v-switch class="xs12" v-model="signup.useVAT"
                                                       label="Assujetti à la TVA"></v-switch>
                                         </v-flex>
-                                        <TextField v-if="signup.useVAT" class="xs12" v-model="signup.VATnumber"
-                                                   label="Numéro de TVA"></TextField>
+                                        <v-flex xs12 v-if="signup.useVAT">
+                                            <v-text-field v-model="signup.VATnumber" v-validate="'required'"
+                                                          name="numéro de TVA"
+                                                          :error-messages="errors.collect('numéro de TVA')"
+                                                          label="Numéro de TVA"></v-text-field>
+                                        </v-flex>
                                         <v-flex xs12>
                                             <v-textarea v-model="signup.paymentInfo" rows="3" no-resize
                                                         label="Information de paiement"
@@ -148,6 +153,7 @@
 <script>
     import {Auth} from "../graphql";
     import section1 from '@/assets/section1.png'
+
     export default {
         data() {
             return {
@@ -183,27 +189,23 @@
         methods: {
             createAccount() {
                 const id = this.$route.params.id;
-                const password = this.signup.password;
                 const firstname = this.signup.name.firstname;
                 const lastname = this.signup.name.lastname;
+
                 const street = this.signup.address.street;
                 const street2 = this.signup.address.street2;
                 const city = this.signup.address.city;
                 const postalcode = this.signup.address.postalcode;
                 const country = this.signup.address.country;
-                const siret = this.signup.siret;
-                const useVAT = this.signup.useVAT;
-                const VATnumber = this.signup.VATnumber;
-                const paymentInfo = this.signup.paymentInfo;
-                const RCS = this.signup.RCS;
-                const RM = this.signup.RM;
-                const commercialName = this.signup.commercialName;
-                const cgv = this.signup.cgv;
+
+                delete this.signup.confirmedPassword
+                delete this.signup.name
+                delete this.signup.address
                 this.$apollo.mutate({
                     mutation: Auth.SIGNUP,
                     variables: {
+                        ...this.signup,
                         id,
-                        password,
                         firstname,
                         lastname,
                         street,
@@ -211,14 +213,6 @@
                         city,
                         postalcode,
                         country,
-                        siret,
-                        useVAT,
-                        VATnumber,
-                        paymentInfo,
-                        RCS,
-                        RM,
-                        commercialName,
-                        cgv
                     }
                 }).then(() => {
                     this.stepper = 4
@@ -228,6 +222,7 @@
             },
             submit() {
                 this.$validator.validateAll().then(valid => {
+                    console.log(valid)
                     if (valid) {
                         if (this.stepper === 3) {
                             this.createAccount()
