@@ -50,7 +50,7 @@
         },
         methods: {
             changePassword() {
-                this.loader = true
+                this.loader = true;
                 this.$apollo.mutate({
                     mutation: Auth.FORGOT_PASSWORD_CHANGE,
                     variables: {
@@ -58,11 +58,10 @@
                         password: this.forgot.password
                     }
                 }).then(response => {
-                    console.log(response)
-                    this.loader = false
+                    this.loader = false;
                     this.success = "Le mot de passe a été changé avec succès."
                 }).catch(error => {
-                    this.loader = false
+                    this.loader = false;
                     this.error = error.message
                 })
             },

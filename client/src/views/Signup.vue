@@ -98,20 +98,19 @@
         },
         methods: {
             sendForgotMail() {
-                this.loader = true
+                this.loader = true;
                 this.$apollo.mutate({
                     mutation: Auth.FORGOT_PASSWORD,
                     variables: {
                         ...this.forgot
                     }
                 }).then(response => {
-                    this.loader = false
+                    this.loader = false;
                     if(response){
-                        console.log(response)
                         this.success = "L'email a été envoyé à l'adresse "+this.forgot.email
                     }
                 }).catch(error => {
-                    this.loader = false
+                    this.loader = false;
                     this.error = error.message
                 })
             },

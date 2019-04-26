@@ -222,7 +222,6 @@
             },
             submit() {
                 this.$validator.validateAll().then(valid => {
-                    console.log(valid);
                     if (valid) {
                         if (this.stepper === 3) {
                             this.createAccount()
