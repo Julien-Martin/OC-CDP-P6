@@ -29,7 +29,7 @@ export const startServer = async () => {
         console.log(`Server is running on port ${port}`);
         console.log(`🚀 Playground ready at http://localhost:${port}/playground`)
     });
-}
+};
 
 startServer()
     .then(() => {
@@ -37,4 +37,4 @@ startServer()
     })
     .catch(error => {
         console.log(error)
-    })
+    });

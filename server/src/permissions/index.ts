@@ -49,7 +49,8 @@ export const permissions = shield({
         deleteProduct: rules.isAuthenticated,
         updateMe: rules.isAuthenticated,
         updatePassword: rules.isAuthenticated,
-        deleteMe: rules.isAuthenticated
+        deleteMe: rules.isAuthenticated,
+        deleteUser: rules.isAdmin
     },
     Client: rules.isAuthenticated,
     Estimate: rules.isAuthenticated,
@@ -58,4 +59,4 @@ export const permissions = shield({
 }, {
     allowExternalErrors: true,
     debug: true
-})
+});

@@ -78,10 +78,10 @@ export function createProvider (options = {}) {
     },
     errorHandler (error) {
       // eslint-disable-next-line no-console
-      let errorToken = "GraphQL error: Le token est expiré."
+      let errorToken = "GraphQL error: Le token est expiré.";
       if(error.message === errorToken){
-        localStorage.removeItem(AUTH_TOKEN)
-        localStorage.removeItem(AUTH_ROLE)
+        localStorage.removeItem(AUTH_TOKEN);
+        localStorage.removeItem(AUTH_ROLE);
         store.dispatch('logout').then(() => {
           router.push('/signup')
         })
@@ -112,7 +112,7 @@ export async function onLogin (apolloClient, token, role) {
 export async function onLogout (apolloClient) {
   if (typeof localStorage !== 'undefined') {
     localStorage.removeItem(AUTH_TOKEN);
-    localStorage.removeItem(AUTH_ROLE)
+    localStorage.removeItem(AUTH_ROLE);
     store.dispatch('logout').then(() => {
       router.push('/signup')
     })

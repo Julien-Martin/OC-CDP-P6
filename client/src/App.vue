@@ -31,7 +31,7 @@
 		},
 		methods: {
 			acceptCookie(){
-				this.cookieSnack = false
+				this.cookieSnack = false;
 				localStorage.setItem("accept-cookie", true)
 			},
 		},

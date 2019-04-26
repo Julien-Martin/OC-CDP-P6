@@ -179,7 +179,7 @@
             },
 
             resetItem() {
-                this.error = ''
+                this.error = '';
                 this.editionMode = false;
                 if (this.typeArg === "Estimate") {
                     this.defaultEstimate.products = [];
@@ -456,7 +456,7 @@
                     }
                 } else {
                     if(!this.selectedItem.paymentCondition && this.selectedItem.paymentCondition !== 0){
-                        this.error = "Vous n'avez pas choisi de condition de paiement."
+                        this.error = "Vous n'avez pas choisi de condition de paiement.";
                         return;
                     }
                     if (item.id === 1) {

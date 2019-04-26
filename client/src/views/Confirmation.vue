@@ -198,9 +198,9 @@
                 const postalcode = this.signup.address.postalcode;
                 const country = this.signup.address.country;
 
-                delete this.signup.confirmedPassword
-                delete this.signup.name
-                delete this.signup.address
+                delete this.signup.confirmedPassword;
+                delete this.signup.name;
+                delete this.signup.address;
                 this.$apollo.mutate({
                     mutation: Auth.SIGNUP,
                     variables: {
@@ -222,7 +222,7 @@
             },
             submit() {
                 this.$validator.validateAll().then(valid => {
-                    console.log(valid)
+                    console.log(valid);
                     if (valid) {
                         if (this.stepper === 3) {
                             this.createAccount()

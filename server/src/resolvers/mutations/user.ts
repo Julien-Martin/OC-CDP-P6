@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt'
-import {Context} from '../../utils'
+import {Context, sendForgotPasswordMail} from '../../utils'
 import {ErrorHandling} from "../../utils/errors";
 
 export const userMutation = {
@@ -75,6 +75,19 @@ export const userMutation = {
             return true
         } catch (e) {
             throw new ErrorHandling("ME003", e.message)
+        }
+    },
+
+    /**
+     * Forgot password
+     * @param _
+     * @param args
+     * @param context
+     */
+    async forgotPassword(_, args, context: Context){
+        const user = await context.prisma.user({email: args.email});
+        if(user){
+            await sendForgotPasswordMail(args.email, user.id)
         }
     }
 };

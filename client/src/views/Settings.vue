@@ -248,24 +248,24 @@
 
         methods: {
             deleteAccount() {
-                this.loaderController()
+                this.loaderController();
                 this.$apollo.mutate({
                     mutation: User.DELETE,
                     variables: {
                         password: this.accountToDelete.password
                     }
                 }).then(() => {
-                    this.loaderController()
+                    this.loaderController();
                     const apolloClient = this.$apollo.provider.defaultClient;
-                    this.$router.push('/')
+                    this.$router.push('/');
                     onLogout(apolloClient).then(() => {
                         this.$store.dispatch('logout').then(() => {
                             this.$router.push('/')
                         })
                     })
                 }).catch(error => {
-                    this.loaderController()
-                    this.error = error.message
+                    this.loaderController();
+                    this.error = error.message;
                     this.scrollTop()
                 })
             },
@@ -277,8 +277,8 @@
             showDeleteModal() {
                 this.$validator.validateAll('form-4').then(valid => {
                     if (valid) {
-                        this.modal.visibility = true
-                        this.modal.title = "Supprimer le compte ?"
+                        this.modal.visibility = true;
+                        this.modal.title = "Supprimer le compte ?";
                         this.modal.message = "Êtes-vous sûr de vouloir supprimer votre compte ?"
                     }
                 })
@@ -293,7 +293,7 @@
                     })
                     .catch(error => {
                         this.loaderController();
-                        this.error = error.message
+                        this.error = error.message;
                         this.scrollTop()
                     })
             },
@@ -319,7 +319,7 @@
                             this.getMe()
                         }).catch(error => {
                             this.loaderController();
-                            this.error = error.message
+                            this.error = error.message;
                             this.scrollTop()
                         })
                     }
@@ -329,7 +329,7 @@
             changePassword() {
                 this.$validator.validateAll('form-3').then(valid => {
                     if (valid) {
-                        delete this.auth.confirmedPassword
+                        delete this.auth.confirmedPassword;
                         this.loaderController();
                         this.$apollo.mutate({
                             mutation: User.UPDATE_PASSWORD,
@@ -341,7 +341,7 @@
                             this.getMe()
                         }).catch(error => {
                             this.loaderController();
-                            this.error = error.message
+                            this.error = error.message;
                             this.scrollTop()
                         })
                     }

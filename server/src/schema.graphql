@@ -34,9 +34,12 @@ type Mutation {
     captureEmail(email: String!): User
     signup(id: ID!, password: String!, name: NameCreateOneInput!, address: AddressCreateOneInput!, phone: String, siret: String!, useVAT: Boolean!, paymentInfo: String!, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): AuthPayload!
     login(email: String!, password: String!): AuthPayload
+    deleteUser(id: ID!): Boolean
+    updateUser(id: ID!, name: JSON, address: JSON, phone: String, siret: String, useVAT: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
 
     updateMe(name: JSON, address: JSON, phone: String, siret: String, useVAT: Boolean, paymentInfo: String, VATnumber: String, RCS: String, RM: String, commercialName: String, ape: String, cgv: String): User
     updatePassword(oldpassword: String!, password: String!): Boolean
+    forgotPassword(email: String!): Boolean
     deleteMe(password: String): Boolean
 
     createProduct(description: String!, vat: Float!, pricettc: Float!, unit: String): Product

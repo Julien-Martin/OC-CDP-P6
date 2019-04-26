@@ -19,7 +19,7 @@ Vue.component('Modal', Modal);
 
 moment.locale('fr');
 
-const apolloProvider = createProvider()
+const apolloProvider = createProvider();
 
 new Vue({
     router,

@@ -138,10 +138,10 @@
                         email: this.email
                     }
                 }).then(() => {
-                    this.alertType = "success"
+                    this.alertType = "success";
                     this.alertMessage = "Vous allez recevoir un email de confirmation à l'adresse "+this.email
                 }).catch(error => {
-                    this.alertType = "error"
+                    this.alertType = "error";
                     this.alertMessage = error
                 })
             },

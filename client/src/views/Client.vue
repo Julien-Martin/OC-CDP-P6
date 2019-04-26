@@ -235,7 +235,7 @@
                         this.loaderController()
                     })
                     .catch(error => {
-                        this.loaderController()
+                        this.loaderController();
                         this.error = error
                     })
             },

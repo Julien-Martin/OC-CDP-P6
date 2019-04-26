@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken'
 import {Prisma} from '../generated'
 import * as fs from 'fs'
 import * as nodemailer from "nodemailer";
-import {welcomeEmail} from "./emails";
+import {forgotPasswordEmail, welcomeEmail} from "./emails";
 import {ErrorHandling} from "./errors";
 
 import * as dotenv from "dotenv"
@@ -52,15 +52,24 @@ export const sendConfirmationMail = async (email, id) => {
     await transporter.sendMail(welcomeEmail(email, id));
 };
 
+/**
+ * Function that send forgot password mail
+ * @param email
+ * @param id
+ */
+export const sendForgotPasswordMail = async(email, id) => {
+    await transporter.sendMail(forgotPasswordEmail(email, id))
+};
+
 export const getAuth = async (context: Context) => {
-    const Authorization = await context.request.get('Authorization')
+    const Authorization = await context.request.get('Authorization');
     if(Authorization){
         try {
-            const token = Authorization.replace('Bearer ', '')
-            const {id, role} = await jwt.verify(token, publicKey)
-            const user = await context.prisma.$exists.user({id})
-            if(!user) throw "USER001"
-            context.user = {id, role}
+            const token = Authorization.replace('Bearer ', '');
+            const {id, role} = await jwt.verify(token, publicKey);
+            const user = await context.prisma.$exists.user({id});
+            if(!user) throw "USER001";
+            context.user = {id, role};
             return {id, role}
         }catch (e) {
             throw new ErrorHandling(e)
@@ -68,4 +77,4 @@ export const getAuth = async (context: Context) => {
     } else {
         return null
     }
-}
+};

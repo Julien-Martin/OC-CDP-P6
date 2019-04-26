@@ -146,7 +146,7 @@ export const estimateMutation = {
                     }
                 }
             });
-            console.log(typeof staticProducts)
+            console.log(typeof staticProducts);
             // @ts-ignore
             return await context.prisma.updateUser({
                 where: {id: context.user.id},
