@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
-import {Context, sendConfirmationMail} from '../../utils'
+import {Context, sendConfirmationMail, sendForgotPasswordMail} from '../../utils'
 import * as fs from 'fs'
 import {ErrorHandling} from "../../utils/errors";
 
@@ -22,7 +22,7 @@ export const authMutation = {
             role: "USER",
             status: "NOTACTIVE"
         });
-        if(user){
+        if (user) {
             await sendConfirmationMail(args.email, user.id)
         }
     },
@@ -57,7 +57,7 @@ export const authMutation = {
      * @param args
      * @param context
      */
-    login: async(_, args, context: Context) => {
+    login: async (_, args, context: Context) => {
         const user = await context.prisma.user({email: args.email});
         if (!user) throw new ErrorHandling("USER001");
         const valid = await bcrypt.compare(args.password, user.password);
@@ -68,4 +68,31 @@ export const authMutation = {
         });
         return {token, user}
     },
+    /**
+     * Forgot password
+     * @param _
+     * @param args
+     * @param context
+     */
+    forgotPassword: async (_, args, context: Context) => {
+        const user = await context.prisma.user({email: args.email});
+        if (!user) throw new ErrorHandling("FORGOT001")
+        await sendForgotPasswordMail(args.email, user.id)
+        return true
+    },
+
+    forgotPasswordChange: async (_, args, context: Context) => {
+        try {
+            let user = await context.prisma.user({id: args.id})
+            if(!user) throw ("Impossible de changer le mot de passe.")
+            let password = await bcrypt.hash(args.password, 10)
+            await context.prisma.updateUser({
+                where: {id: args.id},
+                data: {password}
+            })
+            return true
+        } catch (e) {
+            throw new ErrorHandling("FORGOT002", e.message)
+        }
+    }
 };

@@ -6,7 +6,6 @@ export const errors = {
     "JsonWebTokenError": "Le token est invalide.",
     "NotBeforeError": "JWT n'est pas actif.",
     "USER001": "L'utilisateur n'existe pas.",
-    "USER002": "Impossible !",
     "ME002": "Impossible de mettre à jour votre compte.",
     "ME003": "Impossible de supprimer votre compte.",
     "CLIENT001": "Impossible de créer le client.",
@@ -26,4 +25,6 @@ export const errors = {
     "PRODUCT001": "Impossible de créer le produit/prestation.",
     "PRODUCT002": "Impossible de mettre à jour le produit/prestation.",
     "PRODUCT003": "Impossible de supprimer le produit/prestation.",
+    "FORGOT001": "Aucun compte relié à cet email.",
+    "FORGOT002": "Impossible de changer le mot de passe oublié.",
 };

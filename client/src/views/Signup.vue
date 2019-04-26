@@ -5,21 +5,42 @@
             <v-layout row wrap justify-center class="white--text">
                 <v-flex xs12 class="pt-5">
                     <p class="text-xs-center display-2">ME-Assistant</p>
-                    <p v-if="noAccount" class="text-xs-center headline">Inscription</p>
+                    <p v-if="noAccount && !forgotPassword" class="text-xs-center headline">Inscription</p>
                     <p v-else class="text-xs-center headline">Connexion</p>
                 </v-flex>
-                <v-flex xs12 md4>
+                <v-flex xs12 md6>
                     <Alert type="error" :message="error"></Alert>
-                    <div v-if="!noAccount">
+                    <Alert type="success" :message="success"></Alert>
+                    <div v-if="!noAccount && !forgotPassword">
+                        <v-layout justify-center row wrap>
+                            <v-flex xs12 md10>
+                                <v-text-field prepend-inner-icon="mail_outline" label="Adresse e-mail" class="mt-5" solo
+                                              v-model="signin.email" v-validate="'required|email'" name="email"
+                                              :error-messages="errors.collect('email')"></v-text-field>
+                                <v-text-field prepend-inner-icon="lock" label="Mot de passe" solo
+                                              v-model="signin.password" type="password" v-validate="'required'"
+                                              name="password"
+                                              :error-messages="errors.collect('password')"></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 class="text-xs-center">
+                                <v-btn color="#a845f7" class="lighten-2" dark large @click="submit" round>Connexion</v-btn>
+                                <v-btn dark large round color="#BD8AFF" @click="forgotPassword = true">Mot de passe
+                                    oublié ?
+                                </v-btn>
+                                <v-btn dark large round color="#47B9F5" @click="noAccount = true">Créer un compte ?
+                                </v-btn>
+                                <v-btn dark large round color="#6473EB" router to="/">Retour à l'accueil</v-btn>
+                            </v-flex>
+                        </v-layout>
+                    </div>
+                    <div v-if="!noAccount && forgotPassword">
+                        <p class="subheading text-xs-center mt-5">Un lien pour changer votre mot de passe vous sera
+                            envoyé par email.</p>
                         <v-text-field prepend-inner-icon="mail_outline" label="Adresse e-mail" class="mt-5" solo
-                                      v-model="signin.email" v-validate="'required|email'" name="email"
+                                      v-model="forgot.email" v-validate="'required|email'" name="email"
                                       :error-messages="errors.collect('email')"></v-text-field>
-                        <v-text-field prepend-inner-icon="lock" label="Mot de passe" solo
-                                      v-model="signin.password" type="password" v-validate="'required'" name="password"
-                                      :error-messages="errors.collect('password')"></v-text-field>
-                        <v-btn color="#a845f7" class="lighten-2" dark large @click="submit" round>Connexion</v-btn>
-                        <v-btn dark large round color="#47B9F5" @click="noAccount = true">Créer un compte ?</v-btn>
-                        <v-btn dark large round color="#6473EB" router to="/">Retour à l'accueil</v-btn>
+                        <v-btn color="#a845f7" class="lighten-2" dark large @click="submit" round>Envoyer</v-btn>
+                        <v-btn dark large round color="#6473EB" @click="forgotPassword = false">Retour</v-btn>
                     </div>
                     <v-stepper v-if="noAccount" v-model="stepper">
                         <v-stepper-header>
@@ -58,12 +79,17 @@
             return {
                 images: [section1],
                 error: '',
+                success: '',
                 stepper: 1,
                 noAccount: false,
+                forgotPassword: false,
                 loader: false,
                 signin: {
                     email: '',
                     password: ''
+                },
+                forgot: {
+                    email: '',
                 },
                 signup: {
                     email: '',
@@ -71,6 +97,24 @@
             }
         },
         methods: {
+            sendForgotMail() {
+                this.loader = true
+                this.$apollo.mutate({
+                    mutation: Auth.FORGOT_PASSWORD,
+                    variables: {
+                        ...this.forgot
+                    }
+                }).then(response => {
+                    this.loader = false
+                    if(response){
+                        console.log(response)
+                        this.success = "L'email a été envoyé à l'adresse "+this.forgot.email
+                    }
+                }).catch(error => {
+                    this.loader = false
+                    this.error = error.message
+                })
+            },
             login() {
                 this.loader = true;
                 const email = this.signin.email;
@@ -115,8 +159,10 @@
             submit() {
                 this.$validator.validateAll().then(valid => {
                     if (valid) {
-                        if (!this.noAccount) {
+                        if (!this.noAccount && !this.forgotPassword) {
                             this.login()
+                        } else if (this.forgotPassword) {
+                            this.sendForgotMail()
                         } else {
                             this.captureEmail()
                         }

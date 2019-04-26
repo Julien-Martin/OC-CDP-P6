@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import {isAdmin, isAuth, isNotAuth} from "./utils";
+
 import Signup from './views/Signup'
 import Confirmation from './views/Confirmation'
 import Settings from './views/Settings'
@@ -12,8 +14,7 @@ import LegalForm from './views/LegalForm'
 import PageNotFound from "./views/PageNotFound";
 import Landing from "./views/Landing";
 import Legal from "./views/Legal";
-
-import {isAdmin, isAuth, isNotAuth} from "./utils";
+import Forgot from "./views/Forgot";
 
 Vue.use(Router);
 
@@ -42,6 +43,12 @@ const router = new Router({
 			path: '/signup/:id',
 			name: 'confirmation',
 			component: Confirmation,
+			beforeEnter: isNotAuth
+		},
+		{
+			path: '/forgot/:id',
+			name: 'forgot',
+			component: Forgot,
 			beforeEnter: isNotAuth
 		},
 		{
