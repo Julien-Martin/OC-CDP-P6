@@ -1,7 +1,8 @@
 # ME-ASSISTANT
 ## Dépendances
 - Docker/Docker Desktop => 2.0.0.3
-- NodeJS =>10.15.3, npm =>6.4.1
+- NodeJS =>10.15.3
+- npm =>6.4.1
 - Prisma => 1.30
 - Vue CLI => 3.5.5
 ## Serveur
