@@ -24,9 +24,8 @@
 ### Développement
 - Installation des dépendances : `npm install`
 - Lancement en mode développement : `npm run serve`
----
-### Production
 
+### Production
 - Installation des dépendances : `npm install --only=prod`
 - Configuration des variables d'environnement : `.env` ou `.env.local`
 - Compilation de l'application : `npm run build`
