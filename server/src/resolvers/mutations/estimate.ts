@@ -164,9 +164,11 @@ export const estimateMutation = {
                                 staticUser,
                                 staticClient,
                                 staticProducts: {
+                                    // @ts-ignore
                                     create: staticProducts
                                 },
                                 estimateNumber,
+                                // @ts-ignore
                                 state: StateEnum[1]
                             }
                         }

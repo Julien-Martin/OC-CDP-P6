@@ -160,9 +160,11 @@ export const invoiceMutation = {
                                 staticUser,
                                 staticClient,
                                 staticProducts: {
+                                    // @ts-ignore
                                     create: staticProducts
                                 },
                                 invoiceNumber,
+                                // @ts-ignore
                                 state: StateEnum[1]
                             }
                         }
